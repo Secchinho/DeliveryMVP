@@ -30,6 +30,7 @@ public class CupomRepositoryEmMemoria implements ICupomRepository {
                 LocalDateTime.of(2026, 4, 28, 23, 59)));
     }
 
+    @Override
     public void adicionarCupom(CupomDescontoPedido cupom) {
         validarCupom(cupom);
 
@@ -39,7 +40,8 @@ public class CupomRepositoryEmMemoria implements ICupomRepository {
 
         cuponsDisponiveis.put(cupom.getCodigo(), cupom);
     }
-
+    
+    @Override
     public void atualizarCupom(CupomDescontoPedido cupom) {
         validarCupom(cupom);
 
@@ -49,7 +51,8 @@ public class CupomRepositoryEmMemoria implements ICupomRepository {
 
         cuponsDisponiveis.put(cupom.getCodigo(), cupom);
     }
-
+    
+    @Override
     public void removerCupom(String codigo) {
         if (buscarCupom(codigo).isEmpty()) {
             throw new IllegalArgumentException("Cupom inexistente: " + codigo);
@@ -57,12 +60,13 @@ public class CupomRepositoryEmMemoria implements ICupomRepository {
 
         cuponsDisponiveis.remove(codigo);
     }
-
+    
+    @Override
     public void removerCuponsExpirados() {
         removerCuponsExpirados(LocalDate.now());
     }
 
-    public void removerCuponsExpirados(LocalDate dataReferencia) {
+    private void removerCuponsExpirados(LocalDate dataReferencia) {
         if (dataReferencia == null) {
             throw new IllegalArgumentException("Data de referencia nao pode ser nula");
         }
@@ -108,7 +112,8 @@ public class CupomRepositoryEmMemoria implements ICupomRepository {
             throw new IllegalArgumentException("Data final do cupom nao pode ser anterior a data inicial");
         }
     }
-
+    
+    @Override
     public Map<String, CupomDescontoPedido> getCuponsDisponiveis() {
         return Map.copyOf(cuponsDisponiveis);
     }

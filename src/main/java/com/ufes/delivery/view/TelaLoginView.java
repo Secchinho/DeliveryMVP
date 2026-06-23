@@ -128,4 +128,6 @@ public class TelaLoginView extends javax.swing.JPanel {
     private javax.swing.JLabel senhaLbl;
     private javax.swing.JPasswordField senhaTxt;
     // End of variables declaration//GEN-END:variables
+
+    
 }
