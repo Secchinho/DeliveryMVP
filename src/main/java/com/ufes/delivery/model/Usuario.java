@@ -16,7 +16,8 @@ public class Usuario {
     private String userName;
     private int tipo; //Adotamos inteiros para o tipo. 0 = Atendente e 1 = Admin
     private String senha;
-    private Situacao situacao;
+    //private Situacao situacao;
+    private String situacao;
     private boolean autorizado;
     
     public Usuario(String nome, String userName, String senha){
@@ -24,7 +25,8 @@ public class Usuario {
         this.userName = userName;
         this.senha = senha;
         this.tipo = 0; 
-        this.situacao = new Pendente(this);
+        //this.situacao = new Pendente(this);
+        this.situacao = "Pendente";
     }
 
     public String getSenha() {
@@ -35,10 +37,14 @@ public class Usuario {
         return nome;
     }
 
-    public Situacao getSituacao() {
+    /*public Situacao getSituacao() {
+        return situacao;
+    }*/
+    
+    public String getSituacao() {
         return situacao;
     }
-
+    
     public int getTipo() {
         return tipo;
     }
@@ -47,10 +53,14 @@ public class Usuario {
         return userName;
     }
 
-    public void setSituacao(Situacao situacao) {
+    /*public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
+    }*/
+
+    public void setSituacao(String situacao){
         this.situacao = situacao;
     }
-
+    
     public void setTipo(int tipo) {
         this.tipo = tipo;
     }
