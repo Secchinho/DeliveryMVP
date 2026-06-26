@@ -21,7 +21,7 @@ public class AutenticacaoUsuarioService {
     
     public boolean autenticarUsuario(String nome, String senha){
         boolean encontrado = false;
-        List<Usuario> usuarios = this.usuarioRepository.buscarPorNome(nome);
+        List<Usuario> usuarios = this.usuarioRepository.buscarPorNomeContendo(nome);
         
         for(Usuario u : usuarios){
             if(u.getSenha().equals(senha)){
