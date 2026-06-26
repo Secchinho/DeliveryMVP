@@ -1,14 +1,22 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.ufes.delivery.view;
 
 import com.ufes.delivery.model.Usuario;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -20,52 +28,68 @@ import javax.swing.table.TableColumn;
  *
  * @author raphael
  */
-public class TelaUsuariosView extends javax.swing.JPanel {
+public class TelaUsuariosView extends JFrame {
 
     private static final String[] PERFIS = {"Atendente", "Administrador"};
 
     private List<Usuario> todosUsuarios;
     private UsuariosTableModel tableModel;
 
+    // Componentes visuais
+    private JTextField nomeBuscaTxt;
+    private JTable usuariosTable;
+    private JButton autorizarBtn;
+    private JButton desautorizarBtn;
+    private JButton excluirBtn;
+    private JButton novoBtn;
+    private JButton fecharBtn;
+
     /**
      * Creates new form TelaUsuariosView
      */
     public TelaUsuariosView() {
-        this.todosUsuarios = criarUsuariosDeExemplo();
+        // TODO: Aqui você deve carregar a lista de usuários do seu banco de dados ou repositório
+        // Exemplo: this.todosUsuarios = usuarioService.buscarTodos();
+        this.todosUsuarios = new ArrayList<>(); // Inicializa vazio (sem dados de exemplo)
+
         initComponents();
         this.tableModel = new UsuariosTableModel(todosUsuarios);
         usuariosTable.setModel(tableModel);
         configurarColunaPerfil();
         usuariosTable.setRowHeight(24);
+
+        setTitle("Usuários");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(null);
     }
 
-    private List<Usuario> criarUsuariosDeExemplo() {
-        List<Usuario> lista = new ArrayList<>();
-
-        Usuario adminmaster = new Usuario("Administrador Master", "adminmaster", "123456");
-        adminmaster.setTipo(1);
-        adminmaster.setAutorizado(true);
-        lista.add(adminmaster);
-
-        Usuario atendente01 = new Usuario("Carlos Atendente", "atendente01", "123456");
-        atendente01.setAutorizado(true);
-        lista.add(atendente01);
-
-        Usuario maria01 = new Usuario("Maria Oliveira", "maria01", "123456");
-        // permanece Pendente (situação padrão do construtor)
-        lista.add(maria01);
-
-        Usuario joaosilva = new Usuario("Joao Silva", "joaosilva", "123456");
-        joaosilva.setAutorizado(true);
-        joaosilva.setAutorizado(false); // força transição para Não autorizado
-        lista.add(joaosilva);
-
-        Usuario fulano123 = new Usuario("Fulano de Tal", "fulano123", "123456");
-        fulano123.setAutorizado(true);
-        lista.add(fulano123);
-
-        return lista;
-    }
+    // =========================================================================
+    // MÉTODO DE CARREGAMENTO DE DADOS (Teste opcional)
+    // =========================================================================
+    /**
+     * Método para carregar dados de exemplo. Descomente no 'main' se quiser
+     * ver a tela preenchida para testes, ou utilize sua lógica real de banco aqui.
+     */
+    // public void carregarDadosExemplo() {
+    //     // TODO: Substitua este bloco pela sua lógica real de carregamento de dados
+    //     this.todosUsuarios.clear();
+    //     
+    //     // Exemplo de usuários (apenas para visualização, remova ao conectar com o banco)
+    //     Usuario adminmaster = new Usuario("Administrador Master", "adminmaster", "123456");
+    //     adminmaster.setTipo(1);
+    //     adminmaster.setAutorizado(true);
+    //     adminmaster.setSituacao("Autorizado");
+    //     todosUsuarios.add(adminmaster);
+    //
+    //     Usuario atendente01 = new Usuario("Carlos Atendente", "atendente01", "123456");
+    //     atendente01.setTipo(0);
+    //     atendente01.setAutorizado(true);
+    //     atendente01.setSituacao("Autorizado");
+    //     todosUsuarios.add(atendente01);
+    //     
+    //     tableModel.filtrarPorNome(""); // Atualiza a tabela
+    // }
 
     private void configurarColunaPerfil() {
         TableColumn colunaPerfil = usuariosTable.getColumnModel().getColumn(UsuariosTableModel.COL_PERFIL);
@@ -73,153 +97,64 @@ public class TelaUsuariosView extends javax.swing.JPanel {
         colunaPerfil.setCellEditor(new javax.swing.DefaultCellEditor(comboPerfil));
     }
 
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        setLayout(new BorderLayout(10, 10));
 
-        buscaPanel = new javax.swing.JPanel();
-        nomeBuscaLbl = new javax.swing.JLabel();
-        nomeBuscaTxt = new javax.swing.JTextField();
-        buscarBtn = new javax.swing.JButton();
-        usuariosPanel = new javax.swing.JPanel();
-        usuariosScroll = new javax.swing.JScrollPane();
-        usuariosTable = new javax.swing.JTable();
-        botoesPanel = new javax.swing.JPanel();
-        autorizarBtn = new javax.swing.JButton();
-        desautorizarBtn = new javax.swing.JButton();
-        excluirBtn = new javax.swing.JButton();
-        novoBtn = new javax.swing.JButton();
-        fecharBtn = new javax.swing.JButton();
-
+        // Painel de Busca
+        JPanel buscaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         buscaPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Busca de Usuários"));
 
-        nomeBuscaLbl.setText("Nome");
+        JLabel nomeBuscaLbl = new JLabel("Nome");
+        nomeBuscaTxt = new JTextField(25);
+        JButton buscarBtn = new JButton("Buscar");
 
-        buscarBtn.setText("Buscar");
-        buscarBtn.addActionListener(this::buscarBtnActionPerformed);
+        buscaPanel.add(nomeBuscaLbl);
+        buscaPanel.add(nomeBuscaTxt);
+        buscaPanel.add(buscarBtn);
 
-        javax.swing.GroupLayout buscaPanelLayout = new javax.swing.GroupLayout(buscaPanel);
-        buscaPanel.setLayout(buscaPanelLayout);
-        buscaPanelLayout.setHorizontalGroup(
-            buscaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(buscaPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(nomeBuscaLbl)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(nomeBuscaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(buscarBtn)
-                .addContainerGap())
-        );
-        buscaPanelLayout.setVerticalGroup(
-            buscaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(buscaPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(buscaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nomeBuscaLbl)
-                    .addComponent(nomeBuscaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buscarBtn))
-                .addContainerGap(14, Short.MAX_VALUE))
-        );
-
+        // Painel de Usuários (Tabela)
+        JPanel usuariosPanel = new JPanel(new BorderLayout());
         usuariosPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuários"));
 
-        usuariosTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+        usuariosTable = new JTable();
+        JScrollPane usuariosScroll = new JScrollPane(usuariosTable);
+        usuariosPanel.add(usuariosScroll, BorderLayout.CENTER);
 
-            },
-            new String [] {
-                "Sel.", "Nome de usuário", "Nome", "Autorizado", "Perfil", "Situação"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                true, false, false, true, true, false
-            };
+        // Painel de Botões
+        JPanel botoesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
+        autorizarBtn = new JButton("Autorizar");
+        desautorizarBtn = new JButton("Desautorizar");
+        excluirBtn = new JButton("Excluir");
+        novoBtn = new JButton("Novo");
+        fecharBtn = new JButton("Fechar");
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        usuariosScroll.setViewportView(usuariosTable);
-
-        javax.swing.GroupLayout usuariosPanelLayout = new javax.swing.GroupLayout(usuariosPanel);
-        usuariosPanel.setLayout(usuariosPanelLayout);
-        usuariosPanelLayout.setHorizontalGroup(
-            usuariosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(usuariosPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(usuariosScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 600, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        usuariosPanelLayout.setVerticalGroup(
-            usuariosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(usuariosPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(usuariosScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 220, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        botoesPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 8, 8));
-
-        autorizarBtn.setText("Autorizar");
-        autorizarBtn.addActionListener(this::autorizarBtnActionPerformed);
         botoesPanel.add(autorizarBtn);
-
-        desautorizarBtn.setText("Desautorizar");
-        desautorizarBtn.addActionListener(this::desautorizarBtnActionPerformed);
         botoesPanel.add(desautorizarBtn);
-
-        excluirBtn.setText("Excluir");
-        excluirBtn.addActionListener(this::excluirBtnActionPerformed);
         botoesPanel.add(excluirBtn);
-
-        novoBtn.setText("Novo");
-        novoBtn.addActionListener(this::novoBtnActionPerformed);
         botoesPanel.add(novoBtn);
-
-        fecharBtn.setText("Fechar");
-        fecharBtn.addActionListener(this::fecharBtnActionPerformed);
         botoesPanel.add(fecharBtn);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buscaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(usuariosPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(botoesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(10, 10, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(buscaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(usuariosPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(botoesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10))
-        );
-    }// </editor-fold>//GEN-END:initComponents
+        // Adicionando ao Frame
+        add(buscaPanel, BorderLayout.NORTH);
+        add(usuariosPanel, BorderLayout.CENTER);
+        add(botoesPanel, BorderLayout.SOUTH);
 
+        // Ações dos Botões
+        buscarBtn.addActionListener(evt -> buscarBtnActionPerformed());
+        autorizarBtn.addActionListener(evt -> autorizarBtnActionPerformed());
+        desautorizarBtn.addActionListener(evt -> desautorizarBtnActionPerformed());
+        excluirBtn.addActionListener(evt -> excluirBtnActionPerformed());
+        novoBtn.addActionListener(evt -> novoBtnActionPerformed());
+        fecharBtn.addActionListener(evt -> fecharBtnActionPerformed());
+    }
 
-    private void buscarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarBtnActionPerformed
+    private void buscarBtnActionPerformed() {
         String filtro = nomeBuscaTxt.getText() == null ? "" : nomeBuscaTxt.getText().trim();
         tableModel.filtrarPorNome(filtro);
-    }//GEN-LAST:event_buscarBtnActionPerformed
+    }
 
-    private void autorizarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autorizarBtnActionPerformed
+    private void autorizarBtnActionPerformed() {
         List<Usuario> selecionados = tableModel.getUsuariosSelecionados();
         if (selecionados.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Selecione ao menos um usuário na coluna \"Sel.\".",
@@ -228,11 +163,14 @@ public class TelaUsuariosView extends javax.swing.JPanel {
         }
         for (Usuario usuario : selecionados) {
             usuario.setAutorizado(true);
+            usuario.setSituacao("Autorizado");
+            // TODO: Persistir a alteração no banco de dados
+            // Exemplo: usuarioService.atualizar(usuario);
         }
         tableModel.fireTableDataChanged();
-    }//GEN-LAST:event_autorizarBtnActionPerformed
+    }
 
-    private void desautorizarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desautorizarBtnActionPerformed
+    private void desautorizarBtnActionPerformed() {
         List<Usuario> selecionados = tableModel.getUsuariosSelecionados();
         if (selecionados.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Selecione ao menos um usuário na coluna \"Sel.\".",
@@ -240,13 +178,15 @@ public class TelaUsuariosView extends javax.swing.JPanel {
             return;
         }
         for (Usuario usuario : selecionados) {
-            usuario.setAutorizado(true);
             usuario.setAutorizado(false);
+            usuario.setSituacao("Não autorizado");
+            // TODO: Persistir a alteração no banco de dados
+            // Exemplo: usuarioService.atualizar(usuario);
         }
         tableModel.fireTableDataChanged();
-    }//GEN-LAST:event_desautorizarBtnActionPerformed
+    }
 
-    private void excluirBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excluirBtnActionPerformed
+    private void excluirBtnActionPerformed() {
         List<Usuario> selecionados = tableModel.getUsuariosSelecionados();
         if (selecionados.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Selecione ao menos um usuário na coluna \"Sel.\".",
@@ -258,11 +198,13 @@ public class TelaUsuariosView extends javax.swing.JPanel {
                 "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
         if (confirma == JOptionPane.YES_OPTION) {
             todosUsuarios.removeAll(selecionados);
+            // TODO: Persistir a exclusão no banco de dados
+            // Exemplo: usuarioService.deletar(selecionados);
             tableModel.filtrarPorNome(nomeBuscaTxt.getText());
         }
-    }//GEN-LAST:event_excluirBtnActionPerformed
+    }
 
-    private void novoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_novoBtnActionPerformed
+    private void novoBtnActionPerformed() {
         JTextField nomeTxt = new JTextField();
         JTextField userTxt = new JTextField();
         JTextField senhaTxt = new JTextField();
@@ -282,39 +224,23 @@ public class TelaUsuariosView extends javax.swing.JPanel {
                 return;
             }
             Usuario novo = new Usuario(nome, userName, senha);
+            novo.setSituacao("Pendente");
             todosUsuarios.add(novo);
+            // TODO: Persistir o novo usuário no banco de dados
+            // Exemplo: usuarioService.salvar(novo);
+
             nomeBuscaTxt.setText("");
             tableModel.filtrarPorNome("");
         }
-    }//GEN-LAST:event_novoBtnActionPerformed
+    }
 
-    private void fecharBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fecharBtnActionPerformed
-        java.awt.Window janela = SwingUtilities.getWindowAncestor(this);
-        if (janela != null) {
-            janela.dispose();
-        }
-    }//GEN-LAST:event_fecharBtnActionPerformed
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton autorizarBtn;
-    private javax.swing.JPanel botoesPanel;
-    private javax.swing.JPanel buscaPanel;
-    private javax.swing.JButton buscarBtn;
-    private javax.swing.JButton desautorizarBtn;
-    private javax.swing.JButton excluirBtn;
-    private javax.swing.JButton fecharBtn;
-    private javax.swing.JLabel nomeBuscaLbl;
-    private javax.swing.JTextField nomeBuscaTxt;
-    private javax.swing.JButton novoBtn;
-    private javax.swing.JPanel usuariosPanel;
-    private javax.swing.JScrollPane usuariosScroll;
-    private javax.swing.JTable usuariosTable;
-    // End of variables declaration//GEN-END:variables
+    private void fecharBtnActionPerformed() {
+        this.dispose();
+    }
 
     /**
-     * Modelo de tabela que liga a lista de {@link Usuario} à JTable,
-     * controlando a seleção (coluna "Sel."), a autorização e o perfil.
+     * Modelo de tabela que liga a lista de {@link Usuario} à JTable.
+     * Adaptado para os getters e setters da sua classe Usuario.
      */
     private static class UsuariosTableModel extends AbstractTableModel {
 
@@ -397,11 +323,7 @@ public class TelaUsuariosView extends javax.swing.JPanel {
                 case COL_AUTORIZADO:
                     return usuario.isAutorizado();
                 case COL_PERFIL:
-                    if(usuario.getTipo() == 0){
-                        return "Atendente";
-                    }else{
-                        return "Admin";
-                    }
+                    return (usuario.getTipo() == 1) ? "Administrador" : "Atendente";
                 case COL_SITUACAO:
                     return usuario.getSituacao();
                 default:
@@ -424,21 +346,37 @@ public class TelaUsuariosView extends javax.swing.JPanel {
                     }
                     break;
                 case COL_AUTORIZADO:
-                    usuario.setAutorizado(Boolean.TRUE.equals(aValue));
+                    boolean autorizado = Boolean.TRUE.equals(aValue);
+                    usuario.setAutorizado(autorizado);
+                    usuario.setSituacao(autorizado ? "Autorizado" : "Não autorizado");
                     break;
                 case COL_PERFIL:
-                    if(String.valueOf(aValue).equals("Administrador")){
-                        usuario.setTipo(1);
-                    }else if(String.valueOf(aValue).equals("Atendente")){
-                        usuario.setTipo(0);
-                    }else{
-                        usuario.setTipo(0);
-                    }
+                    String perfilSelecionado = String.valueOf(aValue);
+                    usuario.setTipo(perfilSelecionado.equals("Administrador") ? 1 : 0);
                     break;
                 default:
                     break;
             }
             fireTableRowsUpdated(rowIndex, rowIndex);
         }
+    }
+
+    // ======================================================================
+    // MAIN PARA TESTAR A TELA
+    // ======================================================================
+    public static void main(String[] args) {
+        // Tenta usar o visual padrão do sistema operacional
+        try {
+            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(TelaUsuariosView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            TelaUsuariosView tela = new TelaUsuariosView();
+            // Descomente a linha abaixo se quiser ver a tela com dados de exemplo para testes visuais:
+            // tela.carregarDadosExemplo(); 
+            tela.setVisible(true);
+        });
     }
 }

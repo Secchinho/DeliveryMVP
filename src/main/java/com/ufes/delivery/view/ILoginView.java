@@ -6,7 +6,6 @@ package com.ufes.delivery.view;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -21,6 +20,4 @@ public interface ILoginView {
     
     public JTextField getNomeUsuario();
     public JPasswordField getSenhaUsuario();
-    
-    public JPanel getJanelaPrincipal();
 }
