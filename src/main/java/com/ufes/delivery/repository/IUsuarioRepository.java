@@ -6,14 +6,16 @@ package com.ufes.delivery.repository;
 
 import com.ufes.delivery.model.Usuario;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
  * @author lucas
  */
 public interface IUsuarioRepository {
-    public List<Usuario> buscarPorNome(String nome);
+    public List<Usuario> buscarPorNomeContendo(String nome);
     public void adicionar(Usuario usuario);
-    public void removerPorNome(String nome);
+    public void removerPorNomeUsuario(String nome);
     public List<Usuario> listarUsuarios();
+    public Optional<Usuario> getPorUserName(String userName);
 }
