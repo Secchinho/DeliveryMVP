@@ -44,6 +44,34 @@ public class TelaUsuariosView extends JFrame {
     private JButton novoBtn;
     private JButton fecharBtn;
 
+    public JTextField getNomeBuscaTxt() {
+        return nomeBuscaTxt;
+    }
+
+    public JTable getUsuariosTable() {
+        return usuariosTable;
+    }
+
+    public JButton getAutorizarBtn() {
+        return autorizarBtn;
+    }
+
+    public JButton getDesautorizarBtn() {
+        return desautorizarBtn;
+    }
+
+    public JButton getExcluirBtn() {
+        return excluirBtn;
+    }
+
+    public JButton getNovoBtn() {
+        return novoBtn;
+    }
+
+    public JButton getFecharBtn() {
+        return fecharBtn;
+    }
+
     /**
      * Creates new form TelaUsuariosView
      */
@@ -66,7 +94,6 @@ public class TelaUsuariosView extends JFrame {
 
     // =========================================================================
     // MÉTODO DE CARREGAMENTO DE DADOS (Teste opcional)
-    // =========================================================================
     /**
      * Método para carregar dados de exemplo. Descomente no 'main' se quiser
      * ver a tela preenchida para testes, ou utilize sua lógica real de banco aqui.
@@ -90,6 +117,7 @@ public class TelaUsuariosView extends JFrame {
     //     
     //     tableModel.filtrarPorNome(""); // Atualiza a tabela
     // }
+    // =========================================================================
 
     private void configurarColunaPerfil() {
         TableColumn colunaPerfil = usuariosTable.getColumnModel().getColumn(UsuariosTableModel.COL_PERFIL);

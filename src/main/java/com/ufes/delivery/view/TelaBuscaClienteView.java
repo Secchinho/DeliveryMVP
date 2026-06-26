@@ -31,6 +31,39 @@ public class TelaBuscaClienteView extends JFrame {
     private JButton btnVisualizar;
     private JButton btnFechar;
 
+
+    public String getComboBuscarPor() {
+        return (String) comboBuscarPor.getSelectedItem();
+    }
+
+    public JTextField getTxtValor() {
+        return txtValor;
+    }
+
+    public JButton getBtnBuscar() {
+        return btnBuscar;
+    }
+
+    public JTable getTabelaResultados() {
+        return tabelaResultados;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return tableModel;
+    }
+
+    public JButton getBtnNovo() {
+        return btnNovo;
+    }
+
+    public JButton getBtnVisualizar() {
+        return btnVisualizar;
+    }
+
+    public JButton getBtnFechar() {
+        return btnFechar;
+    }
+
     public TelaBuscaClienteView() {
         super("Clientes");
         initComponents();

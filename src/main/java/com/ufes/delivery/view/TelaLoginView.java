@@ -34,6 +34,34 @@ public class TelaLoginView extends JFrame implements ILoginView {
     private JButton cancelarBtn;
     private JButton acessarBtn;
 
+    // =========================================================================
+    // MÉTODOS DA INTERFACE ILoginView
+    // =========================================================================
+    @Override
+    public JButton getAcessarButton() {
+        return this.acessarBtn;
+    }
+
+    @Override
+    public JButton getCancelarButton() {
+        return this.cancelarBtn;
+    }
+
+    @Override
+    public JButton getCadastrarUsuarioButton() {
+        return this.cadastrarBtn;
+    }
+
+    @Override
+    public JTextField getNomeUsuario() {
+        return this.nomeTxt;
+    }
+
+    @Override
+    public JPasswordField getSenhaUsuario() {
+        return this.senhaTxt;
+    }
+
     /**
      * Creates new form TelaLoginView
      */
@@ -104,34 +132,6 @@ public class TelaLoginView extends JFrame implements ILoginView {
         // Exemplo: 
         // TelaUsuariosView telaUsuarios = new TelaUsuariosView();
         // telaUsuarios.setVisible(true);
-    }
-
-    // =========================================================================
-    // MÉTODOS DA INTERFACE ILoginView
-    // =========================================================================
-    @Override
-    public JButton getAcessarButton() {
-        return this.acessarBtn;
-    }
-
-    @Override
-    public JButton getCancelarButton() {
-        return this.cancelarBtn;
-    }
-
-    @Override
-    public JButton getCadastrarUsuarioButton() {
-        return this.cadastrarBtn;
-    }
-
-    @Override
-    public JTextField getNomeUsuario() {
-        return this.nomeTxt;
-    }
-
-    @Override
-    public JPasswordField getSenhaUsuario() {
-        return this.senhaTxt;
     }
 
     // =========================================================================
