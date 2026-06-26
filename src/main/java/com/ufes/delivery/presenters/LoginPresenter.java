@@ -8,6 +8,7 @@ import com.ufes.delivery.view.ILoginView;
 import com.ufes.util.AutenticacaoUsuarioService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,7 +28,7 @@ public class LoginPresenter {
         this.view.getAcessarButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                realizarLogin();
             }
         });
         
@@ -52,8 +53,14 @@ public class LoginPresenter {
     }
     
     public void realizarLogin(){
-        if(this.autenticacaoService.autenticarUsuario(this.view.getNomeUsuario().getText(),new String(this.view.getSenhaUsuario().getPassword()))){
-            //Vá para outra tela
+        try{
+            if(this.autenticacaoService.autenticarUsuario(this.view.getNomeUsuario().getText(),new String(this.view.getSenhaUsuario().getPassword()))){
+                //Vá para outra tela
+            }
+        }catch(IllegalArgumentException e){
+            JOptionPane.showMessageDialog(this.view.getJanelaPrincipal(), e, "Erro de autenticação", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Erro ao realizar login: " + e.getMessage());
         }
+        
     }
 }

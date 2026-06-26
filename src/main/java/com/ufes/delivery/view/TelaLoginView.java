@@ -4,11 +4,17 @@
  */
 package com.ufes.delivery.view;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
 /**
  *
  * @author raphael
  */
-public class TelaLoginView extends javax.swing.JPanel {
+public class TelaLoginView extends javax.swing.JPanel implements ILoginView{
 
     /**
      * Creates new form TelaLoginView
@@ -128,6 +134,36 @@ public class TelaLoginView extends javax.swing.JPanel {
     private javax.swing.JLabel senhaLbl;
     private javax.swing.JPasswordField senhaTxt;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public JButton getAcessarButton() {
+       return this.acessarBtn;
+    }
+
+    @Override
+    public JButton getCancelarButton() {
+        return this.cancelarBtn;
+    }
+
+    @Override
+    public JButton getCadastrarUsuarioButton() {
+        return this.cadastrarBtn;
+    }
+
+    @Override
+    public JTextField getNomeUsuario() {
+        return this.nomeTxt;
+    }
+
+    @Override
+    public JPasswordField getSenhaUsuario() {
+        return this.senhaTxt;
+    }
+
+    @Override
+    public JPanel getJanelaPrincipal() {
+        return this.dadosDeAcessoPanel;
+    }
 
     
 }

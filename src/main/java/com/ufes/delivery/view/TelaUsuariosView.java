@@ -43,7 +43,7 @@ public class TelaUsuariosView extends javax.swing.JPanel {
         List<Usuario> lista = new ArrayList<>();
 
         Usuario adminmaster = new Usuario("Administrador Master", "adminmaster", "123456");
-        adminmaster.setTipo(Usuario.PERFIL_ADMINISTRADOR);
+        adminmaster.setTipo(1);
         adminmaster.setAutorizado(true);
         lista.add(adminmaster);
 
@@ -397,9 +397,13 @@ public class TelaUsuariosView extends javax.swing.JPanel {
                 case COL_AUTORIZADO:
                     return usuario.isAutorizado();
                 case COL_PERFIL:
-                    return usuario.getPerfilDescricao();
+                    if(usuario.getTipo() == 0){
+                        return "Atendente";
+                    }else{
+                        return "Admin";
+                    }
                 case COL_SITUACAO:
-                    return usuario.getSituacao().getDescricao();
+                    return usuario.getSituacao();
                 default:
                     return null;
             }
@@ -423,7 +427,13 @@ public class TelaUsuariosView extends javax.swing.JPanel {
                     usuario.setAutorizado(Boolean.TRUE.equals(aValue));
                     break;
                 case COL_PERFIL:
-                    usuario.setPerfilPorDescricao(String.valueOf(aValue));
+                    if(String.valueOf(aValue).equals("Administrador")){
+                        usuario.setTipo(1);
+                    }else if(String.valueOf(aValue).equals("Atendente")){
+                        usuario.setTipo(0);
+                    }else{
+                        usuario.setTipo(0);
+                    }
                     break;
                 default:
                     break;

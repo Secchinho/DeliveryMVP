@@ -33,7 +33,7 @@
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="buscaPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="usuariosPanel" pref="250" max="32767" attributes="0"/>
+              <Component id="usuariosPanel" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="botoesPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="10" max="-2" attributes="0"/>
@@ -153,53 +153,6 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="botoesPanel">
-      <Layout class="org.netbeans.modules.form.compat2.layouts.FormFlowLayout">
-        <Property name="alignment" type="int" value="1"/>
-        <Property name="hgap" type="int" value="8"/>
-        <Property name="vgap" type="int" value="8"/>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JButton" name="autorizarBtn">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Autorizar"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autorizarBtnActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="desautorizarBtn">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Desautorizar"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="desautorizarBtnActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="excluirBtn">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Excluir"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="excluirBtnActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="novoBtn">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Novo"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="novoBtnActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="fecharBtn">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Fechar"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fecharBtnActionPerformed"/>
-          </Events>
-        </Component>
-      </SubComponents>
     </Container>
   </SubComponents>
 </Form>
