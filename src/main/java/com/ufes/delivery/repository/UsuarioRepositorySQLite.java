@@ -68,7 +68,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 sql = "UPDATE tbUsuario SET nome = ?, senha = ?, tipo = ?,"
-                        + " autorizado = ?, "
+                        + " autorizado = ? "
                         + "WHERE userName = " + usuario.getUserName();
                 var ustmt = conn.prepareStatement(sql);
                 ustmt.setString(1, usuario.getNome());

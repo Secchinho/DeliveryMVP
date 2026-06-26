@@ -8,10 +8,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-public class CupomRepositoryEmMemoria implements ICupomRepository {
+public class CupomPedidoRepositoryEmMemoria implements ICupomRepository {
     private Map<String, CupomDescontoPedido> cuponsDisponiveis = new HashMap<>();
 
-    public CupomRepositoryEmMemoria() {
+    public CupomPedidoRepositoryEmMemoria() {
         cuponsDisponiveis.put("DESC10", new CupomDescontoPedido("DESC10", 10.0, LocalDateTime.of(2026, 4, 25, 0, 0),
                 LocalDateTime.of(2026, 4, 27, 23, 59)));
         cuponsDisponiveis.put("DESC20", new CupomDescontoPedido("DESC20", 20.0, LocalDateTime.of(2026, 5, 1, 0, 0),

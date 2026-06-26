@@ -10,7 +10,7 @@ import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.model.CupomDescontoPedido;
 import com.ufes.delivery.model.Item;
 import com.ufes.delivery.model.Pedido;
-import com.ufes.delivery.repository.CupomRepositoryEmMemoria;
+import com.ufes.delivery.repository.CupomPedidoRepositoryEmMemoria;
 import java.time.LocalDateTime;
 
 public class UmCasoDeUsoDePedido {
@@ -46,7 +46,7 @@ public class UmCasoDeUsoDePedido {
         //Testando cupom CSV
         pedido.setLogger(logCSV);
 
-        CupomRepositoryEmMemoria cupomRepo = new CupomRepositoryEmMemoria();
+        CupomPedidoRepositoryEmMemoria cupomRepo = new CupomPedidoRepositoryEmMemoria();
         cupomRepo.adicionarCupom(
                 new CupomDescontoPedido("PROMO15", 15.0,
                         dataPedido.minusDays(1), dataPedido.plusDays(1)));
