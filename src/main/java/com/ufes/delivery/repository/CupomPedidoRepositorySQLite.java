@@ -138,7 +138,10 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
 
     @Override
     public Optional<CupomDescontoPedido> buscarCupom(String codigo) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        validarCodigoCupom(codigo);
+        
+        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
+                + "tbUsuario WHERE userName = ?";
     }
 
     @Override
