@@ -8,6 +8,7 @@ import com.ufes.delivery.presenters.LoginPresenter;
 import com.ufes.delivery.repository.UsuarioRepositorySQLite;
 import com.ufes.delivery.view.ILoginView;
 import com.ufes.delivery.view.TelaLoginView;
+import com.ufes.delivery.view.TelaLoginViewAntiga;
 import com.ufes.util.AutenticacaoUsuarioService;
 
 /**

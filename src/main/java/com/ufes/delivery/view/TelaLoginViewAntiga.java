@@ -22,7 +22,7 @@ import javax.swing.border.TitledBorder;
  * 
  * @author raphael
  */
-public class TelaLoginView extends JFrame implements ILoginView {
+public class TelaLoginViewAntiga extends JFrame{
 
     // Componentes visuais
     private JPanel dadosDeAcessoPanel;
@@ -37,35 +37,36 @@ public class TelaLoginView extends JFrame implements ILoginView {
     // =========================================================================
     // MÉTODOS DA INTERFACE ILoginView
     // =========================================================================
-    @Override
-    public JButton getAcessarButton() {
-        return this.acessarBtn;
-    }
-
-    @Override
-    public JButton getCancelarButton() {
-        return this.cancelarBtn;
-    }
-
-    @Override
-    public JButton getCadastrarUsuarioButton() {
-        return this.cadastrarBtn;
-    }
-
-    @Override
-    public JTextField getNomeUsuario() {
-        return this.nomeTxt;
-    }
-
-    @Override
-    public JPasswordField getSenhaUsuario() {
-        return this.senhaTxt;
-    }
+//    @Override
+//    public JButton getAcessarButton() {
+//        return this.acessarBtn;
+//    }
+//
+//    @Override
+//    public JButton getCancelarButton() {
+//        return this.cancelarBtn;
+//    }
+//
+//    @Override
+//    public JButton getCadastrarUsuarioButton() {
+//        return this.cadastrarBtn;
+//    }
+//
+//    @Override
+//    public JTextField getNomeUsuario() {
+//        return this.nomeTxt;
+//    }
+//
+//    @Override
+//    public JPasswordField getSenhaUsuario() {
+//        return this.senhaTxt;
+//    }
+  
 
     /**
      * Creates new form TelaLoginView
      */
-    public TelaLoginView() {
+    public TelaLoginViewAntiga() {
         initComponents();
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -156,11 +157,11 @@ public class TelaLoginView extends JFrame implements ILoginView {
         try {
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaLoginViewAntiga.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         SwingUtilities.invokeLater(() -> {
-            TelaLoginView tela = new TelaLoginView();
+            TelaLoginViewAntiga tela = new TelaLoginViewAntiga();
             // Descomente a linha abaixo se quiser carregar dados de exemplo ao abrir a tela (para testar o preenchimento):
             // tela.carregarDadosExemplo();
             tela.setVisible(true);
