@@ -4,8 +4,11 @@
  */
 package com.ufes.delivery;
 
+import com.ufes.delivery.presenters.CadastrarUsuarioPresenter;
 import com.ufes.delivery.presenters.LoginPresenter;
 import com.ufes.delivery.repository.UsuarioRepositorySQLite;
+import com.ufes.delivery.view.CadastrarUsuarioView;
+import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.ILoginView;
 import com.ufes.delivery.view.TelaLoginView;
 import com.ufes.delivery.view.TelaLoginViewAntiga;
@@ -23,7 +26,11 @@ public class Principal {
     public static void main(String[] args) {
         ILoginView view = new TelaLoginView();
         AutenticacaoUsuarioService a = new AutenticacaoUsuarioService(new UsuarioRepositorySQLite());
-        LoginPresenter login = new LoginPresenter(view,a);
+        
+        ICadastrarUsuarioView viewCadastroUsuario = new CadastrarUsuarioView();
+        CadastrarUsuarioPresenter telaCadastro = new CadastrarUsuarioPresenter(viewCadastroUsuario, new UsuarioRepositorySQLite());
+        
+        LoginPresenter login = new LoginPresenter(view,a, telaCadastro);
         
         login.iniciar();
     }
