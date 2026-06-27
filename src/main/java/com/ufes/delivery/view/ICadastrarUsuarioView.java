@@ -1,6 +1,7 @@
 package com.ufes.delivery.view;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -10,4 +11,5 @@ public interface ICadastrarUsuarioView {
     JTextField getCampoNomeUsuario();
     JTextField getCampoNomeCivil();
     JPasswordField getCampoSenha();
+    JFrame getJanelaPrincipal();
 }
