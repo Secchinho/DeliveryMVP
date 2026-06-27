@@ -1,6 +1,7 @@
 package com.ufes.delivery.model;
 
 public class Cliente {
+    private String cpf;
     private String nome;
     private String tipo;
     private double fidelidade;
@@ -8,7 +9,7 @@ public class Cliente {
     private String bairro;
     private String cidade;
 
-    public Cliente(String nome, String tipo, double fidelidade, String logradouro, String bairro, String cidade) {
+    public Cliente(String cpf, String nome, String tipo, double fidelidade, String logradouro, String bairro, String cidade) {
         validarTextoObrigatorio(nome, "Nome do cliente nao pode ser vazio");
         validarTextoObrigatorio(tipo, "Tipo do cliente nao pode ser vazio");
         validarTextoObrigatorio(logradouro, "Logradouro do cliente nao pode ser vazio");
@@ -18,7 +19,8 @@ public class Cliente {
         if (fidelidade < 0) {
             throw new IllegalArgumentException("Fidelidade do cliente nao pode ser negativa");
         }
-
+        
+        this.cpf = cpf;
         this.nome = nome;
         this.tipo = tipo;
         this.fidelidade = fidelidade;
@@ -29,6 +31,10 @@ public class Cliente {
 
     public String getNome() {
         return nome;
+    }
+
+    public String getCPF() {
+        return cpf;
     }
 
     public String getTipo() {

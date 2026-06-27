@@ -5,6 +5,7 @@
 package com.ufes.delivery.repository;
 
 import com.ufes.delivery.model.Usuario;
+import com.ufes.singleton.ConexaoSQLite;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,7 +23,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     private final String url;
 
     public UsuarioRepositorySQLite() {
-        this.url = "jdbc:sqlite:Delivery.db";
+        this.url = ConexaoSQLite.getInstacia().getURL();
 
         String sql = "CREATE TABLE IF NOT EXISTS tbUsuario ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "nome TEXT NOT NULL,"
@@ -75,7 +76,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 ustmt.setString(2, usuario.getSenha());
                 ustmt.setInt(3, usuario.getTipo());
                 ustmt.setBoolean(4, usuario.isAutorizado());
-
+                ustmt.executeUpdate();
             } else {
                 sql = "INSERT INTO tbUsuario(nome, userName, senha, tipo, "
                         + "situacao, autorizado) VALUES (?, ?, ?, ?, ?, ?)";
