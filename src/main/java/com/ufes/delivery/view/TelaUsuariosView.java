@@ -237,7 +237,7 @@ public class TelaUsuariosView extends JFrame {
         JTextField userTxt = new JTextField();
         JTextField senhaTxt = new JTextField();
         Object[] campos = {
-            "Nome:", nomeTxt,
+            "Nome civil:", nomeTxt,
             "Nome de usuário:", userTxt,
             "Senha:", senhaTxt
         };
