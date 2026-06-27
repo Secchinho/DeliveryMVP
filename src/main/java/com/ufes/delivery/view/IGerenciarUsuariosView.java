@@ -2,6 +2,7 @@ package com.ufes.delivery.view;
 
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
@@ -17,6 +18,7 @@ public interface IGerenciarUsuariosView {
     JButton getExcluirBtn();
     JButton getNovoBtn();
     JButton getFecharBtn();
+    JFrame getJanelaPrincipal();
     
     // Métodos de "Ação" que o Presenter pode invocar para atualizar a tela
     List<Usuario> getUsuariosSelecionados();

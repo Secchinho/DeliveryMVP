@@ -106,6 +106,11 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
     public void fecharTela() {
         this.dispose();
     }
+
+    @Override
+    public JFrame getJanelaPrincipal(){
+        return this;
+    }
     
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
