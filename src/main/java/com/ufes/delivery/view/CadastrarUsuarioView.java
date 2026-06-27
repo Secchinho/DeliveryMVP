@@ -88,6 +88,11 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
     public JPasswordField getCampoSenha() {
         return this.senhaTxt;
     }
+    
+    @Override
+    public JFrame getJanelaPrincipal(){
+        return this;
+    }
 
     public static void main(String[] args) {
         try {
