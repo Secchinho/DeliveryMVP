@@ -5,16 +5,12 @@
 package com.ufes.delivery.repository;
 
 import com.ufes.delivery.model.CupomDescontoPedido;
-import com.ufes.delivery.model.Usuario;
 import com.ufes.singleton.ConexaoSQLite;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -84,16 +80,16 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
                     + "dataHoraInicio = ?, dataHoraFim = ? WHERE codigo = "
                     + cupom.getCodigo();
 
-            var istmt = conn.prepareStatement(sql);
-            istmt.setString(1, cupom.getCodigo());
-            istmt.setDouble(2, cupom.getPercentual());
+            var ustmt = conn.prepareStatement(sql);
+            ustmt.setString(1, cupom.getCodigo());
+            ustmt.setDouble(2, cupom.getPercentual());
 
             String dataInicio = cupom.getDataHoraInicio().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             String dataFim = cupom.getDataHoraFim().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-            istmt.setString(3, dataInicio);
-            istmt.setString(4, dataFim);
-            istmt.executeUpdate();
+            ustmt.setString(3, dataInicio);
+            ustmt.setString(4, dataFim);
+            ustmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
         }
@@ -138,12 +134,65 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
 
     @Override
     public Optional<CupomDescontoPedido> buscarCupom(String codigo) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        validarCodigoCupom(codigo);
+
+        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
+                + "tbUsuario WHERE userName = ?";
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, codigo);
+            var rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String dataFimStr = rs.getString("dataHoraFim");
+                LocalDateTime dataFim = LocalDateTime.parse(dataFimStr,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+                String dataInicioStr = rs.getString("dataHoraInicio");
+                LocalDateTime dataInicio = LocalDateTime.parse(dataInicioStr,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                return Optional.of(new CupomDescontoPedido(rs.getString("codigo"),
+                         rs.getDouble("percentual"), dataInicio, dataFim));
+            }
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public Map<String, CupomDescontoPedido> getCuponsDisponiveis() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Map<String, CupomDescontoPedido> cuponsDisponiveis = new HashMap<>();
+        removerCuponsExpirados();
+
+        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
+                + "tbUsuario";
+
+        try (var conn = DriverManager.getConnection(this.url); 
+                var stmt = conn.createStatement(); 
+                var rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                String dataFimStr = rs.getString("dataHoraFim");
+                LocalDateTime dataFim = LocalDateTime.parse(dataFimStr,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+                String dataInicioStr = rs.getString("dataHoraInicio");
+                LocalDateTime dataInicio = LocalDateTime.parse(dataInicioStr,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+                cuponsDisponiveis.put(rs.getString("codigo"),
+                        new CupomDescontoPedido(rs.getString("codigo"),
+                                rs.getDouble("Percentual"), dataInicio, dataFim));
+            }
+            
+            return Map.copyOf(cuponsDisponiveis);
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+        
+        return null;
     }
 
     private void validarCupom(CupomDescontoPedido cupom) {

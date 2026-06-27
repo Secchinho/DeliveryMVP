@@ -20,4 +20,6 @@ public interface ILoginView {
     
     public JTextField getNomeUsuario();
     public JPasswordField getSenhaUsuario();
+    
+    public JFrame getJanelaPrincipal();
 }
