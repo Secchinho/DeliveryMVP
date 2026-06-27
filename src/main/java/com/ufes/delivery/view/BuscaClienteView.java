@@ -4,18 +4,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
-/**
- * Tela de Busca de Clientes.
- *
- * Java 21 / Swing.
- *
- * Esta classe contém SOMENTE a parte visual (layout dos componentes).
- * Toda a lógica de negócio/persistência (busca por Nome/CPF, abrir Novo,
- * abrir Visualizar) está comentada como indicação de onde deve ser
- * implementada.
- */
-public class TelaBuscaClienteView extends JFrame {
+public class BuscaClienteView extends JFrame implements IBuscarClienteView {
 
     // Atributos disponíveis para busca
     private static final String[] ATRIBUTOS_BUSCA = {"Nome", "CPF"};
@@ -30,44 +21,85 @@ public class TelaBuscaClienteView extends JFrame {
     private JButton btnNovo;
     private JButton btnVisualizar;
     private JButton btnFechar;
+    
+    // Referência para o Presenter
+    //private BuscarClientePresenter presenter;
 
+    // =========================================================================
+    // IMPLEMENTAÇÃO DA INTERFACE (IBuscarClienteView)
+    // =========================================================================
 
-    public String getComboBuscarPor() {
+    @Override
+    public String getValorBusca() {
+        return txtValor.getText().trim();
+    }
+
+    @Override
+    public String getAtributoBusca() {
         return (String) comboBuscarPor.getSelectedItem();
     }
 
-    public JTextField getTxtValor() {
-        return txtValor;
+    @Override
+    public String getCpfClienteSelecionado() {
+        int linha = tabelaResultados.getSelectedRow();
+        if (linha == -1) {
+            return null;
+        }
+        // Supondo que o CPF seja a coluna 1 (índice 1)
+        return (String) tableModel.getValueAt(linha, 1);
     }
 
-    public JButton getBtnBuscar() {
+    @Override
+    public void exibirClientes(List<Object[]> dadosClientes) {
+        // Limpa a tabela atual
+        tableModel.setRowCount(0);
+        
+        // Adiciona os novos dados
+        for (Object[] linha : dadosClientes) {
+            tableModel.addRow(linha);
+        }
+    }
+
+    @Override
+    public void exibirMensagem(String mensagem, String titulo, int tipo) {
+        JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
+    }
+
+    @Override
+    public JFrame getJanelaPrincipal() {
+        return this;
+    }
+
+    @Override
+    public JButton getBuscarClienteButton() {
         return btnBuscar;
     }
 
-    public JTable getTabelaResultados() {
-        return tabelaResultados;
-    }
-
-    public DefaultTableModel getTableModel() {
-        return tableModel;
-    }
-
-    public JButton getBtnNovo() {
+    @Override
+    public JButton getNovoClienteButton() {
         return btnNovo;
     }
 
-    public JButton getBtnVisualizar() {
+    @Override
+    public JButton getVisualizarClienteButton() {
         return btnVisualizar;
     }
 
-    public JButton getBtnFechar() {
+    @Override
+    public JButton getFecharButton() {
         return btnFechar;
     }
+    
+    // =========================================================================
+    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
+    // =========================================================================
 
-    public TelaBuscaClienteView() {
+    public BuscaClienteView() {
         super("Clientes");
         initComponents();
-        carregarDadosExemplo(); // apenas para a tabela não ficar vazia visualmente
+        
+        // Nota: NÃO carregamos dados de exemplo aqui. O Presenter iniciará a busca.
+        // Ou, se quiser, pode chamar presenter.iniciar() aqui após o setPresenter.
     }
 
     private void initComponents() {
@@ -127,11 +159,8 @@ public class TelaBuscaClienteView extends JFrame {
 
         painel.add(linha, BorderLayout.CENTER);
 
-        // ------------------------------------------------------------------
-        // TODO: implementar ação de busca, ex:
-        //
-        // btnBuscar.addActionListener(e -> buscarClientes());
-        // ------------------------------------------------------------------
+        // REMOVIDO: A lógica de ação foi removida daqui. 
+        // O Presenter vai adicionar o listener externamente.
 
         return painel;
     }
@@ -144,7 +173,6 @@ public class TelaBuscaClienteView extends JFrame {
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Resultados são apenas para visualização/seleção
                 return false;
             }
         };
@@ -152,7 +180,7 @@ public class TelaBuscaClienteView extends JFrame {
         tabelaResultados = new JTable(tableModel);
         tabelaResultados.setRowHeight(26);
         tabelaResultados.setFillsViewportHeight(true);
-        tabelaResultados.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tabelaResultados.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         DefaultTableCellRenderer rendererCentralizado = new DefaultTableCellRenderer();
         rendererCentralizado.setHorizontalAlignment(SwingConstants.CENTER);
@@ -175,70 +203,16 @@ public class TelaBuscaClienteView extends JFrame {
         painel.add(btnVisualizar);
         painel.add(btnFechar);
 
-        // ------------------------------------------------------------------
-        // TODO: implementar as ações dos botões, ex:
-        //
-        // btnNovo.addActionListener(e -> novoCliente());
-        // btnVisualizar.addActionListener(e -> visualizarClienteSelecionado());
-        // btnFechar.addActionListener(e -> dispose());
-        // ------------------------------------------------------------------
+        // REMOVIDO: A lógica de ação foi removida daqui.
 
         return painel;
     }
 
-    // =====================================================================
-    // Ações da tela (lógica a implementar)
-    // =====================================================================
-
-    // private void buscarClientes() {
-    //     String atributo = (String) comboBuscarPor.getSelectedItem(); // "Nome" ou "CPF"
-    //     String valor = txtValor.getText().trim();
-    //     // TODO: buscar clientes (ex.: via DAO/Service) conforme o atributo escolhido
-    //     // List<Cliente> clientes = atributo.equals("Nome")
-    //     //         ? clienteService.buscarPorNome(valor)
-    //     //         : clienteService.buscarPorCpf(valor);
-    //     // preencherTabela(clientes);
-    // }
-
-    // private void preencherTabela(List<Cliente> clientes) {
-    //     // TODO: limpar e popular tableModel com os clientes encontrados
-    //     // tableModel.setRowCount(0);
-    //     // for (Cliente c : clientes) {
-    //     //     tableModel.addRow(new Object[]{c.getNome(), c.getCpfFormatado()});
-    //     // }
-    // }
-
-    // private void novoCliente() {
-    //     // TODO: abrir tela/diálogo de cadastro de novo cliente e persistir
-    //     // TelaCadastroCliente tela = new TelaCadastroCliente(this);
-    //     // tela.setVisible(true);
-    //     // if (tela.isConfirmado()) {
-    //     //     clienteService.salvar(tela.getClienteCriado());
-    //     //     buscarClientes(); // ou adicionar a linha diretamente na tabela
-    //     // }
-    // }
-
-    // private void visualizarClienteSelecionado() {
-    //     // TODO: obter o cliente selecionado na tabela e abrir tela de detalhes
-    //     // int linha = tabelaResultados.getSelectedRow();
-    //     // if (linha == -1) {
-    //     //     JOptionPane.showMessageDialog(this, "Selecione um cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
-    //     //     return;
-    //     // }
-    //     // String cpf = (String) tableModel.getValueAt(linha, 1);
-    //     // Cliente cliente = clienteService.buscarPorCpf(cpf);
-    //     // TelaDetalheCliente tela = new TelaDetalheCliente(this, cliente);
-    //     // tela.setVisible(true);
-    // }
-
-    // =====================================================================
-    // Dados de exemplo (apenas para exibir a tela; substituir pela busca
-    // real ao implementar a lógica)
-    // =====================================================================
-    private void carregarDadosExemplo() {
-        tableModel.addRow(new Object[]{"Fulano de Tal", "000.000.000-00"});
-        tableModel.addRow(new Object[]{"Fulano da Silva", "111.111.111-11"});
+    /*Método para ligar a View ao Presenter
+    public void setPresenter(BuscarClientePresenter presenter) {
+        this.presenter = presenter;
     }
+    */
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -246,7 +220,16 @@ public class TelaBuscaClienteView extends JFrame {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception ignored) {
             }
-            new TelaBuscaClienteView().setVisible(true);
+            
+            // FLUXO DE CRIAÇÃO NO MVP:
+            BuscaClienteView view = new BuscaClienteView();
+            //BuscarClientePresenter presenter = new BuscarClientePresenter(view);
+            //view.setPresenter(presenter);
+            
+            // O Presenter configura os eventos e exibe os dados iniciais
+            //presenter.iniciar();
+            
+            view.setVisible(true);
         });
     }
 }
