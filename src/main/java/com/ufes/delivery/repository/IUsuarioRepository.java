@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface IUsuarioRepository {
     public List<Usuario> buscarPorNomeContendo(String nome);
     public void salvar(Usuario usuario);
+    public void atualizar(Usuario usuario);
     public void removerPorNomeUsuario(String userName);
     public List<Usuario> listarUsuarios();
     public Optional<Usuario> getPorUserName(String userName);

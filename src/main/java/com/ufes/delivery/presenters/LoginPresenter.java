@@ -27,14 +27,16 @@ public class LoginPresenter {
 
     private ILoginView view;
     private AutenticacaoUsuarioService autenticacaoService;
+    private CadastrarUsuarioPresenter cadastroUsuarioPresenter;
 
-    public LoginPresenter(ILoginView view, AutenticacaoUsuarioService service) {
+    public LoginPresenter(ILoginView view, AutenticacaoUsuarioService service, CadastrarUsuarioPresenter cadastroUsuarioPresenter) {
         this.view = view;
         this.autenticacaoService = service;
+        this.cadastroUsuarioPresenter = cadastroUsuarioPresenter;
         this.configurarEventos();
     }
 
-    public void configurarEventos() {
+    private void configurarEventos() {
         this.view.getAcessarButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -61,7 +63,7 @@ public class LoginPresenter {
         this.view.getJanelaPrincipal().setVisible(true);
     }
 
-    public void realizarLogin() {
+    private void realizarLogin() {
         try {
             String nomeUsuario = this.view.getNomeUsuario().getText().trim();
             String senha = new String(this.view.getSenhaUsuario().getPassword());
@@ -141,7 +143,7 @@ public class LoginPresenter {
     private void abrirCadastroUsuario() {
         // Abre o CadastrarUsuarioPresenter para cadastro de novo usuário
         // TODO: instanciar CadastrarUsuarioPresenter com as dependências necessárias
-        // Exemplo: new CadastrarUsuarioPresenter(new CadastrarUsuarioView(), new CadastrarUsuarioService(repository)).iniciar();
+        this.cadastroUsuarioPresenter.iniciar();
     }
 
     private boolean validarFormatoNomeUsuario(String nomeUsuario) {
