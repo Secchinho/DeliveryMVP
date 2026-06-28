@@ -26,7 +26,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
 
         String sql = "CREATE TABLE IF NOT EXISTS tbProduto ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "nome TEXT NOT NULL,"
-                + "codigo TEXT NOT NULL," + "categoria TEXT NOT NULL"
+                + "codigo TEXT NOT NULL," + "categoria TEXT NOT NULL, "
                 + "precoUnitario DOUBLE NOT NULL," + "quantidadeInicial INTEGER NOT NULL "
                 + ");";
 
@@ -54,7 +54,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             while (rs.next()) {
                 produtos.add(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
 
             }
         } catch (SQLException e) {
@@ -81,7 +81,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             while (rs.next()) {
                 produtos.add(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
 
             }
         } catch (SQLException e) {
@@ -176,7 +176,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             while (rs.next()) {
                 produtos.add(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
             }
 
         } catch (SQLException e) {
@@ -201,7 +201,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             if (rs.next()) {
                 return Optional.of(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
