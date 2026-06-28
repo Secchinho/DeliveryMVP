@@ -4,10 +4,15 @@
  */
 package com.ufes.delivery;
 
+import com.ufes.delivery.presenters.BuscarClientePresenter;
 import com.ufes.delivery.presenters.CadastrarUsuarioPresenter;
 import com.ufes.delivery.presenters.LoginPresenter;
+import com.ufes.delivery.repository.ClienteRepositorySQLite;
+import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.repository.UsuarioRepositorySQLite;
+import com.ufes.delivery.view.BuscaClienteView;
 import com.ufes.delivery.view.CadastrarUsuarioView;
+import com.ufes.delivery.view.IBuscarClienteView;
 import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.ILoginView;
 import com.ufes.delivery.view.LoginView;
@@ -23,15 +28,12 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ILoginView view = new LoginView();
-        AutenticacaoUsuarioService a = new AutenticacaoUsuarioService(new UsuarioRepositorySQLite());
+        IBuscarClienteView view = new BuscaClienteView();
+        IClienteRepository rep = new ClienteRepositorySQLite();
         
-        ICadastrarUsuarioView viewCadastroUsuario = new CadastrarUsuarioView();
-        CadastrarUsuarioPresenter telaCadastro = new CadastrarUsuarioPresenter(viewCadastroUsuario, new UsuarioRepositorySQLite());
+        BuscarClientePresenter p = new BuscarClientePresenter(view, rep);
         
-        LoginPresenter login = new LoginPresenter(view,a, telaCadastro);
-        
-        login.iniciar();
+        p.iniciar();
     }
     
 }
