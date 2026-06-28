@@ -23,7 +23,7 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
     private final String url;
 
     public CupomPedidoRepositorySQLite() {
-        this.url = ConexaoSQLite.getInstacia().getURL();
+        this.url = ConexaoSQLite.getInstancia().getURL();
 
         String sql = "CREATE TABLE IF NOT EXISTS tbCupomPedido ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "codigo TEXT NOT NULL,"

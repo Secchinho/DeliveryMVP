@@ -14,7 +14,8 @@ import java.util.Optional;
  */
 public interface IClienteRepository {
     public List<Cliente> buscarPorNomeContendo(String nome);
-    public void salvar(Cliente cliente);
+    public void adicionar(Cliente cliente);
+    public void atualizar(Cliente cliente);
     public void removerPorCPF(String cpf);
     public List<Cliente> listarClientes();
     public Optional<Cliente> getPorCPF(String cpf);

@@ -61,7 +61,6 @@ public class GerenciarUsuariosPresenter {
 
         for (Usuario usuario : selecionados) {
             usuario.setSituacao("Autorizado");
-            //this.usuarioRepository.salvar(usuario);
             this.usuarioRepository.atualizar(usuario);
 
         }
@@ -79,7 +78,6 @@ public class GerenciarUsuariosPresenter {
 
         for (Usuario usuario : selecionados) {
             usuario.setSituacao("Não autorizado");
-            //this.usuarioRepository.salvar(usuario);
             this.usuarioRepository.atualizar(usuario);
 
         }

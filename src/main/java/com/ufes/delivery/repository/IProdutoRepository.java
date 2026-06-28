@@ -13,10 +13,18 @@ import java.util.Optional;
  * @author raphael
  */
 public interface IProdutoRepository {
+
     public List<Produto> buscarPorNome(String nome);
+
     public List<Produto> buscarPorCategoria(String categoria);
-    public void salvar(Produto produto);
+
+    public void adicionar(Produto produto);
+
+    public void atualizar(Produto produto);
+
     public void removerPorCodigo(String codigo);
+
     public List<Produto> listarProdutos();
+
     public Optional<Produto> getPorCodigo(String codigo);
 }
