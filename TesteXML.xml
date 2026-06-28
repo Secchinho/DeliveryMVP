@@ -1,0 +1,40 @@
+<Registro>
+<NomeUsuario>Balcão PDV 1</NomeUsuario>
+<Data>27/06/2026</Data>
+<Hora>22:29:48</Hora>
+<CodigoPedido>1001</CodigoPedido>
+<NomeOperacao>Calculo do valor total do pedido (get Valor Pedido)</NomeOperacao>
+<NomeCliente>Maria</NomeCliente>
+</Registro>
+<Registro>
+<NomeUsuario>Fulano de tal</NomeUsuario>
+<Data>27/06/2026</Data>
+<Hora>22:29:48</Hora>
+<CodigoPedido>1001</CodigoPedido>
+<NomeOperacao>Calculo do valor total do pedido (Exceção: Codigo do cupom nao pode ser vazio)</NomeOperacao>
+<NomeCliente>Maria</NomeCliente>
+</Registro>
+<Registro>
+<NomeUsuario>Fulano de tal</NomeUsuario>
+<Data>27/06/2026</Data>
+<Hora>22:29:48</Hora>
+<CodigoPedido>1001</CodigoPedido>
+<NomeOperacao>Calculo do valor total do pedido (Calcular Desconto)</NomeOperacao>
+<NomeCliente>Maria</NomeCliente>
+</Registro>
+<Registro>
+<NomeUsuario>Fulano de tal</NomeUsuario>
+<Data>27/06/2026</Data>
+<Hora>22:29:48</Hora>
+<CodigoPedido>1001</CodigoPedido>
+<NomeOperacao>Calculo do valor total do pedido (Calcular Desconto)</NomeOperacao>
+<NomeCliente>Maria</NomeCliente>
+</Registro>
+<Registro>
+<NomeUsuario>Balcão PDV 1</NomeUsuario>
+<Data>27/06/2026</Data>
+<Hora>22:29:48</Hora>
+<CodigoPedido>1001</CodigoPedido>
+<NomeOperacao>Calculo do valor total do pedido (Calcular Desconto)</NomeOperacao>
+<NomeCliente>Maria</NomeCliente>
+</Registro>

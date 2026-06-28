@@ -1,0 +1,6 @@
+{"nomeUsuario":"Gerente","data":"27/06/2026","hora":"22:29:48","codigoPedido":1001,"nomeOperacao":"Calculo do valor total do pedido (get Valor Pedido)","nomeCliente":"Maria"}
+{"nomeUsuario":"Fulano de tal","data":"27/06/2026","hora":"22:29:48","codigoPedido":1001,"nomeOperacao":"Calculo do valor total do pedido (Calcular Valor Total)","nomeCliente":"Maria"}
+{"nomeUsuario":"Fulano de tal","data":"27/06/2026","hora":"22:29:48","codigoPedido":1001,"nomeOperacao":"Calculo do valor total do pedido (Exceção: Cupom inexistente NAOEXISTE)","nomeCliente":"Maria"}
+{"nomeUsuario":"Balcão PDV 1","data":"27/06/2026","hora":"22:29:48","codigoPedido":1001,"nomeOperacao":"Calculo do valor total do pedido (Calcular Desconto)","nomeCliente":"Maria"}
+{"nomeUsuario":"Fulano de tal","data":"27/06/2026","hora":"22:29:48","codigoPedido":1001,"nomeOperacao":"Calculo do valor total do pedido (Calcular Desconto)","nomeCliente":"Maria"}
+{"nomeUsuario":"Fulano de tal","data":"27/06/2026","hora":"22:29:48","codigoPedido":1001,"nomeOperacao":"Calculo do valor total do pedido (Calcular Desconto)","nomeCliente":"Maria"}

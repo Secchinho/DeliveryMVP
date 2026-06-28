@@ -22,11 +22,11 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
     private final String url;
 
     public ProdutoRepositorySQLite() {
-        this.url = ConexaoSQLite.getInstacia().getURL();
+        this.url = ConexaoSQLite.getInstancia().getURL();
 
         String sql = "CREATE TABLE IF NOT EXISTS tbProduto ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "nome TEXT NOT NULL,"
-                + "codigo TEXT NOT NULL," + "categoria TEXT NOT NULL"
+                + "codigo TEXT NOT NULL," + "categoria TEXT NOT NULL, "
                 + "precoUnitario DOUBLE NOT NULL," + "quantidadeInicial INTEGER NOT NULL "
                 + ");";
 
@@ -54,7 +54,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             while (rs.next()) {
                 produtos.add(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
 
             }
         } catch (SQLException e) {
@@ -81,7 +81,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             while (rs.next()) {
                 produtos.add(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
 
             }
         } catch (SQLException e) {
@@ -92,14 +92,45 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
     }
 
     @Override
-    public void salvar(Produto produto) {
+    public void adicionar(Produto produto) {
         validarProduto(produto);
 
         String sql = "SELECT nome, codigo, categoria, precoUnitario, "
                 + " quantidadeInicial FROM"
-                + " tbProduto WHERE codigo = " + produto.getCodigo();
+                + " tbProduto WHERE codigo = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, produto.getCodigo());
+            var rs = stmt.executeQuery();
+            if (rs.next()) {
+                throw new SQLException("O produto ainda não existe");
+            } else {
+                sql = "INSERT INTO tbProduto(nome, codigo, categoria, precoUnitario, "
+                        + "quantidadeInicial) VALUES (?, ?, ?, ?, ?)";
+                var istmt = conn.prepareStatement(sql);
+                istmt.setString(1, produto.getNome());
+                istmt.setString(2, produto.getCodigo());
+                istmt.setString(3, produto.getCategoria());
+                istmt.setDouble(4, produto.getPrecoUnitario());
+                istmt.setInt(5, produto.getQuantidadeInicial());
+                istmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void atualizar(Produto produto) {
+        validarProduto(produto);
+
+        String sql = "SELECT nome, codigo, categoria, precoUnitario, "
+                + " quantidadeInicial FROM"
+                + " tbProduto WHERE codigo = ?";
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, produto.getCodigo());
+            var rs = stmt.executeQuery(sql);
             if (rs.next()) {
                 sql = "UPDATE tbProduto SET nome = ?, categoria = ?,"
                         + " precoUnitario = ?, quantidadeInicial = ? "
@@ -112,15 +143,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
                 ustmt.setInt(4, produto.getQuantidadeInicial());
                 ustmt.executeUpdate();
             } else {
-                sql = "INSERT INTO tbProduto(nome, codigo, categoria, precoUnitario, "
-                        + "quantidadeInicial) VALUES (?, ?, ?, ?, ?)";
-                var istmt = conn.prepareStatement(sql);
-                istmt.setString(1, produto.getNome());
-                istmt.setString(2, produto.getCodigo());
-                istmt.setString(3, produto.getCategoria());
-                istmt.setDouble(4, produto.getPrecoUnitario());
-                istmt.setInt(5, produto.getQuantidadeInicial());
-                istmt.executeUpdate();
+                throw new SQLException("O produto ainda não existe");
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
@@ -153,7 +176,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             while (rs.next()) {
                 produtos.add(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
             }
 
         } catch (SQLException e) {
@@ -178,7 +201,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             if (rs.next()) {
                 return Optional.of(new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("categoria"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());

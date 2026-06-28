@@ -23,7 +23,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     private final String url;
 
     public UsuarioRepositorySQLite() {
-        this.url = ConexaoSQLite.getInstacia().getURL();
+        this.url = ConexaoSQLite.getInstancia().getURL();
 
         String sql = "CREATE TABLE IF NOT EXISTS tbUsuario ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "nome TEXT NOT NULL,"
@@ -60,22 +60,54 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     }
 
     @Override
-    public void salvar(Usuario usuario) {
+    public void adicionar(Usuario usuario) {
         validarUsuario(usuario);
 
         String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM"
-                + " tbUsuario WHERE userName = " + usuario.getUserName();
+                + " tbUsuario WHERE userName = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, usuario.getUserName());
+            var rs = stmt.executeQuery();
+            if (rs.next()) {
+                throw new SQLException("O usuário já existe no sistema");
+            } else {
+                sql = "INSERT INTO tbUsuario(nome, userName, senha, tipo, "
+                        + "situacao, autorizado) VALUES (?, ?, ?, ?, ?, ?)";
+                var istmt = conn.prepareStatement(sql);
+                istmt.setString(1, usuario.getNome());
+                istmt.setString(2, usuario.getUserName());
+                istmt.setString(3, usuario.getSenha());
+                istmt.setInt(4, usuario.getTipo());
+                istmt.setString(5, usuario.getSituacao());
+                istmt.setBoolean(6, usuario.isAutorizado());
+                istmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void atualizar(Usuario usuario) {
+        validarUsuario(usuario);
+
+        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM"
+                + " tbUsuario WHERE userName = ?";
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, usuario.getUserName());
+            var rs = stmt.executeQuery();
             if (rs.next()) {
                 sql = "UPDATE tbUsuario SET nome = ?, senha = ?, tipo = ?,"
-                        + " autorizado = ? "
+                        + " situacao = ?, autorizado = ?"
                         + "WHERE userName = " + usuario.getUserName();
                 var ustmt = conn.prepareStatement(sql);
                 ustmt.setString(1, usuario.getNome());
                 ustmt.setString(2, usuario.getSenha());
                 ustmt.setInt(3, usuario.getTipo());
-                ustmt.setBoolean(4, usuario.isAutorizado());
+                ustmt.setString(4, usuario.getSituacao());
+                ustmt.setBoolean(5, usuario.isAutorizado());
                 ustmt.executeUpdate();
             } else {
                 sql = "INSERT INTO tbUsuario(nome, userName, senha, tipo, "
@@ -97,14 +129,13 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     @Override
     public void removerPorNomeUsuario(String userName) {
         validarUserName(userName);
-        
+
         String sql = "DELETE FROM tbUsuario WHERE userName = ?";
-        
-        try(var conn = DriverManager.getConnection(this.url);
-                var stmt = conn.prepareStatement(sql)){
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userName);
             stmt.executeUpdate();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
         }
     }
@@ -114,39 +145,36 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
                 + "tbUsuario";
         List<Usuario> usuarios = new ArrayList<>();
-        
-        try(var conn = DriverManager.getConnection(this.url); 
-                var stmt = conn.createStatement();
-                var rs = stmt.executeQuery(sql)){
-            while(rs.next()){
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
                 usuarios.add(mapear(rs));
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
         }
-        
+
         return Collections.unmodifiableList(usuarios);
     }
 
     @Override
     public Optional<Usuario> getPorUserName(String userName) {
         validarUserName(userName);
-        
+
         String sql = "SELECT nome, userName, tipo, situacao, autorizado "
                 + "FROM tbUsuario WHERE userName = ?";
-        
-        try (var conn = DriverManager.getConnection(this.url);
-                var stmt = conn.prepareStatement(sql);){
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql);) {
             stmt.setString(1, userName);
             var rs = stmt.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 return Optional.of(mapear(rs));
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
         }
-        
+
         return Optional.empty();
     }
 
@@ -161,7 +189,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             throw new IllegalArgumentException("O usuário deve ser informado.");
         }
     }
-    
+
     private void validarUserName(String userName) {
         if (userName == null) {
             throw new IllegalArgumentException("O nome de usuário deve ser informado.");

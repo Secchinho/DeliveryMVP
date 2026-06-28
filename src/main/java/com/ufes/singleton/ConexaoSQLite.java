@@ -16,7 +16,7 @@ public class ConexaoSQLite {
         url = "jdbc:sqlite:Delivery.db";
     }
     
-    public static synchronized ConexaoSQLite getInstacia(){
+    public static synchronized ConexaoSQLite getInstancia(){
         if(instancia == null){
             instancia = new ConexaoSQLite();
         }

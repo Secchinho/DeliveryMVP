@@ -117,7 +117,7 @@ public class CadastrarUsuarioPresenter {
             usuario.setSituacao(situacao);
 
             try{
-                this.usuarioRepository.salvar(usuario);
+                this.usuarioRepository.adicionar(usuario);
             }catch(IllegalArgumentException e){
                 exibirMensagem(
                     "Erro ao cadastrar usuário: " + e.getMessage(),
