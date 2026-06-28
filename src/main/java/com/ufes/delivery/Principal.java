@@ -10,8 +10,7 @@ import com.ufes.delivery.repository.UsuarioRepositorySQLite;
 import com.ufes.delivery.view.CadastrarUsuarioView;
 import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.ILoginView;
-import com.ufes.delivery.view.TelaLoginView;
-import com.ufes.delivery.view.TelaLoginViewAntiga;
+import com.ufes.delivery.view.LoginView;
 import com.ufes.util.AutenticacaoUsuarioService;
 
 /**
@@ -24,7 +23,7 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ILoginView view = new TelaLoginView();
+        ILoginView view = new LoginView();
         AutenticacaoUsuarioService a = new AutenticacaoUsuarioService(new UsuarioRepositorySQLite());
         
         ICadastrarUsuarioView viewCadastroUsuario = new CadastrarUsuarioView();
