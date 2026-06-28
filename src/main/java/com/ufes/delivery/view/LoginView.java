@@ -26,7 +26,7 @@ import javax.swing.border.TitledBorder;
  *
  * @author raphael
  */
-public class TelaLoginView extends JFrame implements ILoginView {
+public class LoginView extends JFrame implements ILoginView {
 
     // Componentes visuais
     private JPanel dadosDeAcessoPanel;
@@ -74,7 +74,7 @@ public class TelaLoginView extends JFrame implements ILoginView {
     /**
      * Creates new form TelaLoginView
      */
-    public TelaLoginView() {
+    public LoginView() {
         initComponents();
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -197,7 +197,7 @@ public class TelaLoginView extends JFrame implements ILoginView {
         }
 
         SwingUtilities.invokeLater(() -> {
-            TelaLoginViewAntiga tela = new TelaLoginViewAntiga();
+            LoginView tela = new LoginView();
             tela.setVisible(true);
         });
     }

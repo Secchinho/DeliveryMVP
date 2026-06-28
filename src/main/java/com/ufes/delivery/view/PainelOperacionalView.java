@@ -14,9 +14,9 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class TelaPainelOperacionalView extends JFrame {
+public class PainelOperacionalView extends JFrame {
 
-    public TelaPainelOperacionalView() {
+    public PainelOperacionalView() {
         super("Início");
         setSize(760, 580);
         setLocationRelativeTo(null);
@@ -242,7 +242,7 @@ public class TelaPainelOperacionalView extends JFrame {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception ignored) {}
-            new TelaPainelOperacionalView().setVisible(true);
+            new PainelOperacionalView().setVisible(true);
         });
     }
 }

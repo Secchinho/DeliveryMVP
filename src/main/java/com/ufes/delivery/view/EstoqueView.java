@@ -22,7 +22,7 @@ import java.awt.*;
  * campos são apenas exemplos ilustrativos (mock), iguais aos da imagem de
  * referência, para fins de demonstração visual.
  */
-public class TelaEstoqueView extends JFrame {
+public class EstoqueView extends JFrame {
 
     // ----- Componentes de busca de produtos -----
     private JTextField txtBuscarProduto;
@@ -49,7 +49,7 @@ public class TelaEstoqueView extends JFrame {
     private JButton btnConfirmarMovimentacao;
     private JButton btnCancelar;
 
-    public TelaEstoqueView() {
+    public EstoqueView() {
         super("Movimentação de Estoque");
         initComponents();
     }
@@ -479,7 +479,7 @@ public class TelaEstoqueView extends JFrame {
         }
 
         SwingUtilities.invokeLater(() -> {
-            TelaEstoqueView tela = new TelaEstoqueView();
+            EstoqueView tela = new EstoqueView();
             tela.setVisible(true);
         });
     }

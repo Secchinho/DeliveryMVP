@@ -25,7 +25,7 @@ import java.awt.*;
  * "// TODO: inserir dado real aqui" ao longo do código, junto com um
  * exemplo de como a inserção poderia ser feita.
  */
-public class TelaResultadoPagamentoView extends JFrame {
+public class ResultadoPagamentoView extends JFrame {
 
     // ----- Faixas de status -----
     private JLabel lblStatusPagamento;
@@ -52,7 +52,7 @@ public class TelaResultadoPagamentoView extends JFrame {
     // ----- Botão -----
     private JButton btnFechar;
 
-    public TelaResultadoPagamentoView() {
+    public ResultadoPagamentoView() {
         super("Pagamento");
         initComponents();
     }
@@ -366,7 +366,7 @@ public class TelaResultadoPagamentoView extends JFrame {
         }
 
         SwingUtilities.invokeLater(() -> {
-            TelaResultadoPagamentoView tela = new TelaResultadoPagamentoView();
+            ResultadoPagamentoView tela = new ResultadoPagamentoView();
             tela.setVisible(true);
         });
     }
