@@ -5,7 +5,9 @@
 package com.ufes.delivery.repository;
 
 import com.ufes.delivery.model.Cliente;
+import com.ufes.delivery.model.Endereco;
 import com.ufes.singleton.ConexaoSQLite;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,14 +25,30 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
     public ClienteRepositorySQLite() {
         this.url = ConexaoSQLite.getInstancia().getURL();
-        String sql = "CREATE TABLE IF NOT EXISTS tbCliente ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT, cpf TEXT NOT NULL, "
-                + "nome TEXT NOT NULL, tipo TEXT NOT NULL,"
-                + "fidelidade DOUBLE NOT NULL, logradouro TEXT NOT NULL,"
-                + "bairro TEXT NOT NULL, cidade TEXT NOT NULL);";
+        String sqlCliente = "CREATE TABLE IF NOT EXISTS tbCliente ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "cpf TEXT NOT NULL UNIQUE, "
+                + "nome TEXT NOT NULL, "
+                + "tipo TEXT NOT NULL, "
+                + "fidelidade DOUBLE NOT NULL);";
+
+        String sqlEndereco = "CREATE TABLE IF NOT EXISTS tbEndereco ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "cliente_cpf TEXT NOT NULL, "
+                + "padrao INTEGER NOT NULL, "
+                + "logradouro TEXT NOT NULL, "
+                + "numero INTEGER NOT NULL, "
+                + "complemento TEXT, "
+                + "bairro TEXT NOT NULL, "
+                + "cidade TEXT NOT NULL, "
+                + "uf TEXT NOT NULL, "
+                + "cep TEXT NOT NULL, "
+                + "FOREIGN KEY (cliente_cpf) REFERENCES tbCliente(cpf) "
+                + "ON DELETE CASCADE ON UPDATE CASCADE);";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement()) {
-            stmt.execute(sql);
+            stmt.execute(sqlCliente);
+            stmt.execute(sqlEndereco);
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
         }
@@ -40,8 +58,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public List<Cliente> buscarPorNomeContendo(String nome) {
         validarTrechoNome(nome);
 
-        String sql = "SELECT cpf, nome, tipo, fidelidade, logradouro, bairro, cidade FROM"
-                + " tbCliente WHERE nome LIKE ?";
+        String sql = "SELECT cpf, nome, tipo, fidelidade FROM tbCliente WHERE nome LIKE ?";
         List<Cliente> clientes = new ArrayList<>();
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
@@ -49,10 +66,13 @@ public class ClienteRepositorySQLite implements IClienteRepository {
             var rs = stmt.executeQuery();
 
             while (rs.next()) {
-                clientes.add(new Cliente(rs.getString("cpf"), rs.getString("nome"),
-                        rs.getString("tipo"), rs.getDouble("fidelidade"),
-                        rs.getString("logradouro"), rs.getString("bairro"),
-                        rs.getString("cidade")));
+                Cliente cliente = new Cliente(
+                        rs.getString("cpf"),
+                        rs.getString("nome"),
+                        rs.getString("tipo"),
+                        rs.getDouble("fidelidade"));
+                carregarEnderecos(conn, cliente);
+                clientes.add(cliente);
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
@@ -65,26 +85,34 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public void adicionar(Cliente cliente) {
         validarCliente(cliente);
 
-        String sql = "SELECT cpf, nome, tipo, fidelidade, logradouro, bairro, cidade FROM"
-                + " tbCliente WHERE cpf = ?";
+        String sqlBusca = "SELECT cpf FROM tbCliente WHERE cpf = ?";
+        String sqlInsereCliente = "INSERT INTO tbCliente(cpf, nome, tipo, fidelidade) "
+                + "VALUES (?, ?, ?, ?)";
+        try (var conn = DriverManager.getConnection(this.url)) {
+            conn.setAutoCommit(false);
+            try {
+                try (var stmtBusca = conn.prepareStatement(sqlBusca)) {
+                    stmtBusca.setString(1, cliente.getCPF());
+                    var rs = stmtBusca.executeQuery();
+                    if (rs.next()) {
+                        throw new IllegalArgumentException("O cliente já existe no sistema");
+                    }
+                }
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql);) {
-            stmt.setString(1, cliente.getCPF());
-            var rs = stmt.executeQuery();
-            if (rs.next()) {
-                throw new SQLException("O cliente já existe no sistema");
-            } else {
-                sql = "INSERT INTO tbCliente(cpf, nome, tipo, fidelidade, logradouro, "
-                        + "bairro, cidade) VALUES (?, ?, ?, ?, ?, ?, ?)";
-                var istmt = conn.prepareStatement(sql);
-                istmt.setString(1, cliente.getCPF());
-                istmt.setString(2, cliente.getNome());
-                istmt.setString(3, cliente.getTipo());
-                istmt.setDouble(4, cliente.getFidelidade());
-                istmt.setString(5, cliente.getLogradouro());
-                istmt.setString(6, cliente.getBairro());
-                istmt.setString(7, cliente.getCidade());
-                istmt.executeUpdate();
+                try (var stmtInsere = conn.prepareStatement(sqlInsereCliente)) {
+                    stmtInsere.setString(1, cliente.getCPF());
+                    stmtInsere.setString(2, cliente.getNome());
+                    stmtInsere.setString(3, cliente.getTipo());
+                    stmtInsere.setDouble(4, cliente.getFidelidade());
+                    stmtInsere.executeUpdate();
+                }
+
+                inserirEnderecos(conn, cliente);
+
+                conn.commit();
+            } catch (RuntimeException | SQLException ex) {
+                conn.rollback();
+                throw ex;
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
@@ -95,27 +123,41 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public void atualizar(Cliente cliente) {
         validarCliente(cliente);
 
-        String sql = "SELECT cpf, nome, tipo, fidelidade, logradouro, bairro, cidade FROM"
-                + " tbCliente WHERE cpf = ?";
+        String sqlBusca = "SELECT cpf FROM tbCliente WHERE cpf = ?";
+        String sqlAtualizaCliente = "UPDATE tbCliente SET nome = ?, tipo = ?, fidelidade = ? "
+                + "WHERE cpf = ?";
+        String sqlRemoveEnderecos = "DELETE FROM tbEndereco WHERE cliente_cpf = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql);) {
-            stmt.setString(1, cliente.getCPF());
-            var rs = stmt.executeQuery();
-            if (rs.next()) {
-                sql = "UPDATE tbCliente SET cpf = ?, nome = ?, tipo = ?,"
-                        + " fidelidade = ?, logradouro = ?, bairro = ?, cidade = ? "
-                        + "WHERE cpf = " + cliente.getCPF();
-                var ustmt = conn.prepareStatement(sql);
-                ustmt.setString(1, cliente.getCPF());
-                ustmt.setString(2, cliente.getNome());
-                ustmt.setString(3, cliente.getTipo());
-                ustmt.setDouble(4, cliente.getFidelidade());
-                ustmt.setString(5, cliente.getLogradouro());
-                ustmt.setString(6, cliente.getBairro());
-                ustmt.setString(7, cliente.getCidade());
-                ustmt.executeUpdate();
-            } else {
-                throw new SQLException("O cliente ainda não existe");
+        try (var conn = DriverManager.getConnection(this.url)) {
+            conn.setAutoCommit(false);
+            try {
+                try (var stmtBusca = conn.prepareStatement(sqlBusca)) {
+                    stmtBusca.setString(1, cliente.getCPF());
+                    var rs = stmtBusca.executeQuery();
+                    if (!rs.next()) {
+                        throw new IllegalArgumentException("O cliente ainda não existe");
+                    }
+                }
+
+                try (var stmtAtualiza = conn.prepareStatement(sqlAtualizaCliente)) {
+                    stmtAtualiza.setString(1, cliente.getNome());
+                    stmtAtualiza.setString(2, cliente.getTipo());
+                    stmtAtualiza.setDouble(3, cliente.getFidelidade());
+                    stmtAtualiza.setString(4, cliente.getCPF());
+                    stmtAtualiza.executeUpdate();
+                }
+
+                try (var stmtDel = conn.prepareStatement(sqlRemoveEnderecos)) {
+                    stmtDel.setString(1, cliente.getCPF());
+                    stmtDel.executeUpdate();
+                }
+
+                inserirEnderecos(conn, cliente);
+
+                conn.commit();
+            } catch (RuntimeException | SQLException ex) {
+                conn.rollback();
+                throw ex;
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
@@ -126,11 +168,25 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public void removerPorCPF(String cpf) {
         validarCPF(cpf);
 
-        String sql = "DELETE FROM tbCliente WHERE cpf = ?";
+        String sqlDelEnd = "DELETE FROM tbEndereco WHERE cliente_cpf = ?";
+        String sqlDelCliente = "DELETE FROM tbCliente WHERE cpf = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, cpf);
-            stmt.executeUpdate();
+        try (var conn = DriverManager.getConnection(this.url)) {
+            conn.setAutoCommit(false);
+            try {
+                try (var stmtDel = conn.prepareStatement(sqlDelEnd)) {
+                    stmtDel.setString(1, cpf);
+                    stmtDel.executeUpdate();
+                }
+                try (var stmtDel = conn.prepareStatement(sqlDelCliente)) {
+                    stmtDel.setString(1, cpf);
+                    stmtDel.executeUpdate();
+                }
+                conn.commit();
+            } catch (RuntimeException | SQLException ex) {
+                conn.rollback();
+                throw ex;
+            }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
         }
@@ -138,16 +194,18 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
     @Override
     public List<Cliente> listarClientes() {
-        String sql = "SELECT cpf, nome, tipo, fidelidade, logradouro, bairro, cidade FROM "
-                + "tbCliente";
+        String sql = "SELECT cpf, nome, tipo, fidelidade FROM tbCliente";
         List<Cliente> clientes = new ArrayList<>();
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                clientes.add(new Cliente(rs.getString("cpf"), rs.getString("nome"),
-                        rs.getString("tipo"), rs.getDouble("fidelidade"),
-                        rs.getString("logradouro"), rs.getString("bairro"),
-                        rs.getString("cidade")));
+                Cliente cliente = new Cliente(
+                        rs.getString("cpf"),
+                        rs.getString("nome"),
+                        rs.getString("tipo"),
+                        rs.getDouble("fidelidade"));
+                carregarEnderecos(conn, cliente);
+                clientes.add(cliente);
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
@@ -160,18 +218,20 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public Optional<Cliente> getPorCPF(String cpf) {
         validarCPF(cpf);
 
-        String sql = "SELECT cpf, nome, tipo, fidelidade, logradouro, bairro, cidade FROM "
-                + "tbCliente WHERE cpf = ?";
+        String sql = "SELECT cpf, nome, tipo, fidelidade FROM tbCliente WHERE cpf = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql);) {
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
             var rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(new Cliente(rs.getString("cpf"), rs.getString("nome"),
-                        rs.getString("tipo"), rs.getDouble("fidelidade"),
-                        rs.getString("logradouro"), rs.getString("bairro"),
-                        rs.getString("cidade")));
+                Cliente cliente = new Cliente(
+                        rs.getString("cpf"),
+                        rs.getString("nome"),
+                        rs.getString("tipo"),
+                        rs.getDouble("fidelidade"));
+                carregarEnderecos(conn, cliente);
+                return Optional.of(cliente);
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
@@ -198,4 +258,47 @@ public class ClienteRepositorySQLite implements IClienteRepository {
         }
     }
 
+    private void carregarEnderecos(Connection conn, Cliente cliente) throws SQLException {
+        String sql = "SELECT padrao, logradouro, numero, complemento, bairro, cidade, uf, cep "
+                + "FROM tbEndereco WHERE cliente_cpf = ?";
+
+        try (var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cliente.getCPF());
+            var rs = stmt.executeQuery();
+            while (rs.next()) {
+                Endereco end = new Endereco(
+                        rs.getInt("padrao") == 1,
+                        rs.getString("logradouro"),
+                        rs.getInt("numero"),
+                        rs.getString("complemento"),
+                        rs.getString("bairro"),
+                        rs.getString("cidade"),
+                        rs.getString("uf"),
+                        rs.getString("cep"));
+                cliente.addEndereco(end);
+            }
+        }
+    }
+
+    private void inserirEnderecos(Connection conn, Cliente cliente) throws SQLException {
+        String sqlInsereEndereco = "INSERT INTO tbEndereco(cliente_cpf, padrao, logradouro, "
+                + "numero, complemento, bairro, cidade, uf, cep) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (var stmt = conn.prepareStatement(sqlInsereEndereco)) {
+            for (Endereco end : cliente.getEnderecos()) {
+                stmt.setString(1, cliente.getCPF());
+                stmt.setInt(2, end.isPadrao() ? 1 : 0);
+                stmt.setString(3, end.getLogradouro());
+                stmt.setInt(4, end.getNumero());
+                stmt.setString(5, end.getComplemento());
+                stmt.setString(6, end.getBairro());
+                stmt.setString(7, end.getCidade());
+                stmt.setString(8, end.getUf());
+                stmt.setString(9, end.getCep());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        }
+    }
 }

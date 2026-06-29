@@ -10,9 +10,7 @@ public class Cliente {
     private String nome;
     private String tipo;
     private double fidelidade;
-    //private String logradouro;
-    //private String bairro;
-    //private String cidade;
+
     private List<Endereco> enderecos;
 
     public Cliente(String cpf, String nome, String tipo, double fidelidade) {
