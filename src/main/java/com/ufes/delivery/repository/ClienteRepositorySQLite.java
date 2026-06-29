@@ -268,7 +268,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
         return Optional.empty();
     }
     
-    public Optional<Cliente> getPorId(int id) {
+    public Optional<Cliente> getPorIdCliente(int id) {
 
         String sql = "SELECT id, cpf, nome, tipo, fidelidade FROM tbCliente WHERE id = ?";
 
@@ -297,7 +297,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
             throw new IllegalArgumentException("O trecho do nome para busca deve ser informado.");
         }
     }
-
+    
     private void validarCPF(String cpf) {
         if (cpf == null || cpf.trim().isEmpty()) {
             throw new IllegalArgumentException("O cpf busca deve ser informado.");
