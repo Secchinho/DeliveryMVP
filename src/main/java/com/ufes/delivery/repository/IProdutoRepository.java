@@ -24,7 +24,11 @@ public interface IProdutoRepository {
 
     public void removerPorCodigo(String codigo);
 
+    public void removerPorId(int id);
+
     public List<Produto> listarProdutos();
 
     public Optional<Produto> getPorCodigo(String codigo);
+
+    public Optional<Produto> getPorIdProduto(int id);
 }
