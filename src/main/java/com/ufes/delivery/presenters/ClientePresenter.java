@@ -62,6 +62,15 @@ public class ClientePresenter {
         
         this.configurarEventos();
     }
+    
+    public ClientePresenter(IClienteView view, IClienteRepository clienteRepository, Cliente cliente) {
+        this.view = Objects.requireNonNull(view, "View não pode ser nula");
+        this.clienteRepository = Objects.requireNonNull(clienteRepository,
+                "Repositório não pode ser nulo");
+        this.cliente = Objects.requireNonNull(cliente);
+        
+        this.configurarEventos();
+    }
 
     /**
      * Registra os listeners dos botões da View. A View permanece "burra"
@@ -94,9 +103,7 @@ public class ClientePresenter {
      * implementando o padrão Command (sem uso de State).
      */
     private void salvarDados() {
-        if (this.command != null) {
-            this.command.salvar();
-        }
+        this.command.salvar();
     }
 
     // =========================================================================
@@ -117,10 +124,6 @@ public class ClientePresenter {
 
     public IClienteRepository getClienteRepository() {
         return this.clienteRepository;
-    }
-
-    public ClientePresenterCommand getCommand() {
-        return this.command;
     }
 
     // =========================================================================

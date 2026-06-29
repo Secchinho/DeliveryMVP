@@ -236,7 +236,7 @@ public class BuscarClientePresenter {
         }
         
         try {
-            ClientePresenter presenter = new ClientePresenter(this.clienteView,this.clienteRepository);
+            ClientePresenter presenter = new ClientePresenter(this.clienteView,this.clienteRepository,cliente);
             presenter.setCommand(new AtualizarClienteCommand(presenter));
             presenter.iniciar();
             
