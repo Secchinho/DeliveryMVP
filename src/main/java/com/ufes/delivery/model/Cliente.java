@@ -1,32 +1,31 @@
 package com.ufes.delivery.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cliente {
     private String cpf;
     private String nome;
     private String tipo;
     private double fidelidade;
-    private String logradouro;
-    private String bairro;
-    private String cidade;
+    //private String logradouro;
+    //private String bairro;
+    //private String cidade;
+    private List<Endereco> enderecos;
 
-    public Cliente(String cpf, String nome, String tipo, double fidelidade, String logradouro, String bairro, String cidade) {
+    public Cliente(String cpf, String nome, String tipo, double fidelidade) {
         validarTextoObrigatorio(nome, "Nome do cliente nao pode ser vazio");
         validarTextoObrigatorio(tipo, "Tipo do cliente nao pode ser vazio");
-        validarTextoObrigatorio(logradouro, "Logradouro do cliente nao pode ser vazio");
-        validarTextoObrigatorio(bairro, "Bairro do cliente nao pode ser vazio");
-        validarTextoObrigatorio(cidade, "Cidade do cliente nao pode ser vazia");
-
+        
         if (fidelidade < 0) {
             throw new IllegalArgumentException("Fidelidade do cliente nao pode ser negativa");
         }
         
+        this.enderecos = new ArrayList<>();
         this.cpf = cpf;
         this.nome = nome;
         this.tipo = tipo;
         this.fidelidade = fidelidade;
-        this.logradouro = logradouro;
-        this.bairro = bairro;
-        this.cidade = cidade;
     }
 
     public String getNome() {
@@ -39,18 +38,6 @@ public class Cliente {
 
     public String getTipo() {
         return tipo;
-    }
-
-    public String getLogradouro() {
-        return logradouro;
-    }
-
-    public String getBairro() {
-        return bairro;
-    }
-
-    public String getCidade() {
-        return cidade;
     }
 
     public double getFidelidade() {
@@ -70,6 +57,22 @@ public class Cliente {
             throw new IllegalArgumentException(mensagem);
         }
     }
+    
+    public void addEndereco(Endereco endereco){
+        if(endereco == null){
+            throw new IllegalArgumentException("Insira um endereço.");
+        }
+        
+        if(this.enderecos.size() >= 3){
+            throw new RuntimeException("Não é possível adicionar mais que 3 endereços.");
+        }
+        
+        this.enderecos.add(endereco);
+    }
+    
+    public List<Endereco> getEndereco(){
+        return this.enderecos;
+    }
 
     @Override
     public String toString() {
@@ -77,9 +80,6 @@ public class Cliente {
                 + "nome='" + nome + '\''
                 + ", tipo='" + tipo + '\''
                 + ", fidelidade=" + fidelidade
-                + ", logradouro='" + logradouro + '\''
-                + ", bairro='" + bairro + '\''
-                + ", cidade='" + cidade + '\''
                 + "}";
     }
 }
