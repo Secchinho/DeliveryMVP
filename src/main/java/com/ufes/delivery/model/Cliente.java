@@ -1,6 +1,7 @@
 package com.ufes.delivery.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -72,7 +73,7 @@ public class Cliente {
     }
     
     public List<Endereco> getEnderecos(){
-        return this.enderecos;
+        return Collections.unmodifiableList(this.enderecos);
     }
 
     private Endereco getEnderecoPrincipal(){
@@ -89,6 +90,19 @@ public class Cliente {
     
     public String getBairro(){
         return this.getEnderecoPrincipal().getBairro();
+    }
+    
+    public void removerEndereco(Endereco endereco){
+        if(endereco == null) throw new IllegalArgumentException("Insira um endereço.");
+        
+        for(Endereco e : this.enderecos){
+            if(e.equals(endereco)){
+                this.enderecos.remove(e);
+                return;
+            }
+        }
+        
+        throw new RuntimeException("Não foi encontrado o Endereço informado");
     }
     @Override
     public String toString() {

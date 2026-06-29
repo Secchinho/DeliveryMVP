@@ -17,6 +17,7 @@ public class Endereco {
     private String cidade;
     private String uf;
     private String cep;
+    private int id;
 
     public Endereco(boolean padrao, String logradouro, int numero, String complemento, String bairro, String cidade, String uf, String cep) {
         this.padrao = padrao;
@@ -61,5 +62,19 @@ public class Endereco {
         return cep;
     }
     
+    public boolean equals(Endereco outroEndereco){
+        if(outroEndereco == null) throw new IllegalArgumentException("Insira um endereço.");
+        
+        if(this.bairro.equals(outroEndereco.getBairro()) &&
+                this.cep.equals(outroEndereco.getCep()) &&
+                this.cidade.equals(outroEndereco.getCidade()) &&
+                this.complemento.equals(outroEndereco.getComplemento()) &&
+                this.logradouro.equals(outroEndereco.getLogradouro()) &&
+                this.uf.equals(outroEndereco.getUf()) &&
+                this.numero == outroEndereco.getNumero()
+                ) return true;
+        
+        return false;
+    }
     
 }
