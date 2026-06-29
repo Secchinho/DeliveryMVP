@@ -4,8 +4,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ClienteView extends JFrame implements IClienteView {
 
@@ -60,80 +58,89 @@ public class ClienteView extends JFrame implements IClienteView {
     public JButton getBotaoCancelar() {
         return this.btnCancelar;
     }
-
-    @Override
-    public String getNome() {
-        return txtNome.getText().trim();
-    }
-
-    @Override
-    public String getCpf() {
-        return txtCpf.getText().trim();
-    }
-
-    @Override
-    public List<Object[]> getDadosEnderecos() {
-        List<Object[]> dados = new ArrayList<>();
-        for (int i = 0; i < modeloEnderecos.getRowCount(); i++) {
-            // Verifica se a linha tem pelo menos um endereço preenchido
-            String logradouro = (String) modeloEnderecos.getValueAt(i, 1);
-            if (logradouro != null && !logradouro.isBlank()) {
-                Object[] linha = new Object[8];
-                linha[0] = modeloEnderecos.getValueAt(i, 0); // Padrão (Boolean)
-                linha[1] = logradouro;
-                linha[2] = modeloEnderecos.getValueAt(i, 2); // Número
-                linha[3] = modeloEnderecos.getValueAt(i, 3); // Complemento
-                linha[4] = modeloEnderecos.getValueAt(i, 4); // Bairro
-                linha[5] = modeloEnderecos.getValueAt(i, 5); // Cidade
-                linha[6] = modeloEnderecos.getValueAt(i, 6); // UF
-                linha[7] = modeloEnderecos.getValueAt(i, 7); // CEP
-                dados.add(linha);
-            }
-        }
-        return dados;
-    }
-
-    @Override
-    public void setNome(String nome) {
-        this.txtNome.setText(nome);
-    }
-
-    @Override
-    public void setCpf(String cpf) {
-        this.txtCpf.setText(cpf);
-    }
-
-    @Override
-    public void setEnderecosTabela(List<Object[]> enderecos) {
-        // Limpa a tabela primeiro
-        for (int i = 0; i < MAX_ENDERECOS; i++) {
-            for (int j = 0; j < modeloEnderecos.getColumnCount(); j++) {
-                modeloEnderecos.setValueAt(null, i, j);
-            }
-        }
-        // Preenche com os dados recebidos
-        for (int i = 0; i < enderecos.size() && i < MAX_ENDERECOS; i++) {
-            Object[] end = enderecos.get(i);
-            for (int j = 0; j < end.length && j < modeloEnderecos.getColumnCount(); j++) {
-                modeloEnderecos.setValueAt(end[j], i, j);
-            }
-        }
-    }
-
-    @Override
-    public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
-        JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
-    }
-
-    @Override
-    public void fecharTela() {
-        this.dispose();
-    }
-
+    
     @Override
     public JFrame getJanelaPrincipal(){
         return this;
     }
+    
+    @Override
+    public DefaultTableModel getModeloEnderecos() {
+        return this.modeloEnderecos;
+    }
+
+    @Override
+    public ButtonGroup getGrupoBotaoPadrao() {
+        return this.grupoPadrao;
+    }
+//    @Override
+//    public String getNome() {
+//        return txtNome.getText().trim();
+//    }
+//
+//    @Override
+//    public String getCpf() {
+//        return txtCpf.getText().trim();
+//    }
+//
+//    @Override
+//    public List<Object[]> getDadosEnderecos() {
+//        List<Object[]> dados = new ArrayList<>();
+//        for (int i = 0; i < modeloEnderecos.getRowCount(); i++) {
+//            // Verifica se a linha tem pelo menos um endereço preenchido
+//            String logradouro = (String) modeloEnderecos.getValueAt(i, 1);
+//            if (logradouro != null && !logradouro.isBlank()) {
+//                Object[] linha = new Object[8];
+//                linha[0] = modeloEnderecos.getValueAt(i, 0); // Padrão (Boolean)
+//                linha[1] = logradouro;
+//                linha[2] = modeloEnderecos.getValueAt(i, 2); // Número
+//                linha[3] = modeloEnderecos.getValueAt(i, 3); // Complemento
+//                linha[4] = modeloEnderecos.getValueAt(i, 4); // Bairro
+//                linha[5] = modeloEnderecos.getValueAt(i, 5); // Cidade
+//                linha[6] = modeloEnderecos.getValueAt(i, 6); // UF
+//                linha[7] = modeloEnderecos.getValueAt(i, 7); // CEP
+//                dados.add(linha);
+//            }
+//        }
+//        return dados;
+//    }
+//
+//    @Override
+//    public void setNome(String nome) {
+//        this.txtNome.setText(nome);
+//    }
+//
+//    @Override
+//    public void setCpf(String cpf) {
+//        this.txtCpf.setText(cpf);
+//    }
+//
+//    @Override
+//    public void setEnderecosTabela(List<Object[]> enderecos) {
+//        // Limpa a tabela primeiro
+//        for (int i = 0; i < MAX_ENDERECOS; i++) {
+//            for (int j = 0; j < modeloEnderecos.getColumnCount(); j++) {
+//                modeloEnderecos.setValueAt(null, i, j);
+//            }
+//        }
+//        // Preenche com os dados recebidos
+//        for (int i = 0; i < enderecos.size() && i < MAX_ENDERECOS; i++) {
+//            Object[] end = enderecos.get(i);
+//            for (int j = 0; j < end.length && j < modeloEnderecos.getColumnCount(); j++) {
+//                modeloEnderecos.setValueAt(end[j], i, j);
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
+//        JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
+//    }
+//
+//    @Override
+//    public void fecharTela() {
+//        this.dispose();
+//    }
 
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
