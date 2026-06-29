@@ -1,8 +1,11 @@
 package com.ufes.delivery.presenters;
 
+import com.ufes.delivery.command.AtualizarClienteCommand;
+import com.ufes.delivery.command.SalvarClienteCommand;
 import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.view.IBuscarClienteView;
+import com.ufes.delivery.view.IClienteView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -59,6 +62,7 @@ public class BuscarClientePresenter {
     private final IBuscarClienteView view;
     private final IClienteRepository clienteRepository;
     private List<Cliente> clientes;
+    private IClienteView clienteView;
 
     /**
      * Constrói o Presenter com a View e o repositório de clientes.
@@ -67,9 +71,10 @@ public class BuscarClientePresenter {
      * @param clienteRepository repositório de clientes
      * @throws NullPointerException se view ou clienteRepository forem nulos
      */
-    public BuscarClientePresenter(IBuscarClienteView view, IClienteRepository clienteRepository) {
+    public BuscarClientePresenter(IBuscarClienteView view, IClienteRepository clienteRepository, IClienteView clienteView) {
         this.view = Objects.requireNonNull(view, "A view não pode ser nula");
         this.clienteRepository = Objects.requireNonNull(clienteRepository, "O repositório de clientes não pode ser nulo");
+        this.clienteView = Objects.requireNonNull(clienteView,"Insira uma Tela Cliente.");
         this.clientes = new ArrayList<>();
         this.configurarEventos();
     }
@@ -184,21 +189,18 @@ public class BuscarClientePresenter {
      * {@code CadastrarClienteState}, conforme diagrama de classes.</p>
      */
     private void adicionar() {
-        // ---------------------------------------------------------------------------
-        // Nota de integração: a instância de ClientePresenter/ClienteView segue o
-        // padrão do projeto (MVP Passive View + State). Ajuste a construção caso o
-        // ClientePresenter exija injeção por fábrica ou outro mecanismo.
-        // ---------------------------------------------------------------------------
-//        try {
-//            ClientePresenter presenter = new ClientePresenter(this.clienteRepository);
-//            presenter.iniciarCadastrar();
-//        } catch (RuntimeException ex) {
-//            this.exibirMensagem(
-//                "Não foi possível abrir o cadastro de cliente: " + ex.getMessage(),
-//                "Erro",
-//                JOptionPane.ERROR_MESSAGE
-//            );
-//        } FALTA FAZER!!!
+        try {
+            
+            ClientePresenter presenter = new ClientePresenter(this.clienteView,this.clienteRepository);
+            presenter.setCommand(new SalvarClienteCommand(presenter));
+            presenter.iniciar();
+        } catch (RuntimeException ex) {
+            this.exibirMensagem(
+                "Não foi possível abrir o cadastro de cliente: " + ex.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
+        } 
     }
 
     /**
@@ -232,21 +234,19 @@ public class BuscarClientePresenter {
             );
             return;
         }
-
-        // ---------------------------------------------------------------------------
-        // Nota de integração: o ClientePresenter é aberto no estado
-        // VisualizarClienteState, repassando o Cliente selecionado.
-        // ---------------------------------------------------------------------------
-//        try {
-//            ClientePresenter presenter = new ClientePresenter(this.clienteRepository, cliente);
-//            presenter.iniciarVisualizar();
-//        } catch (RuntimeException ex) {
-//            this.exibirMensagem(
-//                "Não foi possível abrir a visualização do cliente: " + ex.getMessage(),
-//                "Erro",
-//                JOptionPane.ERROR_MESSAGE
-//            );
-//        } FALTA FAZER!!!
+        
+        try {
+            ClientePresenter presenter = new ClientePresenter(this.clienteView,this.clienteRepository);
+            presenter.setCommand(new AtualizarClienteCommand(presenter));
+            presenter.iniciar();
+            
+        } catch (RuntimeException ex) {
+            this.exibirMensagem(
+                "Não foi possível abrir a visualização do cliente: " + ex.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     /**

@@ -102,6 +102,16 @@ public class Cliente {
         
         throw new RuntimeException("Não foi encontrado o Endereço informado");
     }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    
+    
     @Override
     public String toString() {
         return "Cliente{"

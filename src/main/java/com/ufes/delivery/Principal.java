@@ -12,8 +12,10 @@ import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.repository.UsuarioRepositorySQLite;
 import com.ufes.delivery.view.BuscaClienteView;
 import com.ufes.delivery.view.CadastrarUsuarioView;
+import com.ufes.delivery.view.ClienteView;
 import com.ufes.delivery.view.IBuscarClienteView;
 import com.ufes.delivery.view.ICadastrarUsuarioView;
+import com.ufes.delivery.view.IClienteView;
 import com.ufes.delivery.view.ILoginView;
 import com.ufes.delivery.view.LoginView;
 import com.ufes.util.AutenticacaoUsuarioService;
@@ -30,8 +32,9 @@ public class Principal {
     public static void main(String[] args) {
         IBuscarClienteView view = new BuscaClienteView();
         IClienteRepository rep = new ClienteRepositorySQLite();
+        IClienteView clienteView = new ClienteView();
         
-        BuscarClientePresenter p = new BuscarClientePresenter(view, rep);
+        BuscarClientePresenter p = new BuscarClientePresenter(view, rep, clienteView);
         
         p.iniciar();
     }
