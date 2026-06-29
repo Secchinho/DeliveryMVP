@@ -2,6 +2,7 @@ package com.ufes.delivery.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Cliente {
     private String cpf;
@@ -70,10 +71,25 @@ public class Cliente {
         this.enderecos.add(endereco);
     }
     
-    public List<Endereco> getEndereco(){
+    public List<Endereco> getEnderecos(){
         return this.enderecos;
     }
 
+    private Endereco getEnderecoPrincipal(){
+        Endereco enderecoPrincipal = null;
+        
+        for(Endereco e : this.enderecos){
+            if(e.isPadrao()){
+                enderecoPrincipal = e;
+            }
+        }
+        
+        return Objects.requireNonNull(enderecoPrincipal,"Não foi encontrado um Endereço principal.");
+    }
+    
+    public String getBairro(){
+        return this.getEnderecoPrincipal().getBairro();
+    }
     @Override
     public String toString() {
         return "Cliente{"

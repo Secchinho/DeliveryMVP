@@ -17,7 +17,7 @@ public class UmCasoDeUsoDePedido {
 
     public static void main(String[] args) {
 
-        Cliente cliente = new Cliente("12345678910","Maria", "Ouro", 1, "Limoeiro", "Cidade Maravilhosa", "Castelo");
+        Cliente cliente = new Cliente("12345678910","Maria", "Ouro", 1);
         LocalDateTime dataPedido = LocalDateTime.now();
         ILogger logCSV = new CsvLoggerImpl("TesteCSV.csv");
         ILogger logJSONL = new JsonlLoggerImpl("TesteJSONL.jsonl");
