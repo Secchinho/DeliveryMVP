@@ -10,6 +10,7 @@ public class Cliente {
     private String nome;
     private String tipo;
     private double fidelidade;
+    private int id;
 
     private List<Endereco> enderecos;
 
@@ -26,6 +27,14 @@ public class Cliente {
         this.nome = nome;
         this.tipo = tipo;
         this.fidelidade = fidelidade;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNome() {

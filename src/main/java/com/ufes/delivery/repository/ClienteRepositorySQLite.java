@@ -123,16 +123,16 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public void atualizar(Cliente cliente) {
         validarCliente(cliente);
 
-        String sqlBusca = "SELECT cpf FROM tbCliente WHERE cpf = ?";
-        String sqlAtualizaCliente = "UPDATE tbCliente SET nome = ?, tipo = ?, fidelidade = ? "
-                + "WHERE cpf = ?";
-        String sqlRemoveEnderecos = "DELETE FROM tbEndereco WHERE cliente_cpf = ?";
+        String sqlBusca = "SELECT id FROM tbCliente WHERE id = ?";
+        String sqlAtualizaCliente = "UPDATE tbCliente SET nome = ?, tipo = ?, fidelidade = ?, cpf = ?"
+                + "WHERE id = ?";
+        String sqlRemoveEnderecos = "DELETE FROM tbEndereco WHERE id = ?";
 
         try (var conn = DriverManager.getConnection(this.url)) {
             conn.setAutoCommit(false);
             try {
                 try (var stmtBusca = conn.prepareStatement(sqlBusca)) {
-                    stmtBusca.setString(1, cliente.getCPF());
+                    stmtBusca.setInt(1, cliente.getId());
                     var rs = stmtBusca.executeQuery();
                     if (!rs.next()) {
                         throw new IllegalArgumentException("O cliente ainda não existe");
@@ -144,11 +144,12 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                     stmtAtualiza.setString(2, cliente.getTipo());
                     stmtAtualiza.setDouble(3, cliente.getFidelidade());
                     stmtAtualiza.setString(4, cliente.getCPF());
+                    stmtAtualiza.setInt(5, cliente.getId());
                     stmtAtualiza.executeUpdate();
                 }
 
                 try (var stmtDel = conn.prepareStatement(sqlRemoveEnderecos)) {
-                    stmtDel.setString(1, cliente.getCPF());
+                    stmtDel.setInt(1, cliente.getId());
                     stmtDel.executeUpdate();
                 }
 
@@ -168,7 +169,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public void removerPorCPF(String cpf) {
         validarCPF(cpf);
 
-        String sqlDelEnd = "DELETE FROM tbEndereco WHERE cliente_cpf = ?";
+        String sqlDelEnd = "DELETE FROM tbEndereco WHERE cpf = ?";
         String sqlDelCliente = "DELETE FROM tbCliente WHERE cpf = ?";
 
         try (var conn = DriverManager.getConnection(this.url)) {
@@ -192,9 +193,35 @@ public class ClienteRepositorySQLite implements IClienteRepository {
         }
     }
 
+    public void removerPorId(int id) {
+
+        String sqlDelEnd = "DELETE FROM tbEndereco WHERE id = ?";
+        String sqlDelCliente = "DELETE FROM tbCliente WHERE id = ?";
+
+        try (var conn = DriverManager.getConnection(this.url)) {
+            conn.setAutoCommit(false);
+            try {
+                try (var stmtDel = conn.prepareStatement(sqlDelEnd)) {
+                    stmtDel.setInt(1, id);
+                    stmtDel.executeUpdate();
+                }
+                try (var stmtDel = conn.prepareStatement(sqlDelCliente)) {
+                    stmtDel.setInt(1, id);
+                    stmtDel.executeUpdate();
+                }
+                conn.commit();
+            } catch (RuntimeException | SQLException ex) {
+                conn.rollback();
+                throw ex;
+            }
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+    }
+
     @Override
     public List<Cliente> listarClientes() {
-        String sql = "SELECT cpf, nome, tipo, fidelidade FROM tbCliente";
+        String sql = "SELECT id, cpf, nome, tipo, fidelidade FROM tbCliente";
         List<Cliente> clientes = new ArrayList<>();
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
@@ -204,6 +231,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                         rs.getString("nome"),
                         rs.getString("tipo"),
                         rs.getDouble("fidelidade"));
+                cliente.setId(rs.getInt("id"));
                 carregarEnderecos(conn, cliente);
                 clientes.add(cliente);
             }
@@ -222,6 +250,30 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
+            var rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Cliente cliente = new Cliente(
+                        rs.getString("cpf"),
+                        rs.getString("nome"),
+                        rs.getString("tipo"),
+                        rs.getDouble("fidelidade"));
+                carregarEnderecos(conn, cliente);
+                return Optional.of(cliente);
+            }
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+    
+    public Optional<Cliente> getPorId(int id) {
+
+        String sql = "SELECT id, cpf, nome, tipo, fidelidade FROM tbCliente WHERE id = ?";
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
             var rs = stmt.executeQuery();
 
             if (rs.next()) {
