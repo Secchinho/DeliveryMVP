@@ -3,7 +3,6 @@ package com.ufes.delivery.view;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.util.List;
 
 public class ProdutoView extends JFrame implements IProdutoView {
 
@@ -31,66 +30,6 @@ public class ProdutoView extends JFrame implements IProdutoView {
     // =========================================================================
 
     @Override
-    public String getCodigo() {
-        return txtCodigo.getText().trim();
-    }
-
-    @Override
-    public String getNome() {
-        return txtNome.getText().trim();
-    }
-
-    @Override
-    public String getCategoriaSelecionada() {
-        return (String) cmbCategoria.getSelectedItem();
-    }
-
-    @Override
-    public String getPrecoUnitario() {
-        return txtPrecoUnitario.getText().trim();
-    }
-
-    @Override
-    public String getQuantidadeInicial() {
-        return txtQuantidadeInicial.getText().trim();
-    }
-
-    @Override
-    public void setCodigo(String codigo) {
-        this.txtCodigo.setText(codigo);
-    }
-
-    @Override
-    public void setNome(String nome) {
-        this.txtNome.setText(nome);
-    }
-
-    @Override
-    public void setPrecoUnitario(String preco) {
-        this.txtPrecoUnitario.setText(preco);
-    }
-
-    @Override
-    public void setQuantidadeInicial(String quantidade) {
-        this.txtQuantidadeInicial.setText(quantidade);
-    }
-
-    @Override
-    public void setCategorias(List<String> categorias) {
-        cmbCategoria.removeAllItems();
-        if (categorias != null) {
-            for (String cat : categorias) {
-                cmbCategoria.addItem(cat);
-            }
-        }
-    }
-
-    @Override
-    public void selecionarCategoria(String categoria) {
-        cmbCategoria.setSelectedItem(categoria);
-    }
-
-    @Override
     public JButton getSalvarButton() {
         return this.btnSalvar;
     }
@@ -101,18 +40,33 @@ public class ProdutoView extends JFrame implements IProdutoView {
     }
 
     @Override
-    public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
-        JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
-    }
-
-    @Override
-    public void fecharTela() {
-        this.dispose();
-    }
-
-    @Override
     public JFrame getJanelaPrincipal() {
         return this;
+    }
+    
+    @Override
+    public JTextField getTxtCodigo() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public JTextField getTxtNome() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public JTextField getTxtPrecoUnitario() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public JTextField getTxtQuantidadeInicial() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public JComboBox<String> getComboCategoria() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     // =========================================================================

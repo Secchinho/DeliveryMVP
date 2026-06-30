@@ -4,32 +4,23 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import java.util.List;
+import javax.swing.JTextField;
 
 public interface IProdutoView {
 
-    // --- Getters para o Presenter ler os dados da View ---
-    String getCodigo();
-    String getNome();
-    String getCategoriaSelecionada();
-    String getPrecoUnitario();
-    String getQuantidadeInicial();
-
-    // --- Setters para o Presenter preencher a View (Modo Edição) ---
-    void setCodigo(String codigo);
-    void setNome(String nome);
-    void setPrecoUnitario(String preco);
-    void setQuantidadeInicial(String quantidade);
-
-    // --- Manipulação do ComboBox de Categorias ---
-    void setCategorias(List<String> categorias);
-    void selecionarCategoria(String categoria);
-
-    // --- Getters para os Botões (Para o Presenter anexar os ouvintes) ---
+// --- Getters para Componentes ---
     JButton getSalvarButton();
-    JButton getFecharButton(); // Mapeado para o botão Cancelar do diagrama
-
-    // --- Utilitários de Feedback e Navegação ---
-    void exibirMensagem(String mensagem, String titulo, int tipoMensagem);
-    void fecharTela();
+    JButton getFecharButton();
+    
     JFrame getJanelaPrincipal();
+    
+    JTextField getTxtCodigo();
+    JTextField getTxtNome();
+    JTextField getTxtPrecoUnitario();
+    JTextField getTxtQuantidadeInicial();
+    
+    JComboBox<String> getComboCategoria();
+    
+
+    
 }
