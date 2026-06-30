@@ -5,15 +5,20 @@
 package com.ufes.delivery;
 
 import com.ufes.delivery.presenters.BuscarClientePresenter;
+import com.ufes.delivery.presenters.BuscarProdutoPresenter;
 import com.ufes.delivery.presenters.CadastrarUsuarioPresenter;
 import com.ufes.delivery.presenters.LoginPresenter;
 import com.ufes.delivery.repository.ClienteRepositorySQLite;
 import com.ufes.delivery.repository.IClienteRepository;
+import com.ufes.delivery.repository.IProdutoRepository;
+import com.ufes.delivery.repository.ProdutoRepositorySQLite;
 import com.ufes.delivery.repository.UsuarioRepositorySQLite;
 import com.ufes.delivery.view.BuscaClienteView;
+import com.ufes.delivery.view.BuscarProdutoView;
 import com.ufes.delivery.view.CadastrarUsuarioView;
 import com.ufes.delivery.view.ClienteView;
 import com.ufes.delivery.view.IBuscarClienteView;
+import com.ufes.delivery.view.IBuscarProdutoView;
 import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.IClienteView;
 import com.ufes.delivery.view.ILoginView;
@@ -30,13 +35,11 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        IBuscarClienteView view = new BuscaClienteView();
-        IClienteRepository rep = new ClienteRepositorySQLite();
-        IClienteView clienteView = new ClienteView();
+        IBuscarProdutoView v = new BuscarProdutoView();
+        IProdutoRepository rep = new ProdutoRepositorySQLite();
         
-        BuscarClientePresenter p = new BuscarClientePresenter(view, rep, clienteView);
-        
-        p.iniciar();
+        BuscarProdutoPresenter presenter = new BuscarProdutoPresenter(v,rep);
+        presenter.iniciar();
     }
     
 }
