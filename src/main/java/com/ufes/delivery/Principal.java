@@ -36,12 +36,12 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        IClienteView v = new ClienteView();
-        IBuscarClienteView bcv = new BuscaClienteView();
-        IClienteRepository r = new ClienteRepositorySQLite();
-        BuscarClientePresenter p = new BuscarClientePresenter(bcv, r, v);
+        IClienteView clienteView = new ClienteView();
+        IBuscarClienteView buscaClienteView = new BuscaClienteView();
+        IClienteRepository clienteRepository = new ClienteRepositorySQLite();
+        BuscarClientePresenter buscaClientePresenter = new BuscarClientePresenter(buscaClienteView, clienteRepository, clienteView);
 
-        p.iniciar();
+        buscaClientePresenter.iniciar();
     }
     
 }

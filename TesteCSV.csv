@@ -8,3 +8,12 @@ Balcão PDV 1, 27/06/2026, 22:29:48, 1001, Calculo do valor total do pedido (Cal
 Balcão PDV 1, 27/06/2026, 22:29:48, 1001, Calculo do valor total do pedido (get Valor Pedido), Maria
 Gerente, 27/06/2026, 22:29:48, 1001, Calculo do valor total do pedido (get Valor Pedido), Maria
 Balcão PDV 1, 27/06/2026, 22:29:48, 1001, Calculo do valor total do pedido (get Valor Pedido), Maria
+Balcão PDV 1, 30/06/2026, 16:09:48, 1001, Calculo do valor total do pedido (get Valor Pedido), Maria
+Gerente, 30/06/2026, 16:09:49, 1001, Calculo do valor total do pedido (Aplicar Cupom), Maria
+Gerente, 30/06/2026, 16:09:49, 1001, Calculo do valor total do pedido (Exceção: O pedido nao esta dentro da validade do cupom), Maria
+Gerente, 30/06/2026, 16:12:17, 1001, Calculo do valor total do pedido (get Valor Pedido), Maria
+Gerente, 30/06/2026, 16:12:17, 1001, Calculo do valor total do pedido (Aplicar Cupom), Maria
+Gerente, 30/06/2026, 16:12:17, 1001, Calculo do valor total do pedido (Exceção: O pedido nao esta dentro da validade do cupom), Maria
+Gerente, 30/06/2026, 16:22:26, 1001, Calculo do valor total do pedido (get Valor Pedido), Maria
+Gerente, 30/06/2026, 16:22:26, 1001, Calculo do valor total do pedido (Aplicar Cupom), Maria
+Fulano de tal, 30/06/2026, 16:22:26, 1001, Calculo do valor total do pedido (Exceção: O pedido nao esta dentro da validade do cupom), Maria
