@@ -34,35 +34,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
     // =========================================================================
 
     @Override
-    public String getValorBusca() {
-        return txtValor.getText().trim();
-    }
-
-    @Override
-    public String getAtributoBusca() {
-        return (String) cmbBuscarPor.getSelectedItem();
-    }
-
-    @Override
-    public void limparTabelaResultados() {
-        modeloResultados.setRowCount(0);
-    }
-
-    @Override
-    public void adicionarLinhaResultado(Object[] linha) {
-        modeloResultados.addRow(linha);
-    }
-
-    @Override
-    public String getCodigoProdutoSelecionado() {
-        int linhaSelecionada = tabelaResultados.getSelectedRow();
-        if (linhaSelecionada == -1) {
-            return null;
-        }
-        return (String) modeloResultados.getValueAt(linhaSelecionada, 0);
-    }
-
-    @Override
     public JButton getBuscarButton() {
         return this.btnBuscar;
     }
@@ -88,20 +59,24 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
     }
 
     @Override
-    public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
-        JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
-    }
-
-    @Override
-    public void fecharTela() {
-        this.dispose();
-    }
-
-    @Override
     public JFrame getJanelaPrincipal() {
         return this;
     }
 
+    @Override
+    public JTextField getTxtValor() {
+        return this.txtValor;
+    }
+
+    @Override
+    public JTable getTabelaResultados() {
+        return this.tabelaResultados;
+    }
+
+    @Override
+    public DefaultTableModel getModeloResultados() {
+        return this.modeloResultados;
+    }
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================
