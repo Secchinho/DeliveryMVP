@@ -85,6 +85,10 @@ public class ClientePresenter {
 
     /** Torna a janela visível. */
     public void iniciar() {
+        if(this.cliente != null){
+            this.popularViewComCliente(cliente);
+        }
+        
         this.view.getJanelaPrincipal().setVisible(true);
     }
 
