@@ -17,7 +17,6 @@ public interface IClienteView {
     JButton getBotaoCancelar();
     JFrame getJanelaPrincipal();
     DefaultTableModel getModeloEnderecos();
-    ButtonGroup getGrupoBotaoPadrao();
 
 //    // --- Métodos "Command" para o Presenter manipular a View ---
 //    String getNome();
