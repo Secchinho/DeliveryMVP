@@ -82,7 +82,7 @@ public class SalvarClienteCommand extends ClientePresenterCommand {
         }
 
         // ---- 6. Cria o cliente e adiciona os endereços ----
-        Cliente cliente = new Cliente(nome.trim(), cpf, "Bronze", 1.0);
+        Cliente cliente = new Cliente(cpf, nome.trim(), "Bronze", 1.0);
         for (Object[] endData : enderecosData) {
             cliente.addEndereco(construirEndereco(endData));
         }
