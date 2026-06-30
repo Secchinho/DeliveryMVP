@@ -14,6 +14,7 @@ public class Produto {
     private String categoria;
     private double precoUnitario;
     private int quantidadeInicial;
+    private int id;
 
     public Produto(String nome, String codigo, String categoria, double precoUnitario, int quantidadeInicial) {
         this.nome = nome;
@@ -23,6 +24,14 @@ public class Produto {
         this.quantidadeInicial = quantidadeInicial;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public String getNome() {
         return nome;
     }

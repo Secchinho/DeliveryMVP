@@ -41,7 +41,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
     public List<Produto> buscarPorNome(String nome) {
         validarNome(nome);
 
-        String sql = "SELECT nome, codigo, categoria, precoUnitario, "
+        String sql = "SELECT id, nome, codigo, categoria, precoUnitario, "
                 + " quantidadeInicial FROM"
                 + " tbProduto WHERE nome LIKE ?";
 
@@ -68,7 +68,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
     public List<Produto> buscarPorCategoria(String categoria) {
         validarCategoria(categoria);
 
-        String sql = "SELECT nome, codigo, categoria, precoUnitario, "
+        String sql = "SELECT id, nome, codigo, categoria, precoUnitario, "
                 + " quantidadeInicial FROM"
                 + " tbProduto WHERE categoria = ?";
 
@@ -99,7 +99,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
                 + " quantidadeInicial FROM"
                 + " tbProduto WHERE codigo = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)){
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, produto.getCodigo());
             var rs = stmt.executeQuery();
             if (rs.next()) {
@@ -126,10 +126,10 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
 
         String sql = "SELECT nome, codigo, categoria, precoUnitario, "
                 + " quantidadeInicial FROM"
-                + " tbProduto WHERE codigo = ?";
+                + " tbProduto WHERE id = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)){
-            stmt.setString(1, produto.getCodigo());
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, produto.getId());
             var rs = stmt.executeQuery(sql);
             if (rs.next()) {
                 sql = "UPDATE tbProduto SET nome = ?, categoria = ?,"
@@ -165,18 +165,34 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
     }
 
     @Override
+    public void removerPorId(int id) {
+
+        String sql = "DELETE FROM tbProduto WHERE id = ?";
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+    }
+
+    @Override
     public List<Produto> listarProdutos() {
 
-        String sql = "SELECT nome, codigo, categoria, precoUnitario, "
+        String sql = "SELECT id, nome, codigo, categoria, precoUnitario, "
                 + " quantidadeInicial FROM"
                 + " tbProduto";
         List<Produto> produtos = new ArrayList<>();
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                produtos.add(new Produto(rs.getString("nome"),
+                Produto novoProduto = new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial"));
+                novoProduto.setId(rs.getInt("id"));
+                produtos.add(novoProduto);
+
             }
 
         } catch (SQLException e) {
@@ -190,18 +206,44 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
     public Optional<Produto> getPorCodigo(String codigo) {
         validarCodigo(codigo);
 
-        String sql = "SELECT nome, codigo, categoria, precoUnitario, "
+        String sql = "SELECT id, nome, codigo, categoria, precoUnitario, "
                 + " quantidadeInicial FROM"
-                + " tbProduto WHERE codigo = " + codigo;
+                + " tbProduto WHERE codigo = ?";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql);) {
             stmt.setString(1, codigo);
             var rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(new Produto(rs.getString("nome"),
+                Produto novoProduto = new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial"));
+                novoProduto.setId(rs.getInt("id"));
+                return Optional.of(novoProduto);
+            }
+        } catch (SQLException e) {
+            System.out.println("ERRO!!! " + e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Produto> getPorIdProduto(int id) {
+        String sql = "SELECT id, nome, codigo, categoria, precoUnitario, "
+                + " quantidadeInicial FROM"
+                + " tbProduto WHERE id = ? ";
+
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql);) {
+            stmt.setInt(1, id);
+            var rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Produto novoProduto = new Produto(rs.getString("nome"),
+                        rs.getString("codigo"), rs.getString("categoria"),
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial"));
+                novoProduto.setId(rs.getInt("id"));
+                return Optional.of(novoProduto);
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());

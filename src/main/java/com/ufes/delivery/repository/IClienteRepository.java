@@ -17,6 +17,7 @@ public interface IClienteRepository {
     public void adicionar(Cliente cliente);
     public void atualizar(Cliente cliente);
     public void removerPorCPF(String cpf);
+    public void removerPorId(int id);
     public List<Cliente> listarClientes();
     public Optional<Cliente> getPorCPF(String cpf);
     public Optional<Cliente> getPorIdCliente(int id);

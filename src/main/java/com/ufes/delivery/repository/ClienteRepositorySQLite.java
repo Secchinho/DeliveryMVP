@@ -58,7 +58,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public List<Cliente> buscarPorNomeContendo(String nome) {
         validarTrechoNome(nome);
 
-        String sql = "SELECT cpf, nome, tipo, fidelidade FROM tbCliente WHERE nome LIKE ?";
+        String sql = "SELECT id, cpf, nome, tipo, fidelidade FROM tbCliente WHERE nome LIKE ?";
         List<Cliente> clientes = new ArrayList<>();
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
@@ -193,6 +193,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
         }
     }
 
+    @Override
     public void removerPorId(int id) {
 
         String sqlDelEnd = "DELETE FROM tbEndereco WHERE id = ?";
@@ -246,7 +247,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public Optional<Cliente> getPorCPF(String cpf) {
         validarCPF(cpf);
 
-        String sql = "SELECT cpf, nome, tipo, fidelidade FROM tbCliente WHERE cpf = ?";
+        String sql = "SELECT id, cpf, nome, tipo, fidelidade FROM tbCliente WHERE cpf = ?";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
@@ -258,6 +259,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                         rs.getString("nome"),
                         rs.getString("tipo"),
                         rs.getDouble("fidelidade"));
+                cliente.setId(rs.getInt("id"));
                 carregarEnderecos(conn, cliente);
                 return Optional.of(cliente);
             }
@@ -267,7 +269,8 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
         return Optional.empty();
     }
-    
+
+    @Override
     public Optional<Cliente> getPorIdCliente(int id) {
 
         String sql = "SELECT id, cpf, nome, tipo, fidelidade FROM tbCliente WHERE id = ?";
@@ -282,6 +285,8 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                         rs.getString("nome"),
                         rs.getString("tipo"),
                         rs.getDouble("fidelidade"));
+
+                cliente.setId(rs.getInt("id"));
                 carregarEnderecos(conn, cliente);
                 return Optional.of(cliente);
             }
@@ -297,7 +302,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
             throw new IllegalArgumentException("O trecho do nome para busca deve ser informado.");
         }
     }
-    
+
     private void validarCPF(String cpf) {
         if (cpf == null || cpf.trim().isEmpty()) {
             throw new IllegalArgumentException("O cpf busca deve ser informado.");
