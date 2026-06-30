@@ -7,6 +7,7 @@ package com.ufes.delivery;
 import com.ufes.delivery.presenters.BuscarClientePresenter;
 import com.ufes.delivery.presenters.BuscarProdutoPresenter;
 import com.ufes.delivery.presenters.CadastrarUsuarioPresenter;
+import com.ufes.delivery.presenters.ClientePresenter;
 import com.ufes.delivery.presenters.LoginPresenter;
 import com.ufes.delivery.repository.ClienteRepositorySQLite;
 import com.ufes.delivery.repository.IClienteRepository;
@@ -35,11 +36,12 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        IBuscarProdutoView v = new BuscarProdutoView();
-        IProdutoRepository rep = new ProdutoRepositorySQLite();
-        
-        BuscarProdutoPresenter presenter = new BuscarProdutoPresenter(v,rep);
-        presenter.iniciar();
+        IClienteView v = new ClienteView();
+        IBuscarClienteView bcv = new BuscaClienteView();
+        IClienteRepository r = new ClienteRepositorySQLite();
+        BuscarClientePresenter p = new BuscarClientePresenter(bcv, r, v);
+
+        p.iniciar();
     }
     
 }

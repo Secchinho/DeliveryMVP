@@ -14,7 +14,7 @@ public class ClienteView extends JFrame implements IClienteView {
     // ----- Componentes da tabela de endereços de entrega -----
     private JTable tabelaEnderecos;
     private DefaultTableModel modeloEnderecos;
-    private ButtonGroup grupoPadrao;
+
 
     // ----- Botões -----
     private JButton btnSalvar;
@@ -26,7 +26,6 @@ public class ClienteView extends JFrame implements IClienteView {
 
     public ClienteView() {
         super("Cliente");
-        grupoPadrao = new ButtonGroup();
         initComponents();
     }
 
@@ -69,10 +68,6 @@ public class ClienteView extends JFrame implements IClienteView {
         return this.modeloEnderecos;
     }
 
-    @Override
-    public ButtonGroup getGrupoBotaoPadrao() {
-        return this.grupoPadrao;
-    }
 //    @Override
 //    public String getNome() {
 //        return txtNome.getText().trim();
@@ -209,7 +204,7 @@ public class ClienteView extends JFrame implements IClienteView {
         modeloEnderecos = new DefaultTableModel(colunas, MAX_ENDERECOS) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column != 0;
+                return true; // Coluna 0 (Padrão) também precisa ser editável para o editor funcionar
             }
         };
 
@@ -219,7 +214,20 @@ public class ClienteView extends JFrame implements IClienteView {
 
         tabelaEnderecos.getColumnModel().getColumn(0).setMaxWidth(70);
         tabelaEnderecos.getColumnModel().getColumn(0).setCellRenderer(new RadioButtonRenderer());
-        tabelaEnderecos.getColumnModel().getColumn(0).setCellEditor(new RadioButtonEditor());
+
+        // MouseListener garante: (1) ativação com 1 clique, (2) desmarca outras linhas no modelo
+        tabelaEnderecos.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int row = tabelaEnderecos.rowAtPoint(e.getPoint());
+                int col = tabelaEnderecos.columnAtPoint(e.getPoint());
+                if (col == 0 && row >= 0) {
+                    for (int i = 0; i < modeloEnderecos.getRowCount(); i++) {
+                        modeloEnderecos.setValueAt(i == row, i, 0);
+                    }
+                }
+            }
+        });
 
         JScrollPane scroll = new JScrollPane(tabelaEnderecos);
         scroll.setPreferredSize(new Dimension(700, 130));
@@ -265,34 +273,6 @@ public class ClienteView extends JFrame implements IClienteView {
         }
     }
 
-    private class RadioButtonEditor extends javax.swing.AbstractCellEditor
-            implements javax.swing.table.TableCellEditor {
-        private final JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        private final JRadioButton radio = new JRadioButton();
-        private int linhaAtual;
-
-        RadioButtonEditor() {
-            painel.add(radio);
-            grupoPadrao.add(radio);
-            radio.addActionListener(e -> {
-                modeloEnderecos.setValueAt(Boolean.TRUE, linhaAtual, 0);
-                fireEditingStopped();
-            });
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value,
-                boolean isSelected, int row, int column) {
-            linhaAtual = row;
-            radio.setSelected(Boolean.TRUE.equals(value));
-            return painel;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return radio.isSelected();
-        }
-    }
 
     public static void main(String[] args) {
         try {
