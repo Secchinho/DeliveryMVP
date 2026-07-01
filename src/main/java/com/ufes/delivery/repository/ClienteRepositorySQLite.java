@@ -34,7 +34,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
         String sqlEndereco = "CREATE TABLE IF NOT EXISTS tbEndereco ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "clienteId TEXT NOT NULL, "
+                + "clienteId INTEGER NOT NULL, "
                 + "padrao INTEGER NOT NULL, "
                 + "logradouro TEXT NOT NULL, "
                 + "numero INTEGER NOT NULL, "
@@ -317,10 +317,10 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
     private void carregarEnderecos(Connection conn, Cliente cliente) throws SQLException {
         String sql = "SELECT padrao, logradouro, numero, complemento, bairro, cidade, uf, cep "
-                + "FROM tbEndereco WHERE cliente_cpf = ?";
+                + "FROM tbEndereco WHERE clienteId = ?";
 
         try (var stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, cliente.getCPF());
+            stmt.setInt(1, cliente.getId());
             var rs = stmt.executeQuery();
             while (rs.next()) {
                 Endereco end = new Endereco(
@@ -338,13 +338,13 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     }
 
     private void inserirEnderecos(Connection conn, Cliente cliente) throws SQLException {
-        String sqlInsereEndereco = "INSERT INTO tbEndereco(cliente_cpf, padrao, logradouro, "
+        String sqlInsereEndereco = "INSERT INTO tbEndereco(clienteId, padrao, logradouro, "
                 + "numero, complemento, bairro, cidade, uf, cep) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (var stmt = conn.prepareStatement(sqlInsereEndereco)) {
             for (Endereco end : cliente.getEnderecos()) {
-                stmt.setString(1, cliente.getCPF());
+                stmt.setInt(1, cliente.getId());
                 stmt.setInt(2, end.isPadrao() ? 1 : 0);
                 stmt.setString(3, end.getLogradouro());
                 stmt.setInt(4, end.getNumero());
