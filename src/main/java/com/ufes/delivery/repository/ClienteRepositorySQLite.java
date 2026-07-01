@@ -34,7 +34,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
         String sqlEndereco = "CREATE TABLE IF NOT EXISTS tbEndereco ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "cliente_cpf TEXT NOT NULL, "
+                + "clienteId TEXT NOT NULL, "
                 + "padrao INTEGER NOT NULL, "
                 + "logradouro TEXT NOT NULL, "
                 + "numero INTEGER NOT NULL, "
@@ -43,7 +43,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                 + "cidade TEXT NOT NULL, "
                 + "uf TEXT NOT NULL, "
                 + "cep TEXT NOT NULL, "
-                + "FOREIGN KEY (cliente_cpf) REFERENCES tbCliente(cpf) "
+                + "FOREIGN KEY (clienteId) REFERENCES tbCliente(id) "
                 + "ON DELETE CASCADE ON UPDATE CASCADE);";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement()) {
@@ -126,7 +126,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
         String sqlBusca = "SELECT id FROM tbCliente WHERE id = ?";
         String sqlAtualizaCliente = "UPDATE tbCliente SET nome = ?, tipo = ?, fidelidade = ?, cpf = ?"
                 + "WHERE id = ?";
-        String sqlRemoveEnderecos = "DELETE FROM tbEndereco WHERE id = ?";
+        String sqlRemoveEnderecos = "DELETE FROM tbEndereco WHERE clienteId = ?";
 
         try (var conn = DriverManager.getConnection(this.url)) {
             conn.setAutoCommit(false);
