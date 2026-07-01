@@ -8,6 +8,7 @@ import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.model.Endereco;
 import com.ufes.delivery.presenters.ClientePresenter;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Command concreto responsável por <b>atualizar</b> um cliente existente.
@@ -25,6 +26,12 @@ public class AtualizarClienteCommand extends ClientePresenterCommand {
 
     public AtualizarClienteCommand(ClientePresenter clientePresenter) {
         super(clientePresenter);
+    }
+    
+    @Override
+    public void iniciar(){
+        this.clientePresenter.popularViewComCliente(this.clientePresenter.getCliente());
+        this.clientePresenter.getView().getJanelaPrincipal().setVisible(true);
     }
     
     @Override
@@ -70,18 +77,14 @@ public class AtualizarClienteCommand extends ClientePresenterCommand {
         }
 
         // ---- 4. Se o CPF mudou, verifica duplicidade em outro cliente ----
-        if (!cpf.equals(clienteExistente.getCPF())) {
-            try {
-                Cliente outro = clientePresenter.getClienteRepository().getPorCPF(cpf).get();
-                if (outro != null) {
-                    clientePresenter.exibirMensagem(
+        if (!cpf.equals(clienteExistente.getCPF().replaceAll("[^0-9]", ""))) {
+            Optional<Cliente> optionalOutro = clientePresenter.getClienteRepository().getPorCPF(cpf); 
+            if(optionalOutro.isPresent()){
+                clientePresenter.exibirMensagem(
                             "CPF já vinculado a outro cliente existente.",
                             "Validação",
                             javax.swing.JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-            } catch (RuntimeException ex) {
-                // CPF não encontrado em outro cadastro — pode prosseguir
+                return;
             }
         }
 
@@ -120,5 +123,7 @@ public class AtualizarClienteCommand extends ClientePresenterCommand {
                 "Cliente atualizado com sucesso!",
                 "Sucesso",
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        
+        this.clientePresenter.getView().getJanelaPrincipal().dispose();
     }
 }

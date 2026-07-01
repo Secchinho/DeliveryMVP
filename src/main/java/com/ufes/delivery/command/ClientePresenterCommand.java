@@ -25,6 +25,7 @@ public abstract class ClientePresenterCommand {
      * Implementada por cada command concreto.
      */
     public abstract void salvar();
+    public abstract void iniciar();
 
     // =========================================================================
     // Validações compartilhadas (US06)

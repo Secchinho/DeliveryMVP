@@ -78,18 +78,16 @@ public class ClientePresenter {
      */
     private void configurarEventos() {
         this.view.getBotaoCancelar()
-                .addActionListener(e -> this.view.getJanelaPrincipal().dispose());
+                .addActionListener(e -> {
+                    this.limpar();
+                    this.view.getJanelaPrincipal().dispose();});
         this.view.getBotaoSalvar()
                 .addActionListener(e -> this.salvarDados());
     }
 
     /** Torna a janela visível. */
     public void iniciar() {
-        if(this.cliente != null){
-            this.popularViewComCliente(cliente);
-        }
-        
-        this.view.getJanelaPrincipal().setVisible(true);
+        this.command.iniciar();
     }
 
     /**
@@ -238,5 +236,22 @@ public class ClientePresenter {
     public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
         javax.swing.JOptionPane.showMessageDialog(
                 this.view.getJanelaPrincipal(), mensagem, titulo, tipoMensagem);
+    }
+    
+    private void limpar() {
+        // Limpa os campos de texto (Nome e CPF)
+        this.view.getCampoNome().setText("");
+        this.view.getCampoCpf().setText("");
+
+        // Limpa todas as células da tabela de endereços
+        DefaultTableModel modelo = this.view.getModeloEnderecos();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            for (int j = 1; j < modelo.getColumnCount(); j++) {
+                // A coluna 0 ("Padrão") é Boolean; usar false mantém o
+                // renderer consistente (radio desmarcado). As demais
+                // colunas aceitam null, o que resulta em célula vazia.
+                modelo.setValueAt(null, i, j);
+            }
+        }
     }
 }

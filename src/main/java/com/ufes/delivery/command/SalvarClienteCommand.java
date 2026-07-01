@@ -27,6 +27,11 @@ public class SalvarClienteCommand extends ClientePresenterCommand {
     }
     
     @Override
+    public void iniciar(){
+        this.clientePresenter.getView().getJanelaPrincipal().setVisible(true);
+    }
+    
+    @Override
     public void salvar() {
         // ---- 1. Lê os dados do formulário via Presenter ----
         String[] dadosCliente = clientePresenter.lerDadosClienteDaView();
@@ -71,7 +76,7 @@ public class SalvarClienteCommand extends ClientePresenterCommand {
         } catch (RuntimeException ex) {
             // Repositório lançou ao não encontrar — segue o fluxo de inclusão
         }
-
+        
         // ---- 5. Lê e valida os endereços (US06) ----
         List<Object[]> enderecosData = clientePresenter.lerEnderecosDaView();
         String erroEnd = validarEnderecos(enderecosData);
@@ -82,7 +87,7 @@ public class SalvarClienteCommand extends ClientePresenterCommand {
         }
 
         // ---- 6. Cria o cliente e adiciona os endereços ----
-        Cliente cliente = new Cliente(cpf, nome.trim(), "Bronze", 1.0);
+        Cliente cliente = new Cliente(cpf.replaceAll("[^0-9]", ""), nome.trim(), "Bronze", 1.0);
         for (Object[] endData : enderecosData) {
             cliente.addEndereco(construirEndereco(endData));
         }
@@ -96,5 +101,7 @@ public class SalvarClienteCommand extends ClientePresenterCommand {
                 "Cliente cadastrado com sucesso!",
                 "Sucesso",
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        
+        this.clientePresenter.getView().getJanelaPrincipal().dispose();
     }
 }

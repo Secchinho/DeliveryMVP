@@ -4,6 +4,7 @@ import com.ufes.delivery.command.AtualizarClienteCommand;
 import com.ufes.delivery.command.SalvarClienteCommand;
 import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.repository.IClienteRepository;
+import com.ufes.delivery.view.ClienteView;
 import com.ufes.delivery.view.IBuscarClienteView;
 import com.ufes.delivery.view.IClienteView;
 import java.util.ArrayList;
@@ -191,7 +192,7 @@ public class BuscarClientePresenter {
     private void adicionar() {
         try {
             
-            ClientePresenter presenter = new ClientePresenter(this.clienteView,this.clienteRepository);
+            ClientePresenter presenter = new ClientePresenter(new ClienteView(),this.clienteRepository);
             presenter.setCommand(new SalvarClienteCommand(presenter));
             presenter.iniciar();
         } catch (RuntimeException ex) {
@@ -236,7 +237,7 @@ public class BuscarClientePresenter {
         }
         
         try {
-            ClientePresenter presenter = new ClientePresenter(this.clienteView,this.clienteRepository,cliente);
+            ClientePresenter presenter = new ClientePresenter(new ClienteView(),this.clienteRepository,cliente);
             presenter.setCommand(new AtualizarClienteCommand(presenter));
             presenter.iniciar();
             
