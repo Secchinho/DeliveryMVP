@@ -10,6 +10,7 @@ import com.ufes.singleton.ConexaoSQLite;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,9 +33,13 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                 + "tipo TEXT NOT NULL, "
                 + "fidelidade DOUBLE NOT NULL);";
 
+        // cliente_id (FK para tbCliente.id) substitui a antiga cliente_cpf.
+        // O id do cliente é uma chave substituta e nunca é alterado pela
+        // aplicação, o que evita o risco de endereços "descolarem" do
+        // cliente em caso de edição do CPF.
         String sqlEndereco = "CREATE TABLE IF NOT EXISTS tbEndereco ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "clienteId INTEGER NOT NULL, "
+                + "cliente_id INTEGER NOT NULL, "
                 + "padrao INTEGER NOT NULL, "
                 + "logradouro TEXT NOT NULL, "
                 + "numero INTEGER NOT NULL, "
@@ -43,8 +48,8 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                 + "cidade TEXT NOT NULL, "
                 + "uf TEXT NOT NULL, "
                 + "cep TEXT NOT NULL, "
-                + "FOREIGN KEY (clienteId) REFERENCES tbCliente(id) "
-                + "ON DELETE CASCADE ON UPDATE CASCADE);";
+                + "FOREIGN KEY (cliente_id) REFERENCES tbCliente(id) "
+                + "ON DELETE CASCADE);";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement()) {
             stmt.execute(sqlCliente);
@@ -71,6 +76,9 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                         rs.getString("nome"),
                         rs.getString("tipo"),
                         rs.getDouble("fidelidade"));
+                // Necessário para que carregarEnderecos() encontre os
+                // endereços corretos (agora filtrados por cliente_id).
+                cliente.setId(rs.getInt("id"));
                 carregarEnderecos(conn, cliente);
                 clientes.add(cliente);
             }
@@ -99,12 +107,20 @@ public class ClienteRepositorySQLite implements IClienteRepository {
                     }
                 }
 
-                try (var stmtInsere = conn.prepareStatement(sqlInsereCliente)) {
+                try (var stmtInsere = conn.prepareStatement(sqlInsereCliente, Statement.RETURN_GENERATED_KEYS)) {
                     stmtInsere.setString(1, cliente.getCPF());
                     stmtInsere.setString(2, cliente.getNome());
                     stmtInsere.setString(3, cliente.getTipo());
                     stmtInsere.setDouble(4, cliente.getFidelidade());
                     stmtInsere.executeUpdate();
+
+                    // Captura o id gerado para o cliente, necessário para
+                    // gravar os endereços já vinculados por cliente_id.
+                    try (var rsChaves = stmtInsere.getGeneratedKeys()) {
+                        if (rsChaves.next()) {
+                            cliente.setId(rsChaves.getInt(1));
+                        }
+                    }
                 }
 
                 inserirEnderecos(conn, cliente);
@@ -126,7 +142,10 @@ public class ClienteRepositorySQLite implements IClienteRepository {
         String sqlBusca = "SELECT id FROM tbCliente WHERE id = ?";
         String sqlAtualizaCliente = "UPDATE tbCliente SET nome = ?, tipo = ?, fidelidade = ?, cpf = ?"
                 + "WHERE id = ?";
-        String sqlRemoveEnderecos = "DELETE FROM tbEndereco WHERE clienteId = ?";
+        // Corrigido: antes filtrava por "id" (a PK da própria tbEndereco)
+        // comparando com cliente.getId(), o que nunca apagava os endereços
+        // antigos do cliente correto. Agora filtra pela FK cliente_id.
+        String sqlRemoveEnderecos = "DELETE FROM tbEndereco WHERE cliente_id = ?";
 
         try (var conn = DriverManager.getConnection(this.url)) {
             conn.setAutoCommit(false);
@@ -169,16 +188,29 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     public void removerPorCPF(String cpf) {
         validarCPF(cpf);
 
-        String sqlDelEnd = "DELETE FROM tbEndereco WHERE cpf = ?";
+        String sqlBuscaId = "SELECT id FROM tbCliente WHERE cpf = ?";
+        String sqlDelEnd = "DELETE FROM tbEndereco WHERE cliente_id = ?";
         String sqlDelCliente = "DELETE FROM tbCliente WHERE cpf = ?";
 
         try (var conn = DriverManager.getConnection(this.url)) {
             conn.setAutoCommit(false);
             try {
-                try (var stmtDel = conn.prepareStatement(sqlDelEnd)) {
-                    stmtDel.setString(1, cpf);
-                    stmtDel.executeUpdate();
+                int clienteId = -1;
+                try (var stmtBusca = conn.prepareStatement(sqlBuscaId)) {
+                    stmtBusca.setString(1, cpf);
+                    var rs = stmtBusca.executeQuery();
+                    if (rs.next()) {
+                        clienteId = rs.getInt("id");
+                    }
                 }
+
+                if (clienteId != -1) {
+                    try (var stmtDel = conn.prepareStatement(sqlDelEnd)) {
+                        stmtDel.setInt(1, clienteId);
+                        stmtDel.executeUpdate();
+                    }
+                }
+
                 try (var stmtDel = conn.prepareStatement(sqlDelCliente)) {
                     stmtDel.setString(1, cpf);
                     stmtDel.executeUpdate();
@@ -196,7 +228,10 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     @Override
     public void removerPorId(int id) {
 
-        String sqlDelEnd = "DELETE FROM tbEndereco WHERE id = ?";
+        // Corrigido: o filtro antigo "WHERE id = ?" comparava a PK da
+        // própria tbEndereco com o id do cliente. O correto é filtrar
+        // pela FK cliente_id.
+        String sqlDelEnd = "DELETE FROM tbEndereco WHERE cliente_id = ?";
         String sqlDelCliente = "DELETE FROM tbCliente WHERE id = ?";
 
         try (var conn = DriverManager.getConnection(this.url)) {
@@ -317,7 +352,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
 
     private void carregarEnderecos(Connection conn, Cliente cliente) throws SQLException {
         String sql = "SELECT padrao, logradouro, numero, complemento, bairro, cidade, uf, cep "
-                + "FROM tbEndereco WHERE clienteId = ?";
+                + "FROM tbEndereco WHERE cliente_id = ?";
 
         try (var stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, cliente.getId());
@@ -338,7 +373,7 @@ public class ClienteRepositorySQLite implements IClienteRepository {
     }
 
     private void inserirEnderecos(Connection conn, Cliente cliente) throws SQLException {
-        String sqlInsereEndereco = "INSERT INTO tbEndereco(clienteId, padrao, logradouro, "
+        String sqlInsereEndereco = "INSERT INTO tbEndereco(cliente_id, padrao, logradouro, "
                 + "numero, complemento, bairro, cidade, uf, cep) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
