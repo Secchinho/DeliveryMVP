@@ -9,7 +9,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,11 +23,10 @@ import javax.swing.border.TitledBorder;
 /**
  * Tela de Login do sistema.
  *
- * @author raphael
+ * @author fabricio
  */
 public class LoginView extends JFrame implements ILoginView {
 
-    // Componentes visuais
     private JPanel dadosDeAcessoPanel;
     private JLabel nomeLbl;
     private JLabel senhaLbl;
@@ -38,9 +36,6 @@ public class LoginView extends JFrame implements ILoginView {
     private JButton cancelarBtn;
     private JButton acessarBtn;
 
-    // =========================================================================
-    // MÉTODOS DA INTERFACE ILoginView
-    // =========================================================================
     @Override
     public JButton getAcessarButton() {
         return this.acessarBtn;
@@ -71,9 +66,6 @@ public class LoginView extends JFrame implements ILoginView {
         return this;
     }
 
-    /**
-     * Creates new form TelaLoginView
-     */
     public LoginView() {
         initComponents();
         setTitle("Login");
@@ -88,9 +80,6 @@ public class LoginView extends JFrame implements ILoginView {
         JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
         panelPrincipal.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // =====================================================================
-        // Painel de Dados de Acesso (Borda Titulada) - Fica no CENTRO
-        // =====================================================================
         dadosDeAcessoPanel = new JPanel(new GridBagLayout());
         TitledBorder titulo = javax.swing.BorderFactory.createTitledBorder("Dados de Acesso");
         dadosDeAcessoPanel.setBorder(titulo);
@@ -150,45 +139,13 @@ public class LoginView extends JFrame implements ILoginView {
         botoesPanel.add(cancelarBtn);
         botoesPanel.add(cadastrarBtn);
 
-        // =====================================================================
-        // Adicionando os painéis ao JFrame
-        // =====================================================================
         panelPrincipal.add(dadosDeAcessoPanel, BorderLayout.CENTER);
         panelPrincipal.add(botoesPanel, BorderLayout.SOUTH);
 
         getContentPane().add(panelPrincipal);
-
-        // Eventos (você pode implementar depois)
-        nomeTxt.addActionListener(this::nomeTxtActionPerformed);
-        cadastrarBtn.addActionListener(this::cadastrarBtnActionPerformed);
     }
 
-    private void nomeTxtActionPerformed(ActionEvent evt) {
-        // TODO: Adicione sua lógica de ação ao pressionar Enter no campo de nome, se necessário
-    }
-
-    private void cadastrarBtnActionPerformed(ActionEvent evt) {
-        // TODO: Adicione sua lógica para abrir a tela de cadastro de usuários aqui
-        // Exemplo:
-        // TelaUsuariosView telaUsuarios = new TelaUsuariosView();
-        // telaUsuarios.setVisible(true);
-    }
-
-    // =========================================================================
-    // MÉTODO PARA CARREGAR DADOS (TESTE)
-    // =========================================================================
-    /**
-     * Método para carregar dados de exemplo para teste.
-     * Descomente e adicione sua lógica real de carregamento (ex: do banco de dados).
-     */
-    // public void carregarDadosExemplo() {
-    //     this.nomeTxt.setText("fulano123");
-    //     this.senhaTxt.setText("123456");
-    // }
-
-    // =========================================================================
-    // MAIN PARA TESTAR A TELA
-    // =========================================================================
+    
     public static void main(String[] args) {
         try {
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
