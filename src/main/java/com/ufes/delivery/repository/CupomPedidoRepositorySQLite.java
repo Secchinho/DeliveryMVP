@@ -27,7 +27,7 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
 
         String sql = "CREATE TABLE IF NOT EXISTS tbCupomPedido ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "codigo TEXT NOT NULL,"
-                + "percentual DOUBLE NOT NULL," + "dataHoraInicio TEXT NOT NULL"
+                + "percentual DOUBLE NOT NULL," + "dataHoraInicio TEXT NOT NULL, "
                 + "dataHoraFim TEXT NOT NULL" + ");";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement()) {
@@ -111,14 +111,13 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
 
     @Override
     public void removerCuponsExpirados() {
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
-                + "tbUsuario";
+        String sql = "SELECT codigo, dataHoraFim FROM tbCupomPedido";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 String dataFimStr = rs.getString("dataHoraFim");
                 LocalDateTime dataFim = LocalDateTime.parse(dataFimStr,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
                 if (dataFim.isBefore(LocalDateTime.now())) {
                     sql = "DELETE FROM tbUsuario WHERE userName = ?";
@@ -136,8 +135,8 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
     public Optional<CupomDescontoPedido> buscarCupom(String codigo) {
         validarCodigoCupom(codigo);
 
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
-                + "tbUsuario WHERE userName = ?";
+        String sql = "SELECT codigo, percentual, dataHoraInicio, dataHoraFim FROM "
+                + "tbCupomPedido WHERE codigo = ?";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, codigo);
@@ -146,13 +145,14 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
             if (rs.next()) {
                 String dataFimStr = rs.getString("dataHoraFim");
                 LocalDateTime dataFim = LocalDateTime.parse(dataFimStr,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
                 String dataInicioStr = rs.getString("dataHoraInicio");
                 LocalDateTime dataInicio = LocalDateTime.parse(dataInicioStr,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
                 return Optional.of(new CupomDescontoPedido(rs.getString("codigo"),
-                         rs.getDouble("percentual"), dataInicio, dataFim));
+                        rs.getDouble("percentual"), dataInicio, dataFim));
             }
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
@@ -166,32 +166,30 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
         Map<String, CupomDescontoPedido> cuponsDisponiveis = new HashMap<>();
         removerCuponsExpirados();
 
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
-                + "tbUsuario";
+        String sql = "SELECT codigo, percentual, dataHoraInicio, dataHoraFim FROM "
+                + "tbCupomPedido";
 
-        try (var conn = DriverManager.getConnection(this.url); 
-                var stmt = conn.createStatement(); 
-                var rs = stmt.executeQuery(sql)) {
-            
+        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 String dataFimStr = rs.getString("dataHoraFim");
                 LocalDateTime dataFim = LocalDateTime.parse(dataFimStr,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
                 String dataInicioStr = rs.getString("dataHoraInicio");
                 LocalDateTime dataInicio = LocalDateTime.parse(dataInicioStr,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
                 cuponsDisponiveis.put(rs.getString("codigo"),
                         new CupomDescontoPedido(rs.getString("codigo"),
                                 rs.getDouble("Percentual"), dataInicio, dataFim));
             }
-            
+
             return Map.copyOf(cuponsDisponiveis);
         } catch (SQLException e) {
             System.out.println("ERRO!!! " + e.getMessage());
         }
-        
+
         return null;
     }
 
