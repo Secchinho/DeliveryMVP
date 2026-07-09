@@ -34,7 +34,6 @@ public class PedidoView extends JFrame implements IPedidoView {
     private JButton btnPagar;
     private JButton btnCancelar;
     
-    //private PedidoPresenter presenter;
 
     public PedidoView() {
         super("Pedido");
@@ -153,12 +152,7 @@ public class PedidoView extends JFrame implements IPedidoView {
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================
-
-    /*public void setPresenter(PedidoPresenter presenter) {
-        this.presenter = presenter;
-    } */
     
-
     private void initComponents() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(770, 620);
@@ -340,16 +334,5 @@ public class PedidoView extends JFrame implements IPedidoView {
             }
             return dados;
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
-            PedidoView view = new PedidoView();
-            view.setVisible(true);
-        });
     }
 }

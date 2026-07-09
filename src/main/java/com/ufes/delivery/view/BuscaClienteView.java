@@ -21,9 +21,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
     private JButton btnNovo;
     private JButton btnVisualizar;
     private JButton btnFechar;
-    
-    // Referência para o Presenter
-    //private BuscarClientePresenter presenter;
 
     // =========================================================================
     // IMPLEMENTAÇÃO DA INTERFACE (IBuscarClienteView)
@@ -97,9 +94,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
     public BuscaClienteView() {
         super("Clientes");
         initComponents();
-        
-        // Nota: NÃO carregamos dados de exemplo aqui. O Presenter iniciará a busca.
-        // Ou, se quiser, pode chamar presenter.iniciar() aqui após o setPresenter.
     }
 
     private void initComponents() {
@@ -159,9 +153,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
 
         painel.add(linha, BorderLayout.CENTER);
 
-        // REMOVIDO: A lógica de ação foi removida daqui. 
-        // O Presenter vai adicionar o listener externamente.
-
         return painel;
     }
 
@@ -203,33 +194,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
         painel.add(btnVisualizar);
         painel.add(btnFechar);
 
-        // REMOVIDO: A lógica de ação foi removida daqui.
-
         return painel;
-    }
-
-    /*Método para ligar a View ao Presenter
-    public void setPresenter(BuscarClientePresenter presenter) {
-        this.presenter = presenter;
-    }
-    */
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ignored) {
-            }
-            
-            // FLUXO DE CRIAÇÃO NO MVP:
-            BuscaClienteView view = new BuscaClienteView();
-            //BuscarClientePresenter presenter = new BuscarClientePresenter(view);
-            //view.setPresenter(presenter);
-            
-            // O Presenter configura os eventos e exibe os dados iniciais
-            //presenter.iniciar();
-            
-            view.setVisible(true);
-        });
     }
 }

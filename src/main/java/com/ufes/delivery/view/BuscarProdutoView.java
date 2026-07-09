@@ -21,9 +21,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
     private JButton btnVisualizar;
     private JButton btnFechar;
 
-    // ----- Atributo do Presenter (Comentado para uso futuro) -----
-    // private BuscarProdutoPresenter presenter;
-
     public BuscarProdutoView() {
         super("Produtos");
         initComponents();
@@ -81,14 +78,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================
 
-    /**
-     * Método para ligar a View ao Presenter.
-     * Descomente e utilize quando criar a classe BuscarProdutoPresenter.
-     */
-    // public void setPresenter(BuscarProdutoPresenter presenter) {
-    //     this.presenter = presenter;
-    // }
-
     private void initComponents() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(760, 600);
@@ -138,9 +127,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
         gbc.gridx = 4; gbc.weightx = 0;
         painel.add(btnBuscar, gbc);
 
-        // --- REMOVIDO: Listener do btnBuscar ---
-        // A lógica será tratada no Presenter
-
         return painel;
     }
 
@@ -156,9 +142,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
                 return column == 5;
             }
         };
-
-        // --- REMOVIDO: Dados Mock (linhas de exemplo) ---
-        // A tabela agora inicia vazia, pronta para ser populada pelo Presenter.
 
         tabelaResultados = new JTable(modeloResultados);
         tabelaResultados.setRowHeight(28);
@@ -182,18 +165,12 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
         btnVisualizar = new JButton("Visualizar");
         btnFechar = new JButton("Fechar");
 
-        // --- REMOVIDO: Listeners dos botões inferiores ---
-        // As lógicas serão tratadas no Presenter
-
         painel.add(btnNovo);
         painel.add(btnVisualizar);
         painel.add(btnFechar);
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Renderer/Editor (Mantidos, pois são puramente visuais)
-    // ---------------------------------------------------------------
     private class BotaoAcaoRenderer extends JButton implements javax.swing.table.TableCellRenderer {
         BotaoAcaoRenderer() {
             setText("Visualizar");
@@ -213,8 +190,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
 
         BotaoAcaoEditor() {
             botao.addActionListener(e -> {
-                // --- REMOVIDO: Lógica de negócio dentro do botão da tabela ---
-                // O Presenter deve recuperar o código do produto e decidir o que fazer.
                 fireEditingStopped();
             });
         }
@@ -230,16 +205,5 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
         public Object getCellEditorValue() {
             return "Visualizar";
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
-            BuscarProdutoView view = new BuscarProdutoView();
-            view.setVisible(true);
-        });
     }
 }

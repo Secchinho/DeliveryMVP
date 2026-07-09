@@ -329,13 +329,4 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
     public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
         JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ignored) {}
-            new PainelOperacionalView().setVisible(true);
-        });
-    }
 }

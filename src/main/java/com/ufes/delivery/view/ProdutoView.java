@@ -17,9 +17,6 @@ public class ProdutoView extends JFrame implements IProdutoView {
     private JButton btnSalvar;
     private JButton btnCancelar;
 
-    // ----- Atributo do Presenter (Comentado para uso futuro) -----
-    // private ProdutoPresenter presenter;
-
     public ProdutoView() {
         super("Produto");
         initComponents();
@@ -46,40 +43,32 @@ public class ProdutoView extends JFrame implements IProdutoView {
     
     @Override
     public JTextField getTxtCodigo() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.txtCodigo;
     }
 
     @Override
     public JTextField getTxtNome() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.txtNome;
     }
 
     @Override
     public JTextField getTxtPrecoUnitario() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.txtPrecoUnitario;
     }
 
     @Override
     public JTextField getTxtQuantidadeInicial() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.txtQuantidadeInicial;
     }
 
     @Override
     public JComboBox<String> getComboCategoria() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.cmbCategoria;
     }
 
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================
-
-    /**
-     * Método para ligar a View ao Presenter.
-     * Descomente e utilize quando criar a classe ProdutoPresenter.
-     */
-    // public void setPresenter(ProdutoPresenter presenter) {
-    //     this.presenter = presenter;
-    // }
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -174,16 +163,5 @@ public class ProdutoView extends JFrame implements IProdutoView {
         painel.add(btnSalvar);
         painel.add(btnCancelar);
         return painel;
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
-            ProdutoView view = new ProdutoView();
-            view.setVisible(true);
-        });
     }
 }

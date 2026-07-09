@@ -21,8 +21,6 @@ public class ClienteView extends JFrame implements IClienteView {
     private JButton btnCancelar;
 
     private static final int MAX_ENDERECOS = 3;
-    
-    //private ClientePresenter presenter;
 
     public ClienteView() {
         super("Cliente");
@@ -68,84 +66,9 @@ public class ClienteView extends JFrame implements IClienteView {
         return this.modeloEnderecos;
     }
 
-//    @Override
-//    public String getNome() {
-//        return txtNome.getText().trim();
-//    }
-//
-//    @Override
-//    public String getCpf() {
-//        return txtCpf.getText().trim();
-//    }
-//
-//    @Override
-//    public List<Object[]> getDadosEnderecos() {
-//        List<Object[]> dados = new ArrayList<>();
-//        for (int i = 0; i < modeloEnderecos.getRowCount(); i++) {
-//            // Verifica se a linha tem pelo menos um endereço preenchido
-//            String logradouro = (String) modeloEnderecos.getValueAt(i, 1);
-//            if (logradouro != null && !logradouro.isBlank()) {
-//                Object[] linha = new Object[8];
-//                linha[0] = modeloEnderecos.getValueAt(i, 0); // Padrão (Boolean)
-//                linha[1] = logradouro;
-//                linha[2] = modeloEnderecos.getValueAt(i, 2); // Número
-//                linha[3] = modeloEnderecos.getValueAt(i, 3); // Complemento
-//                linha[4] = modeloEnderecos.getValueAt(i, 4); // Bairro
-//                linha[5] = modeloEnderecos.getValueAt(i, 5); // Cidade
-//                linha[6] = modeloEnderecos.getValueAt(i, 6); // UF
-//                linha[7] = modeloEnderecos.getValueAt(i, 7); // CEP
-//                dados.add(linha);
-//            }
-//        }
-//        return dados;
-//    }
-//
-//    @Override
-//    public void setNome(String nome) {
-//        this.txtNome.setText(nome);
-//    }
-//
-//    @Override
-//    public void setCpf(String cpf) {
-//        this.txtCpf.setText(cpf);
-//    }
-//
-//    @Override
-//    public void setEnderecosTabela(List<Object[]> enderecos) {
-//        // Limpa a tabela primeiro
-//        for (int i = 0; i < MAX_ENDERECOS; i++) {
-//            for (int j = 0; j < modeloEnderecos.getColumnCount(); j++) {
-//                modeloEnderecos.setValueAt(null, i, j);
-//            }
-//        }
-//        // Preenche com os dados recebidos
-//        for (int i = 0; i < enderecos.size() && i < MAX_ENDERECOS; i++) {
-//            Object[] end = enderecos.get(i);
-//            for (int j = 0; j < end.length && j < modeloEnderecos.getColumnCount(); j++) {
-//                modeloEnderecos.setValueAt(end[j], i, j);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
-//        JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
-//    }
-//
-//    @Override
-//    public void fecharTela() {
-//        this.dispose();
-//    }
-
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================
-
-    /*  PRESENTER
-    public void setPresenter(ClientePresenter presenter) {
-        this.presenter = presenter;
-    }
-    */
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -241,20 +164,12 @@ public class ClienteView extends JFrame implements IClienteView {
 
         btnSalvar = new JButton("Salvar");
         btnCancelar = new JButton("Cancelar");
-
-        // IMPORTANTE: No MVP, a View NÃO pode ter ActionListeners.
-        // A lógica será implementada no ClientePresenter.
-        // O Presenter vai acessar getBotaoSalvar() e fazer:
-        // view.getBotaoSalvar().addActionListener(e -> presenter.salvarCliente());
         
         painel.add(btnSalvar);
         painel.add(btnCancelar);
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Renderer/Editor (Mantido intacto, pois é puramente visual)
-    // ---------------------------------------------------------------
     private class RadioButtonRenderer extends JPanel implements javax.swing.table.TableCellRenderer {
         private final JRadioButton radio = new JRadioButton();
 
@@ -271,17 +186,5 @@ public class ClienteView extends JFrame implements IClienteView {
             setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
             return this;
         }
-    }
-
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
-            ClienteView view = new ClienteView();
-            view.setVisible(true);
-        });
     }
 }

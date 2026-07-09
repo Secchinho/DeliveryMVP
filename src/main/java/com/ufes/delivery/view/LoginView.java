@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
@@ -143,19 +142,5 @@ public class LoginView extends JFrame implements ILoginView {
         panelPrincipal.add(botoesPanel, BorderLayout.SOUTH);
 
         getContentPane().add(panelPrincipal);
-    }
-
-    
-    public static void main(String[] args) {
-        try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaLoginViewAntiga.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            LoginView tela = new LoginView();
-            tela.setVisible(true);
-        });
     }
 }

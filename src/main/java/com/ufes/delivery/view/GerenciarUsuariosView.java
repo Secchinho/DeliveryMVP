@@ -34,9 +34,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
     private JButton excluirBtn;
     private JButton novoBtn;
     private JButton fecharBtn;
-    
-    // Referência para o Presenter
-    //private IGerenciarUsuariosPresenter presenter; 
 
     // =========================================================================
     // IMPLEMENTAÇÃO DA INTERFACE (IGerenciarUsuariosView)
@@ -178,33 +175,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
         add(buscaPanel, BorderLayout.NORTH);
         add(usuariosPanel, BorderLayout.CENTER);
         add(botoesPanel, BorderLayout.SOUTH);
-
-        // -----------------------------------------------------------
-        // EVENTOS: DISPARAM O PRESENTER
-        // -----------------------------------------------------------
-        buscarBtn.addActionListener(evt -> {
-            //if(presenter != null) presenter.buscarUsuario();
-        });
-        
-        autorizarBtn.addActionListener(evt -> {
-            //if(presenter != null) presenter.autorizarUsuario();
-        });
-        
-        desautorizarBtn.addActionListener(evt -> {
-            //if(presenter != null) presenter.desautorizarUsuario();
-        });
-        
-        excluirBtn.addActionListener(evt -> {
-            //if(presenter != null) presenter.excluirUsuario();
-        });
-        
-        novoBtn.addActionListener(evt -> {
-            //if(presenter != null) presenter.novoUsuario();
-        });
-        
-        fecharBtn.addActionListener(evt -> {
-            //if(presenter != null) presenter.iniciar(); // Ou um método de fechar
-        });
     }
 
     // ======================================================================
@@ -300,21 +270,5 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
             }
             fireTableRowsUpdated(rowIndex, rowIndex);
         }
-    }
-
-    // ======================================================================
-    // MAIN (Para testes visuais)
-    // ======================================================================
-    public static void main(String[] args) {
-        try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(GerenciarUsuariosView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            GerenciarUsuariosView tela = new GerenciarUsuariosView();
-            tela.setVisible(true);
-        });
     }
 }

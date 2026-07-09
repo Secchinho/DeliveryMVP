@@ -32,9 +32,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
     private JButton btnConfirmarMovimentacao;
     private JButton btnCancelar;
 
-    // ----- Atributo do Presenter (Comentado para uso futuro) -----
-    // private MovimentacaoEstoquePresenter presenter;
-
     public MovimentacaoEstoqueView() {
         super("Movimentação de Estoque");
         initComponents();
@@ -150,14 +147,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================
 
-    /**
-     * Método para ligar a View ao Presenter.
-     * Descomente e utilize quando criar a classe MovimentacaoEstoquePresenter.
-     */
-    // public void setPresenter(MovimentacaoEstoquePresenter presenter) {
-    //     this.presenter = presenter;
-    // }
-
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(770, 640);
@@ -204,9 +193,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
                 return false;
             }
         };
-
-        // --- REMOVIDO: Dados Mock ---
-        // A tabela inicia vazia, o Presenter irá preencher.
 
         tabelaProdutos = new JTable(modeloProdutos);
         tabelaProdutos.setRowHeight(26);
@@ -349,22 +335,8 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         btnConfirmarMovimentacao = new JButton("Confirmar movimentação");
         btnCancelar = new JButton("Cancelar");
 
-        // --- REMOVIDO: Listeners de botões ---
-        // A lógica será tratada no Presenter.
-
         painel.add(btnConfirmarMovimentacao);
         painel.add(btnCancelar);
         return painel;
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
-            MovimentacaoEstoqueView view = new MovimentacaoEstoqueView();
-            view.setVisible(true);
-        });
     }
 }

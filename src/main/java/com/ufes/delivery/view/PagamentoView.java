@@ -31,8 +31,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
     // ----- Botão -----
     private JButton btnFechar;
 
-    // ----- Atributo do Presenter (Comentado para uso futuro) -----
-    // private PagamentoPresenter presenter;
 
     public PagamentoView() {
         super("Pagamento");
@@ -104,9 +102,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
     @Override
     public void setValorPago(String valor) {
         this.lblValorPagoValor.setText(valor);
-        // Destaque de fundo na linha "Valor pago", se desejar:
-        // this.lblValorPagoValor.setOpaque(true);
-        // this.lblValorPagoValor.setBackground(new Color(226, 245, 222));
     }
 
     @Override
@@ -142,14 +137,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================
-
-    /**
-     * Método para ligar a View ao Presenter.
-     * Descomente e utilize quando criar a classe PagamentoPresenter.
-     */
-    // public void setPresenter(PagamentoPresenter presenter) {
-    //     this.presenter = presenter;
-    // }
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -322,30 +309,7 @@ public class PagamentoView extends JFrame implements IPagamentoView {
 
         btnFechar = new JButton("Fechar");
 
-        // --- REMOVIDO: Listener do botão Fechar ---
-        // A lógica de navegação será tratada no Presenter.
-
         painel.add(btnFechar);
         return painel;
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
-            PagamentoView view = new PagamentoView();
-
-            // ---------------------------------------------------------------
-            // FLUXO DE CRIAÇÃO DO MVP (Descomente quando criar o Presenter)
-            // ---------------------------------------------------------------
-            // PagamentoPresenter presenter = new PagamentoPresenter(view);
-            // view.setPresenter(presenter);
-            // presenter.iniciar(); // Para popular todos os dados do pagamento!
-            // ---------------------------------------------------------------
-
-            view.setVisible(true);
-        });
     }
 }

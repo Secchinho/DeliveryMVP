@@ -20,7 +20,6 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
     }
 
     private void initComponents() {
-        // ATENÇÃO AQUI: Usando os ATRIBUTOS da classe (this.xxx)
         this.nomeCivilTxt = new JTextField(15);
         this.nomeUsuarioTxt = new JTextField(15);
         this.senhaTxt = new JPasswordField(15);
@@ -63,7 +62,6 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
         this.add(panel);
     }
 
-    // Getters exigidos pela Interface
     @Override
     public JButton getConfirmarButton() {
         return this.confirmarBtn;
@@ -92,19 +90,5 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
     @Override
     public JFrame getJanelaPrincipal(){
         return this;
-    }
-
-    public static void main(String[] args) {
-        try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(CadastrarUsuarioView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            // Agora a tela será exibida de verdade
-            CadastrarUsuarioView tela = new CadastrarUsuarioView();
-            tela.setVisible(true);
-        });
     }
 }
