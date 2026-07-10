@@ -18,7 +18,7 @@ public class Pedido {
     private LocalDateTime data;
     private int codigoPedido;
     private ILogger logger;
-
+    private String estado;
     private CupomDescontoPedido cupomPedidoAplicado;
 
     public Pedido(LocalDateTime data, Cliente cliente, int codigoPedido, ILogger logger) {
@@ -34,6 +34,7 @@ public class Pedido {
         this.data = data;
         this.codigoPedido = codigoPedido;
         this.logger = logger;
+        estado = "Novo";
     }
 
     public void adicionarItem(Item objeto) {
@@ -71,6 +72,14 @@ public class Pedido {
 
     public double getTaxaEntrega() {
         return taxaEntrega;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public void setLogger(ILogger logger) {
