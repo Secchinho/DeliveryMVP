@@ -12,4 +12,5 @@ public interface ICadastrarUsuarioView {
     JTextField getCampoNomeCivil();
     JPasswordField getCampoSenha();
     JFrame getJanelaPrincipal();
+    void exibirMensagem(String mensagem, String titulo, int tipoMensagem);
 }

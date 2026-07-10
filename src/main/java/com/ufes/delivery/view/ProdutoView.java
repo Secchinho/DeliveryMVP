@@ -66,6 +66,11 @@ public class ProdutoView extends JFrame implements IProdutoView {
         return this.cmbCategoria;
     }
 
+    @Override
+    public void exibirMensagem(String mensagem, String titulo, int tipo) {
+        JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
+    }
+
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================

@@ -7,8 +7,6 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public interface IBuscarProdutoView {
-    
-    // --- Getters para Componentes ---
     JButton getBuscarButton();
     JButton getNovoButton();
     JButton getVisualizarButton();
@@ -18,4 +16,5 @@ public interface IBuscarProdutoView {
     JTextField getTxtValor();
     JTable getTabelaResultados();
     DefaultTableModel getModeloResultados();
+    void exibirMensagem(String mensagem, String titulo, int tipoMensagem);
 }

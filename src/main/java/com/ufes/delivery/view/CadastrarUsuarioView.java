@@ -91,4 +91,9 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
     public JFrame getJanelaPrincipal(){
         return this;
     }
+
+    @Override
+    public void exibirMensagem(String mensagem, String titulo, int tipo) {
+        JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
+    }
 }

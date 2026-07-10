@@ -66,6 +66,11 @@ public class ClienteView extends JFrame implements IClienteView {
         return this.modeloEnderecos;
     }
 
+    @Override
+    public void exibirMensagem(String mensagem, String titulo, int tipo) {
+        JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
+    }
+
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================

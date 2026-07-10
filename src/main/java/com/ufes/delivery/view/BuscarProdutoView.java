@@ -74,6 +74,11 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
     public DefaultTableModel getModeloResultados() {
         return this.modeloResultados;
     }
+
+    @Override
+    public void exibirMensagem(String mensagem, String titulo, int tipo) {
+        JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
+    }
     // =========================================================================
     // FIM DA IMPLEMENTAÇÃO DA INTERFACE
     // =========================================================================

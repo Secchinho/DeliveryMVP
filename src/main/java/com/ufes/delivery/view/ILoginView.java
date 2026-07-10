@@ -14,12 +14,11 @@ import javax.swing.JTextField;
  * @author lucas
  */
 public interface ILoginView {
-    public JButton getAcessarButton();
-    public JButton getCancelarButton();
-    public JButton getCadastrarUsuarioButton();
-    
-    public JTextField getNomeUsuario();
-    public JPasswordField getSenhaUsuario();
-    
-    public JFrame getJanelaPrincipal();
+    JButton getAcessarButton();
+    JButton getCancelarButton();
+    JButton getCadastrarUsuarioButton();
+    JTextField getNomeUsuario();
+    JPasswordField getSenhaUsuario();
+    JFrame getJanelaPrincipal();
+    void exibirMensagem(String mensagem, String titulo, int tipoMensagem);
 }

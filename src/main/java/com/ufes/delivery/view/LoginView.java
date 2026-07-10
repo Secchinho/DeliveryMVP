@@ -13,6 +13,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -63,6 +64,11 @@ public class LoginView extends JFrame implements ILoginView {
     @Override
     public JFrame getJanelaPrincipal() {
         return this;
+    }
+
+    @Override
+    public void exibirMensagem(String mensagem, String titulo, int tipo) {
+        JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
     }
 
     public LoginView() {
