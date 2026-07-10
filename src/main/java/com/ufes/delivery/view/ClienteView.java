@@ -19,10 +19,6 @@ public class ClienteView extends JFrame implements IClienteView {
         initComponents();
     }
 
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IClienteView)
-    // =========================================================================
-
     @Override
     public JTextField getCampoNome() {
         return this.txtNome;
@@ -62,10 +58,6 @@ public class ClienteView extends JFrame implements IClienteView {
     public void exibirMensagem(String mensagem, String titulo, int tipo) {
         JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
     }
-
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -124,7 +116,7 @@ public class ClienteView extends JFrame implements IClienteView {
         modeloEnderecos = new DefaultTableModel(colunas, MAX_ENDERECOS) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true; // Coluna 0 (Padrão) também precisa ser editável para o editor funcionar
+                return true;
             }
         };
 
@@ -135,7 +127,6 @@ public class ClienteView extends JFrame implements IClienteView {
         tabelaEnderecos.getColumnModel().getColumn(0).setMaxWidth(70);
         tabelaEnderecos.getColumnModel().getColumn(0).setCellRenderer(new RadioButtonRenderer());
 
-        // MouseListener garante: (1) ativação com 1 clique, (2) desmarca outras linhas no modelo
         tabelaEnderecos.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {

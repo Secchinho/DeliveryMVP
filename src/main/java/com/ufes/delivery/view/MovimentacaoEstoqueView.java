@@ -20,8 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -49,10 +47,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         super("Movimentação de Estoque");
         initComponents();
     }
-
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IMovimentacaoEstoqueView)
-    // =========================================================================
 
     @Override
     public String getTermoBuscaProduto() {
@@ -156,10 +150,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         return this;
     }
 
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
-
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(770, 640);
@@ -183,9 +173,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         painelPrincipal.add(criarPainelBotoes(), BorderLayout.SOUTH);
     }
 
-    // ---------------------------------------------------------------
-    // Painel "Busca de Produtos"
-    // ---------------------------------------------------------------
     private JPanel criarPainelBuscaProdutos() {
         JPanel painel = new JPanel(new BorderLayout(8, 8));
         painel.setBorder(new TitledBorder("Busca de Produtos"));
@@ -229,9 +216,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Painel "Produto Selecionado" (somente leitura)
-    // ---------------------------------------------------------------
     private JPanel criarPainelProdutoSelecionado() {
         JPanel painel = new JPanel(new GridBagLayout());
         painel.setBorder(new TitledBorder("Produto Selecionado"));
@@ -260,9 +244,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Painel "Movimentação"
-    // ---------------------------------------------------------------
     private JPanel criarPainelMovimentacao() {
         JPanel painel = new JPanel(new GridBagLayout());
         painel.setBorder(new TitledBorder("Movimentação"));
@@ -272,13 +253,13 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Linha 1: Data (Desabilitada - será preenchida pelo sistema)
+        // Linha 1: Data
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         painel.add(new JLabel("Data da movimentação"), gbc);
 
         cmbDataMovimentacao = new JComboBox<>();
         cmbDataMovimentacao.setEditable(false);
-        cmbDataMovimentacao.setEnabled(false); // O Presenter define a data atual
+        cmbDataMovimentacao.setEnabled(false); 
         cmbDataMovimentacao.setPreferredSize(new Dimension(140, cmbDataMovimentacao.getPreferredSize().height));
         gbc.gridx = 1; gbc.weightx = 0;
         painel.add(cmbDataMovimentacao, gbc);
@@ -338,9 +319,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Painel de botões "Confirmar movimentação" / "Cancelar"
-    // ---------------------------------------------------------------
     private JPanel criarPainelBotoes() {
         JPanel painel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -350,16 +328,5 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         painel.add(btnConfirmarMovimentacao);
         painel.add(btnCancelar);
         return painel;
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
-            MovimentacaoEstoqueView view = new MovimentacaoEstoqueView();
-            view.setVisible(true);
-        });
     }
 }

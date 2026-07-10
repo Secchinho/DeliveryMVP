@@ -19,13 +19,9 @@ import javax.swing.table.TableColumn;
 import com.ufes.delivery.model.Usuario;
 
 public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosView {
-
     private static final String[] PERFIS = {"Atendente", "Administrador"};
-
     private List<Usuario> todosUsuarios;
     private UsuariosTableModel tableModel;
-
-    // Componentes visuais
     private JTextField nomeBuscaTxt;
     private JTable usuariosTable;
     private JButton autorizarBtn;
@@ -35,9 +31,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
     private JButton fecharBtn;
     private JButton buscarBtn;
 
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IGerenciarUsuariosView)
-    // =========================================================================
     @Override
     public JButton getBuscarBtn() {
         return buscarBtn;
@@ -106,10 +99,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
     public JFrame getJanelaPrincipal(){
         return this;
     }
-    
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
 
     public GerenciarUsuariosView() {
         this.todosUsuarios = new ArrayList<>(); 
@@ -134,7 +123,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
     private void initComponents() {
         setLayout(new BorderLayout(10, 10));
 
-        // Painel de Busca
         JPanel buscaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         buscaPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Busca de Usuários"));
 
@@ -146,7 +134,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
         buscaPanel.add(nomeBuscaTxt);
         buscaPanel.add(buscarBtn);
 
-        // Painel de Usuários (Tabela)
         JPanel usuariosPanel = new JPanel(new BorderLayout());
         usuariosPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuários"));
 
@@ -154,7 +141,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
         JScrollPane usuariosScroll = new JScrollPane(usuariosTable);
         usuariosPanel.add(usuariosScroll, BorderLayout.CENTER);
 
-        // Painel de Botões
         JPanel botoesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
 
         autorizarBtn = new JButton("Autorizar");
@@ -175,9 +161,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
         add(botoesPanel, BorderLayout.SOUTH);
     }
 
-    // ======================================================================
-    // MODELO DA TABELA (Mantido igual)
-    // ======================================================================
     private static class UsuariosTableModel extends AbstractTableModel {
         static final int COL_SEL = 0;
         static final int COL_USERNAME = 1;

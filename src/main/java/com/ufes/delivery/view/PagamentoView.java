@@ -27,10 +27,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         initComponents();
     }
 
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IPagamentoView)
-    // =========================================================================
-
     @Override
     public void setStatusPagamento(String status, boolean aprovado) {
         this.lblStatusPagamento.setText(status);
@@ -129,10 +125,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
     }
 
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
-
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(770, 620);
@@ -160,9 +152,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         painelPrincipal.add(criarPainelBotoes(), BorderLayout.SOUTH);
     }
 
-    // ---------------------------------------------------------------
-    // Faixa "Pagamento aprovado" / "Pagamento reprovado"
-    // ---------------------------------------------------------------
     private JPanel criarFaixaStatusPagamento() {
         lblStatusPagamento = new JLabel("", SwingConstants.CENTER);
         lblStatusPagamento.setFont(lblStatusPagamento.getFont().deriveFont(Font.BOLD, 20f));
@@ -174,9 +163,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Faixa "Pedido pronto para entrega" (ou outra situação do pedido)
-    // ---------------------------------------------------------------
     private JPanel criarFaixaStatusPedido() {
         lblStatusPedido = new JLabel("", SwingConstants.CENTER);
         lblStatusPedido.setFont(lblStatusPedido.getFont().deriveFont(Font.BOLD, 18f));
@@ -190,9 +176,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Painel "Resumo do Pedido"
-    // ---------------------------------------------------------------
     private JPanel criarPainelResumoPedido() {
         JPanel painel = new JPanel(new GridBagLayout());
         painel.setBorder(new TitledBorder("Resumo do Pedido"));
@@ -214,9 +197,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Painel "Informações do Pagamento"
-    // ---------------------------------------------------------------
     private JPanel criarPainelInformacoesPagamento() {
         JPanel painel = new JPanel(new GridBagLayout());
         painel.setBorder(new TitledBorder("Informações do Pagamento"));
@@ -241,9 +221,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         return painel;
     }
 
-    // ---------------------------------------------------------------
-    // Painel "Entrega"
-    // ---------------------------------------------------------------
     private JPanel criarPainelEntrega() {
         JPanel painel = new JPanel(new GridBagLayout());
         painel.setBorder(new TitledBorder("Entrega"));
@@ -261,10 +238,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
 
         return painel;
     }
-
-    // ---------------------------------------------------------------
-    // Métodos auxiliares de layout
-    // ---------------------------------------------------------------
 
     private GridBagConstraints criarGbcPadrao() {
         GridBagConstraints gbc = new GridBagConstraints();
@@ -296,9 +269,6 @@ public class PagamentoView extends JFrame implements IPagamentoView {
         return lblValor;
     }
 
-    // ---------------------------------------------------------------
-    // Painel de botão "Fechar"
-    // ---------------------------------------------------------------
     private JPanel criarPainelBotoes() {
         JPanel painel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 

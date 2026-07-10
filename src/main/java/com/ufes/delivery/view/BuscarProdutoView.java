@@ -6,17 +6,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
-
-    // ----- Componentes do painel de busca -----
     private JComboBox<String> cmbBuscarPor;
     private JTextField txtValor;
     private JButton btnBuscar;
-
-    // ----- Componentes da tabela de resultados -----
     private JTable tabelaResultados;
     private DefaultTableModel modeloResultados;
-
-    // ----- Botões inferiores -----
     private JButton btnNovo;
     private JButton btnVisualizar;
     private JButton btnFechar;
@@ -25,10 +19,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
         super("Produtos");
         initComponents();
     }
-
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IBuscarProdutoView)
-    // =========================================================================
 
     @Override
     public JButton getBuscarButton() {
@@ -79,9 +69,6 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
     public void exibirMensagem(String mensagem, String titulo, int tipo) {
         JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
     }
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

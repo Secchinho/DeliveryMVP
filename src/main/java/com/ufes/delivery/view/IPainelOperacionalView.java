@@ -25,18 +25,7 @@ public interface IPainelOperacionalView {
             int entreguesHoje
     );
     JTable getTabelaPedidos();
-    /**
-     * Substitui o conteúdo da tabela de pedidos.
-     * Cada linha deve conter: {numero, cliente, dataPedido, dataConclusao,
-     * estado, valorTotal} — a coluna "Ação" (botão Visualizar) é adicionada
-     * automaticamente pela View.
-     */
     void atualizarListaPedidos(Object[][] linhas);
-    /**
-     * Registra o callback a ser chamado quando o usuário clicar em
-     * "Visualizar" na linha de um pedido. O parâmetro é o índice da
-     * linha (na tabela) do pedido clicado.
-     */
     void setAcaoVisualizarPedidoListener(IntConsumer callback);
     void exibirSessaoUsuario(String nomeUsuario, String dataHoraLogin, String tipoUsuario);
     void exibirMensagem(String mensagem, String titulo, int tipoMensagem);

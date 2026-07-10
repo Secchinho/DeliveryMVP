@@ -7,17 +7,13 @@ import javax.swing.border.*;
 import java.awt.*;
 
 public class PainelOperacionalView extends JFrame implements IPainelOperacionalView {
-
-    // ----- Componentes que o Presenter precisa ler/manipular -----
     private JMenuItem miNovoPedido;
     private JMenuItem miBuscarProdutos;
     private JMenuItem miNovoProduto;
     private JMenuItem miMovimentacaoEstoque;
     private JMenuItem miNovoCliente;
     private JMenuItem miBuscarClientes;
-
     private JLabel lblDataOperacao;
-
     private JLabel lblPedidosDoDia;
     private JLabel lblNovos;
     private JLabel lblAguardandoPagamento;
@@ -25,11 +21,9 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
     private JLabel lblAguardandoEntrega;
     private JLabel lblEmTransito;
     private JLabel lblEntreguesHoje;
-
     private JTable tabelaPedidos;
     private DefaultTableModel modeloTabelaPedidos;
     private IntConsumer acaoVisualizarPedidoListener;
-
     private JLabel lblUsuario;
     private JLabel lblLogin;
     private JLabel lblTipo;
@@ -85,7 +79,6 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
         painel.setLayout(new FlowLayout(FlowLayout.CENTER));
         painel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
-        // O valor exibido aqui é definido pelo Presenter via exibirDataOperacao(...)
         lblDataOperacao = new JLabel("Data de operação: ");
         lblDataOperacao.setFont(new Font("SansSerif", Font.BOLD, 16));
         lblDataOperacao.setForeground(new Color(20, 40, 90));
@@ -123,7 +116,7 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
         linha2.add(criarCard("Aguardando entrega", lblAguardandoEntrega));
         linha2.add(criarCard("Em trânsito", lblEmTransito));
         linha2.add(criarCard("Entregues hoje", lblEntreguesHoje));
-        linha2.add(new JPanel() {{ setOpaque(false); }}); // espaço vazio p/ alinhar 3 cards
+        linha2.add(new JPanel() {{ setOpaque(false); }});
 
         painelCards.add(linha1);
         painelCards.add(Box.createVerticalStrut(10));
@@ -165,8 +158,6 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
 
         String[] colunas = {"Pedido", "Cliente", "Data do pedido", "Data de conclusão",
                 "Estado do pedido", "Valor total", "Ação"};
-
-        // As linhas são preenchidas dinamicamente pelo Presenter via atualizarListaPedidos(...)
         modeloTabelaPedidos = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int col) {
@@ -218,7 +209,6 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
         JPanel barra = new JPanel(new BorderLayout());
         barra.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, Color.GRAY), new EmptyBorder(4, 10, 4, 10)));
 
-        // Os valores exibidos aqui são definidos pelo Presenter via exibirSessaoUsuario(...)
         lblUsuario = new JLabel("Usuário logado: ");
         lblLogin = new JLabel("Login: ");
         lblTipo = new JLabel("Tipo: ");
@@ -232,10 +222,6 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
 
         return barra;
     }
-
-    // =====================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE IPainelOperacionalView
-    // =====================================================================
 
     @Override
     public JFrame getJanelaPrincipal() {

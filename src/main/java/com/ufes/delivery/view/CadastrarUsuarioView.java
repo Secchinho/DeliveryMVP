@@ -12,11 +12,10 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
 
     public CadastrarUsuarioView() {
         initComponents();
-        // Configurações básicas da janela
         setTitle("Cadastrar Novo Usuário");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(350, 200);
-        setLocationRelativeTo(null); // Centraliza na tela
+        setLocationRelativeTo(null);
     }
 
     private void initComponents() {
@@ -27,31 +26,26 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
         this.confirmarBtn = new JButton("Confirmar");
         this.cancelarBtn = new JButton("Cancelar");
 
-        // Criando o painel principal
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Linha 1: Nome Civil
         gbc.gridx = 0; gbc.gridy = 0;
         panel.add(new JLabel("Nome Civil:"), gbc);
         gbc.gridx = 1; gbc.gridy = 0;
         panel.add(this.nomeCivilTxt, gbc);
 
-        // Linha 2: Nome Usuário
         gbc.gridx = 0; gbc.gridy = 1;
         panel.add(new JLabel("Nome Usuário:"), gbc);
         gbc.gridx = 1; gbc.gridy = 1;
         panel.add(this.nomeUsuarioTxt, gbc);
 
-        // Linha 3: Senha
         gbc.gridx = 0; gbc.gridy = 2;
         panel.add(new JLabel("Senha:"), gbc);
         gbc.gridx = 1; gbc.gridy = 2;
         panel.add(this.senhaTxt, gbc);
 
-        // Linha 4: Botões
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(this.confirmarBtn);
         buttonPanel.add(this.cancelarBtn);

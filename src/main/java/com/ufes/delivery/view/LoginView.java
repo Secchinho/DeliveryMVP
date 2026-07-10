@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.ufes.delivery.view;
 
 import java.awt.BorderLayout;
@@ -20,11 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-/**
- * Tela de Login do sistema.
- *
- * @author fabricio
- */
 public class LoginView extends JFrame implements ILoginView {
 
     private JPanel dadosDeAcessoPanel;
@@ -81,7 +72,6 @@ public class LoginView extends JFrame implements ILoginView {
     }
 
     private void initComponents() {
-        // Layout principal da janela
         JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
         panelPrincipal.setBorder(new EmptyBorder(15, 15, 15, 15));
 
@@ -95,7 +85,6 @@ public class LoginView extends JFrame implements ILoginView {
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.weighty = 0;
 
-        // Linha 1: Nome de Usuário
         nomeLbl = new JLabel("Nome de usuário");
         nomeTxt = new JTextField(15);
 
@@ -108,7 +97,6 @@ public class LoginView extends JFrame implements ILoginView {
         gbc.weightx = 1;
         dadosDeAcessoPanel.add(nomeTxt, gbc);
 
-        // Linha 2: Senha
         senhaLbl = new JLabel("Senha");
         senhaTxt = new JPasswordField(15);
 
@@ -121,8 +109,6 @@ public class LoginView extends JFrame implements ILoginView {
         gbc.weightx = 1;
         dadosDeAcessoPanel.add(senhaTxt, gbc);
 
-        // Linha invisível que absorve o espaço vertical sobrando,
-        // mantendo os campos colados ao título "Dados de Acesso"
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -131,9 +117,6 @@ public class LoginView extends JFrame implements ILoginView {
         gbc.fill = GridBagConstraints.BOTH;
         dadosDeAcessoPanel.add(Box.createGlue(), gbc);
 
-        // =====================================================================
-        // Painel de Botões (Centralizado) - Fica na parte SUL (inferior)
-        // =====================================================================
         JPanel botoesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
 
         acessarBtn = new JButton("Acessar");

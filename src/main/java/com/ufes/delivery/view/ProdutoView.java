@@ -5,15 +5,11 @@ import javax.swing.border.*;
 import java.awt.*;
 
 public class ProdutoView extends JFrame implements IProdutoView {
-
-    // ----- Componentes de dados do produto -----
     private JTextField txtCodigo;
     private JTextField txtNome;
     private JComboBox<String> cmbCategoria;
     private JTextField txtPrecoUnitario;
     private JTextField txtQuantidadeInicial;
-
-    // ----- Botões -----
     private JButton btnSalvar;
     private JButton btnCancelar;
 
@@ -21,10 +17,6 @@ public class ProdutoView extends JFrame implements IProdutoView {
         super("Produto");
         initComponents();
     }
-
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IProdutoView)
-    // =========================================================================
 
     @Override
     public JButton getSalvarButton() {
@@ -70,10 +62,6 @@ public class ProdutoView extends JFrame implements IProdutoView {
     public void exibirMensagem(String mensagem, String titulo, int tipo) {
         JOptionPane.showMessageDialog(this, mensagem, titulo, tipo);
     }
-
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

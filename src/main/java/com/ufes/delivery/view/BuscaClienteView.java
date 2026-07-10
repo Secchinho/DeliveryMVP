@@ -17,10 +17,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
     private JButton btnVisualizar;
     private JButton btnFechar;
 
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IBuscarClienteView)
-    // =========================================================================
-
     @Override
     public String getValorBusca() {
         return txtValor.getText().trim();
@@ -37,16 +33,13 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
         if (linha == -1) {
             return null;
         }
-        // Supondo que o CPF seja a coluna 1 (índice 1)
         return (String) tableModel.getValueAt(linha, 1);
     }
 
     @Override
     public void exibirClientes(List<Object[]> dadosClientes) {
-        // Limpa a tabela atual
         tableModel.setRowCount(0);
         
-        // Adiciona os novos dados
         for (Object[] linha : dadosClientes) {
             tableModel.addRow(linha);
         }
@@ -81,10 +74,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
     public JButton getFecharButton() {
         return btnFechar;
     }
-    
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
 
     public BuscaClienteView() {
         super("Clientes");
@@ -117,7 +106,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
         gbc.insets = new Insets(0, 0, 0, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // "Buscar por" + combo
         gbc.gridx = 0;
         gbc.gridy = 0;
         linha.add(new JLabel("Buscar por"), gbc);
@@ -127,7 +115,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
         gbc.weightx = 0;
         linha.add(comboBuscarPor, gbc);
 
-        // "Valor" + campo de texto (expande)
         gbc.gridx = 2;
         gbc.weightx = 0;
         linha.add(new JLabel("Valor"), gbc);
@@ -138,7 +125,6 @@ public class BuscaClienteView extends JFrame implements IBuscarClienteView {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         linha.add(txtValor, gbc);
 
-        // Botão Buscar
         btnBuscar = new JButton("Buscar");
         gbc.gridx = 4;
         gbc.weightx = 0;

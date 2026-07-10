@@ -10,27 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoView extends JFrame implements IPedidoView {
-
-    // ----- Componentes "Dados do Pedido" -----
     private JTextField txtCliente;
     private JButton btnNovoCliente;
     private JComboBox<String> cmbEnderecoEntrega;
-
-    // ----- Tabela de itens do pedido -----
     private JTable tabelaItens;
     private ItensTableModel modeloItens;
-
-    // ----- Cupom de desconto -----
     private JTextField txtCupomDesconto;
     private JButton btnAplicarCupom;
-
-    // ----- Totais -----
     private JLabel lblTotalDescontosValor;
     private JLabel lblDescontoTaxaEntregaValor;
     private JLabel lblTaxaEntregaFinalValor;
     private JLabel lblTotalPedidoValor;
-
-    // ----- Botões finais -----
     private JButton btnPagar;
     private JButton btnCancelar;
     
@@ -39,10 +29,6 @@ public class PedidoView extends JFrame implements IPedidoView {
         super("Pedido");
         initComponents();
     }
-
-    // =========================================================================
-    // IMPLEMENTAÇÃO DA INTERFACE (IPedidoView)
-    // =========================================================================
 
     @Override
     public String getNomeCliente() {
@@ -148,10 +134,6 @@ public class PedidoView extends JFrame implements IPedidoView {
     public JFrame getJanelaPrincipal() {
         return this;
     }
-
-    // =========================================================================
-    // FIM DA IMPLEMENTAÇÃO DA INTERFACE
-    // =========================================================================
     
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
