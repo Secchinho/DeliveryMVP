@@ -183,6 +183,8 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
         BotaoAcaoEditor() {
             botao.addActionListener(e -> {
                 fireEditingStopped();
+                tabelaResultados.setRowSelectionInterval(linhaAtual, linhaAtual);
+                btnVisualizar.doClick(); 
             });
         }
 
