@@ -5,30 +5,20 @@ import javax.swing.border.*;
 import java.awt.*;
 
 public class PagamentoView extends JFrame implements IPagamentoView {
-
-    // ----- Faixas de status -----
     private JLabel lblStatusPagamento;
     private JLabel lblStatusPedido;
-
-    // ----- Resumo do Pedido -----
     private JLabel lblPedidoValor;
     private JLabel lblClienteValor;
     private JLabel lblEnderecoEntregaValor;
     private JLabel lblTotalPedidoValor;
-
-    // ----- Informações do Pagamento -----
     private JLabel lblSituacaoPagamentoValor;
     private JLabel lblFormaPagamentoValor;
     private JLabel lblDataHoraPagamentoValor;
     private JLabel lblIdentificadorTransacaoValor;
     private JLabel lblValorPagoValor;
-
-    // ----- Entrega -----
     private JLabel lblSituacaoPedidoValor;
     private JLabel lblPrazoEstimadoValor;
     private JLabel lblObservacaoValor;
-
-    // ----- Botão -----
     private JButton btnFechar;
 
 

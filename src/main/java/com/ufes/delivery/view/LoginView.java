@@ -74,7 +74,7 @@ public class LoginView extends JFrame implements ILoginView {
     public LoginView() {
         initComponents();
         setTitle("Login");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(480, 320);
         setLocationRelativeTo(null);
         setResizable(false);

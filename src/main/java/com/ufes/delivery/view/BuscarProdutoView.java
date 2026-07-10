@@ -84,7 +84,7 @@ public class BuscarProdutoView extends JFrame implements IBuscarProdutoView {
     // =========================================================================
 
     private void initComponents() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(760, 600);
         setMinimumSize(new Dimension(700, 560));
         setLocationRelativeTo(null);

@@ -38,7 +38,7 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
         super("Início");
         setSize(760, 580);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         setJMenuBar(criarMenuBar());

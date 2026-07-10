@@ -7,17 +7,12 @@ import java.awt.*;
 import java.util.List;
 
 public class BuscaClienteView extends JFrame implements IBuscarClienteView {
-
-    // Atributos disponíveis para busca
     private static final String[] ATRIBUTOS_BUSCA = {"Nome", "CPF"};
-
     private JComboBox<String> comboBuscarPor;
     private JTextField txtValor;
     private JButton btnBuscar;
-
     private JTable tabelaResultados;
     private DefaultTableModel tableModel;
-
     private JButton btnNovo;
     private JButton btnVisualizar;
     private JButton btnFechar;

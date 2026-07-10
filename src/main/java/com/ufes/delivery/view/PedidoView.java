@@ -154,7 +154,7 @@ public class PedidoView extends JFrame implements IPedidoView {
     // =========================================================================
     
     private void initComponents() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(770, 620);
         setMinimumSize(new Dimension(720, 580));
         setLocationRelativeTo(null);
