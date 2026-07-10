@@ -1,24 +1,39 @@
 package com.ufes.delivery.view;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
 public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEstoqueView {
-
-    // ----- Componentes de busca de produtos -----
     private JTextField txtBuscarProduto;
     private JButton btnBuscar;
     private JTable tabelaProdutos;
     private DefaultTableModel modeloProdutos;
     private JButton btnSelecionar;
-
-    // ----- Componentes "Produto Selecionado" -----
     private JTextField txtProdutoSelecionado;
     private JTextField txtQuantidadeAtual;
-
-    // ----- Componentes "Movimentação" -----
     private JComboBox<String> cmbDataMovimentacao;
     private JComboBox<String> cmbTipoMovimentacao;
     private JTextField txtQuantidadeMovimentar;
@@ -27,8 +42,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
     private JTextField txtNotaFiscal;
     private JLabel lblAvisoPrevisualizacao;
     private JLabel lblAvisoRegras;
-
-    // ----- Botões finais -----
     private JButton btnConfirmarMovimentacao;
     private JButton btnCancelar;
 
@@ -305,8 +318,7 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         gbc.gridx = 2; gbc.weightx = 0;
         painel.add(new JLabel("Nota fiscal de entrada"), gbc);
 
-        txtNotaFiscal = new JTextField("(Opcional)");
-        txtNotaFiscal.setEnabled(false);
+        txtNotaFiscal = new JTextField();
         gbc.gridx = 3; gbc.weightx = 1;
         painel.add(txtNotaFiscal, gbc);
 
@@ -338,5 +350,16 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
         painel.add(btnConfirmarMovimentacao);
         painel.add(btnCancelar);
         return painel;
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
+
+        SwingUtilities.invokeLater(() -> {
+            MovimentacaoEstoqueView view = new MovimentacaoEstoqueView();
+            view.setVisible(true);
+        });
     }
 }

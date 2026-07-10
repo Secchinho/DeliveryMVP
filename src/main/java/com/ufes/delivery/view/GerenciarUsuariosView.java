@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
@@ -34,11 +33,16 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
     private JButton excluirBtn;
     private JButton novoBtn;
     private JButton fecharBtn;
+    private JButton buscarBtn;
 
     // =========================================================================
     // IMPLEMENTAÇÃO DA INTERFACE (IGerenciarUsuariosView)
     // =========================================================================
-    
+    @Override
+    public JButton getBuscarBtn() {
+        return buscarBtn;
+    }
+
     @Override
     public JTextField getNomeBuscaTxt() {
         return nomeBuscaTxt;
@@ -94,12 +98,6 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
     }
 
     @Override
-    public void abrirTelaCadastro() {
-        CadastrarUsuarioView telaNovo = new CadastrarUsuarioView();
-        telaNovo.setVisible(true);
-    }
-
-    @Override
     public void fecharTela() {
         this.dispose();
     }
@@ -142,7 +140,7 @@ public class GerenciarUsuariosView extends JFrame implements IGerenciarUsuariosV
 
         JLabel nomeBuscaLbl = new JLabel("Nome");
         nomeBuscaTxt = new JTextField(25);
-        JButton buscarBtn = new JButton("Buscar");
+        buscarBtn = new JButton("Buscar");
 
         buscaPanel.add(nomeBuscaLbl);
         buscaPanel.add(nomeBuscaTxt);

@@ -16,10 +16,10 @@ public interface IGerenciarUsuariosView {
     JButton getExcluirBtn();
     JButton getNovoBtn();
     JButton getFecharBtn();
+    JButton getBuscarBtn();
     JFrame getJanelaPrincipal();
     List<Usuario> getUsuariosSelecionados();
     void atualizarTabela(List<Usuario> usuarios);
     void exibirMensagem(String mensagem, String titulo, int tipoMensagem);
-    void abrirTelaCadastro();
     void fecharTela();
 }

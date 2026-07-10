@@ -6,20 +6,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class ClienteView extends JFrame implements IClienteView {
-
-    // ----- Componentes de dados do cliente -----
     private JTextField txtNome;
     private JTextField txtCpf;
-
-    // ----- Componentes da tabela de endereços de entrega -----
     private JTable tabelaEnderecos;
     private DefaultTableModel modeloEnderecos;
-
-
-    // ----- Botões -----
     private JButton btnSalvar;
     private JButton btnCancelar;
-
     private static final int MAX_ENDERECOS = 3;
 
     public ClienteView() {
