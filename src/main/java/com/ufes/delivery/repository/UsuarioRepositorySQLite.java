@@ -27,7 +27,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
         String sql = "CREATE TABLE IF NOT EXISTS tbUsuario ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," + "nome TEXT NOT NULL,"
-                + "userName TEXT NOT NULL," + "senha TEXT NOT NULL" + "tipo INTEGER NOT NULL,"
+                + "userName TEXT NOT NULL UNIQUE," + "senha TEXT NOT NULL," + "tipo INTEGER NOT NULL,"
                 + "situacao TEXT NOT NULL," + "autorizado BOOLEAN NOT NULL"
                 + ");";
 
