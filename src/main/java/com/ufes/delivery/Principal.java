@@ -9,6 +9,7 @@ import com.ufes.delivery.presenters.BuscarProdutoPresenter;
 import com.ufes.delivery.presenters.CadastrarUsuarioPresenter;
 import com.ufes.delivery.presenters.ClientePresenter;
 import com.ufes.delivery.presenters.LoginPresenter;
+import com.ufes.delivery.presenters.MovimentacaoEstoquePresenter;
 import com.ufes.delivery.repository.ClienteRepositorySQLite;
 import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.repository.IProdutoRepository;
@@ -23,7 +24,11 @@ import com.ufes.delivery.view.IBuscarProdutoView;
 import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.IClienteView;
 import com.ufes.delivery.view.ILoginView;
+import com.ufes.delivery.view.IMovimentacaoEstoqueView;
+import com.ufes.delivery.view.IProdutoView;
 import com.ufes.delivery.view.LoginView;
+import com.ufes.delivery.view.MovimentacaoEstoqueView;
+import com.ufes.delivery.view.ProdutoView;
 import com.ufes.util.AutenticacaoUsuarioService;
 
 /**
@@ -36,12 +41,11 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        IClienteView clienteView = new ClienteView();
-        IBuscarClienteView buscaClienteView = new BuscaClienteView();
-        IClienteRepository clienteRepository = new ClienteRepositorySQLite();
-        BuscarClientePresenter buscaClientePresenter = new BuscarClientePresenter(buscaClienteView, clienteRepository, clienteView);
-
-        buscaClientePresenter.iniciar();
+        IMovimentacaoEstoqueView view = new MovimentacaoEstoqueView();
+        IProdutoRepository rep = new ProdutoRepositorySQLite();
+        MovimentacaoEstoquePresenter presenter = new MovimentacaoEstoquePresenter(view,rep);
+        
+        presenter.iniciar();
     }
     
 }

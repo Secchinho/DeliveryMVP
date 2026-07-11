@@ -49,63 +49,6 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
     }
 
     @Override
-    public String getTermoBuscaProduto() {
-        return txtBuscarProduto.getText().trim();
-    }
-
-    @Override
-    public String getProdutoSelecionadoCodigo() {
-        int linha = tabelaProdutos.getSelectedRow();
-        if (linha == -1) return null;
-        return (String) modeloProdutos.getValueAt(linha, 0); // Coluna 0 é o Código
-    }
-
-    @Override
-    public String getQuantidadeMovimentar() {
-        return txtQuantidadeMovimentar.getText().trim();
-    }
-
-    @Override
-    public String getMotivoAjuste() {
-        return txtMotivoAjuste.getText().trim();
-    }
-
-    @Override
-    public String getNotaFiscal() {
-        return txtNotaFiscal.getText().trim();
-    }
-
-    @Override
-    public String getTipoMovimentacaoSelecionado() {
-        return (String) cmbTipoMovimentacao.getSelectedItem();
-    }
-
-    @Override
-    public void setProdutoSelecionado(String nomeProduto) {
-        this.txtProdutoSelecionado.setText(nomeProduto);
-    }
-
-    @Override
-    public void setQuantidadeAtual(String quantidade) {
-        this.txtQuantidadeAtual.setText(quantidade);
-    }
-
-    @Override
-    public void setEstoqueAposMovimentacao(String quantidade) {
-        this.txtEstoqueAposMovimentacao.setText(quantidade);
-    }
-
-    @Override
-    public void adicionarLinhaTabela(Object[] linha) {
-        modeloProdutos.addRow(linha);
-    }
-
-    @Override
-    public void limparTabelaProdutos() {
-        modeloProdutos.setRowCount(0);
-    }
-
-    @Override
     public JButton getBuscarButton() {
         return this.btnBuscar;
     }
@@ -136,18 +79,53 @@ public class MovimentacaoEstoqueView extends JFrame implements IMovimentacaoEsto
     }
 
     @Override
-    public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
-        JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
-    }
-
-    @Override
-    public void fecharTela() {
-        this.dispose();
-    }
-
-    @Override
     public JFrame getJanelaPrincipal() {
         return this;
+    }
+    
+    @Override
+    public JTextField getTxtBuscarProduto() {
+        return this.txtBuscarProduto;
+    }
+
+    @Override
+    public JTextField getTxtProdutoSelecionado() {
+        return this.txtProdutoSelecionado;
+    }
+
+    @Override
+    public JTextField getTxtQuantidadeAtual() {
+        return this.txtQuantidadeAtual;
+    }
+
+    @Override
+    public JTextField getTxtQuantidadeMovimentar() {
+        return this.txtQuantidadeMovimentar;
+    }
+
+    @Override
+    public JTextField getTxtMotivoAjuste() {
+        return this.txtMotivoAjuste;
+    }
+
+    @Override
+    public JTextField getTxtEstoqueAposMovimentacao() {
+       return this.txtEstoqueAposMovimentacao;
+    }
+
+    @Override
+    public JTextField getTxtNotaFiscal() {
+        return this.txtNotaFiscal;
+    }
+
+    @Override
+    public JLabel getLblAvisoPrevisualizacao() {
+        return this.lblAvisoPrevisualizacao;
+    }
+
+    @Override
+    public JLabel getLblAvisoRegras() {
+        return this.lblAvisoRegras;
     }
 
     private void initComponents() {

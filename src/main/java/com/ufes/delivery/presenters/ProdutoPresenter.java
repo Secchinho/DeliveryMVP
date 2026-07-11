@@ -58,6 +58,10 @@ public class ProdutoPresenter {
         this.view.getFecharButton().addActionListener(v -> this.view.getJanelaPrincipal().dispose());
         this.view.getSalvarButton().addActionListener(v -> this.command.salvar());
     }
+    
+    public void iniciar(){
+        this.view.getJanelaPrincipal().setVisible(true);
+    }
 
     public void setCommand(ProdutoPresenterCommand command){
         this.command = Objects.requireNonNull(command,"Insira um Command válido.");

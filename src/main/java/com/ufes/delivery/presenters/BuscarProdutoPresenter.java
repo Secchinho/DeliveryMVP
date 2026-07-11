@@ -4,6 +4,8 @@
  */
 package com.ufes.delivery.presenters;
 
+import com.ufes.delivery.command.AtualizarProdutoCommand;
+import com.ufes.delivery.command.SalvarProdutoCommand;
 import com.ufes.delivery.model.Produto;
 import com.ufes.delivery.repository.IProdutoRepository;
 import com.ufes.delivery.view.IBuscarProdutoView;
@@ -42,11 +44,13 @@ public class BuscarProdutoPresenter {
 
     private final IBuscarProdutoView view;
     private final IProdutoRepository produtoRepository;
+    private final IProdutoView produtoView;
     private List<Produto> produtos;
 
-    public BuscarProdutoPresenter(IBuscarProdutoView view, IProdutoRepository produtoRepository) {
+    public BuscarProdutoPresenter(IBuscarProdutoView view, IProdutoRepository produtoRepository, IProdutoView produtoView) {
         this.view = Objects.requireNonNull(view);
         this.produtoRepository = Objects.requireNonNull(produtoRepository);
+        this.produtoView = Objects.requireNonNull(produtoView);
 
         this.iniciar();
         this.configurarEventos();
@@ -59,6 +63,7 @@ public class BuscarProdutoPresenter {
     public void iniciar() {
         this.produtos = this.produtoRepository.listarProdutos();
         this.popularTabela(this.produtos);
+        this.view.getJanelaPrincipal().setVisible(true);
     }
 
     /**
@@ -160,8 +165,9 @@ public class BuscarProdutoPresenter {
      * Abre a tela de cadastro de produto em branco (comando Novo).
      */
     private void abrirNovoProduto() {
-        //ProdutoPresenter produtoPresenter = new ProdutoPresenter(this.produtoView, this.produtoRepository);
-        //produtoPresenter.iniciar();
+        ProdutoPresenter produtoPresenter = new ProdutoPresenter(this.produtoView, this.produtoRepository);
+        produtoPresenter.setCommand(new SalvarProdutoCommand(produtoPresenter));
+        produtoPresenter.iniciar();
     }
 
     /**
@@ -180,8 +186,9 @@ public class BuscarProdutoPresenter {
         String codigo = String.valueOf(this.view.getModeloResultados().getValueAt(linhaModelo, COLUNA_CODIGO));
 
         this.produtoRepository.getPorCodigo(codigo).ifPresentOrElse(produto -> {
-            //ProdutoPresenter produtoPresenter = new ProdutoPresenter(new ProdutoView, this.produtoRepository, produto);
-            //produtoPresenter.iniciar();
+            ProdutoPresenter produtoPresenter = new ProdutoPresenter(this.produtoView, this.produtoRepository, produto);
+            produtoPresenter.setCommand(new AtualizarProdutoCommand(produtoPresenter));
+            produtoPresenter.iniciar();
         }, () -> this.exibirMensagem("Produto não encontrado para a linha selecionada."));
     }
 
