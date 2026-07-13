@@ -7,7 +7,10 @@ package com.ufes.delivery.presenters;
 import com.ufes.delivery.repository.IUsuarioRepository;
 import com.ufes.delivery.model.Usuario;
 import com.ufes.util.AutenticacaoUsuarioService;
+import com.ufes.util.CriptografarService;
 import com.ufes.delivery.view.ICadastrarUsuarioView;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -108,13 +111,15 @@ public class CadastrarUsuarioPresenter {
 
         // --- Determinar perfil e situação (Cenários 1 e 2) ---
         boolean primeiroUsuario = isPrimeiroUsuario();
-        String tipo = primeiroUsuario ? "Administrador" : "Atendente";
+        int tipo = primeiroUsuario ? 1 : 0;
         String situacao = primeiroUsuario ? "Autorizado" : "Pendente";
+        senha = CriptografarService.gerarHash(senha);
 
         // --- Delegar ao serviço de cadastro ---
         try {
             Usuario usuario = new Usuario(nomeCivil, nomeUsuario, senha);
             usuario.setSituacao(situacao);
+            usuario.setTipo(tipo);
 
             try{
                 this.usuarioRepository.adicionar(usuario);
@@ -123,6 +128,7 @@ public class CadastrarUsuarioPresenter {
                     "Erro ao cadastrar usuário: " + e.getMessage(),
                     "Erro",
                     JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
             exibirMensagem(

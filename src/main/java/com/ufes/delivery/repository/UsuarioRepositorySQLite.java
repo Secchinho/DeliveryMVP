@@ -66,15 +66,19 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM"
                 + " tbUsuario WHERE userName = ?";
 
-        try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
+        try (var conn = DriverManager.getConnection(this.url);
+             var stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, usuario.getUserName());
             var rs = stmt.executeQuery();
+
             if (rs.next()) {
-                throw new SQLException("O usuário já existe no sistema");
-            } else {
-                sql = "INSERT INTO tbUsuario(nome, userName, senha, tipo, "
-                        + "situacao, autorizado) VALUES (?, ?, ?, ?, ?, ?)";
-                var istmt = conn.prepareStatement(sql);
+                throw new IllegalArgumentException("O usuário já existe no sistema");
+            }
+
+            sql = "INSERT INTO tbUsuario(nome, userName, senha, tipo, "
+                    + "situacao, autorizado) VALUES (?, ?, ?, ?, ?, ?)";
+            try (var istmt = conn.prepareStatement(sql)) {
                 istmt.setString(1, usuario.getNome());
                 istmt.setString(2, usuario.getUserName());
                 istmt.setString(3, usuario.getSenha());
@@ -83,8 +87,9 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 istmt.setBoolean(6, usuario.isAutorizado());
                 istmt.executeUpdate();
             }
+
         } catch (SQLException e) {
-            System.out.println("ERRO!!! " + e.getMessage());
+            throw new RuntimeException("Erro de persistência ao cadastrar usuário: " + e.getMessage(), e);
         }
     }
 
