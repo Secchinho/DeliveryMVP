@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 public class Mapper {
     public static RegistroDeLogDTO convertToLog(int codigoPedido, 
             String nomeMetodo, String nomeCliente){
-        String nomeUsuario = UsuarioLogadoService.getNomeUsuario();
+        UsuarioLogadoService user = UsuarioLogadoService.getInstance();
+        String nomeUsuario = user.getNome();
         LocalDateTime momentoExato = LocalDateTime.now();
         String nomeOperacao = "Calculo do valor total do pedido (" + nomeMetodo + ")";
                 

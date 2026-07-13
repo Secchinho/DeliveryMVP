@@ -7,6 +7,8 @@ package com.ufes.delivery.presenters;
 import com.ufes.delivery.view.ILoginView;
 import com.ufes.delivery.model.Usuario;
 import com.ufes.util.AutenticacaoUsuarioService;
+import com.ufes.util.UsuarioLogadoService;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -95,6 +97,8 @@ public class LoginPresenter {
 
             // Delegar autenticação ao service — retorna Usuario, não boolean
             Usuario usuario = this.autenticacaoService.autenticarUsuario(nomeUsuario, senha);
+            UsuarioLogadoService user = UsuarioLogadoService.getInstance();
+            user.logar(usuario);
 
             // Login bem-sucedido: fechar tela de login e abrir painel operacional
             this.view.getJanelaPrincipal().setVisible(false);

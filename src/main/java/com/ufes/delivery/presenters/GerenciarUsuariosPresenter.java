@@ -43,7 +43,6 @@ public class GerenciarUsuariosPresenter {
         } else{
             throw new RuntimeException("Secao permitida somente a usuarios do tipo Administrador.");
         }
-        
     }
 
     private void configurarEventos() {
