@@ -4,9 +4,11 @@
  */
 package com.ufes.delivery.command;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.presenters.ClientePresenter;
-import java.util.List;
 
 /**
  * Command concreto responsável por <b>cadastrar (incluir)</b> um novo cliente.
@@ -65,8 +67,8 @@ public class SalvarClienteCommand extends ClientePresenterCommand {
 
         // ---- 4. Verifica duplicidade de CPF (US06, Cenário 2) ----
         try {
-            Cliente existente = clientePresenter.getClienteRepository().getPorCPF(cpf).get();
-            if (existente != null) {
+            Optional<Cliente> existente = clientePresenter.getClienteRepository().getPorCPF(cpf);
+            if (existente.isPresent()) {
                 clientePresenter.exibirMensagem(
                         "CPF já vinculado a cliente existente.",
                         "Validação",

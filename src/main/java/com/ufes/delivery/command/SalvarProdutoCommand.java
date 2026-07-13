@@ -39,7 +39,7 @@ public class SalvarProdutoCommand extends ProdutoPresenterCommand {
             return;
         }
 
-        if (produtoRepository.getPorCodigo(codigo) != null) {
+        if (produtoRepository.getPorCodigo(codigo).isPresent()) {
             this.exibirErro("O código informado já está em uso.");
             return;
         }
