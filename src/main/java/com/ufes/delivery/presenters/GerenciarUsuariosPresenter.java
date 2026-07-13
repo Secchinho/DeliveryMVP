@@ -8,6 +8,8 @@ import com.ufes.delivery.model.Usuario;
 import com.ufes.delivery.repository.IUsuarioRepository;
 import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.IGerenciarUsuariosView;
+import com.ufes.util.UsuarioLogadoService;
+
 import java.util.List;
 import java.util.Objects;
 import javax.swing.JOptionPane;
@@ -34,8 +36,14 @@ public class GerenciarUsuariosPresenter {
     }
 
     public void iniciar() {
-        this.listarUsuarios();
-        this.view.getJanelaPrincipal().setVisible(true);
+        UsuarioLogadoService user = UsuarioLogadoService.getInstance();
+        if (user.getTipo() == 1) {
+            this.listarUsuarios();
+            this.view.getJanelaPrincipal().setVisible(true);
+        } else{
+            throw new RuntimeException("Secao permitida somente a usuarios do tipo Administrador.");
+        }
+        
     }
 
     private void configurarEventos() {

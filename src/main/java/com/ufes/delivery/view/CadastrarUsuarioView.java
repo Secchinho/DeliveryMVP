@@ -14,7 +14,7 @@ public class CadastrarUsuarioView extends JFrame implements ICadastrarUsuarioVie
         initComponents();
         setTitle("Cadastrar Novo Usuário");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(350, 200);
+        setSize(420, 260);
         setLocationRelativeTo(null);
     }
 
