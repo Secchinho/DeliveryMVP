@@ -100,7 +100,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             var rs = stmt.executeQuery();
             if (rs.next()) {
                 sql = "UPDATE tbUsuario SET nome = ?, senha = ?, tipo = ?,"
-                        + " situacao = ?, autorizado = ?"
+                        + " situacao = ?, autorizado = ? "
                         + "WHERE userName = " + usuario.getUserName();
                 var ustmt = conn.prepareStatement(sql);
                 ustmt.setString(1, usuario.getNome());
@@ -197,8 +197,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     }
 
     private Usuario mapear(ResultSet rs) throws SQLException {
-        Usuario u = new Usuario(rs.getString("nome"), rs.getString("userName"),
-                rs.getString("senha"));
+        Usuario u = new Usuario(rs.getString("nome"), rs.getString("userName"));
         u.setTipo(rs.getInt("tipo"));
         u.setSituacao(rs.getString("situacao"));
         return u;

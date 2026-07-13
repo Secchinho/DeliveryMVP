@@ -103,7 +103,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             stmt.setString(1, produto.getCodigo());
             var rs = stmt.executeQuery();
             if (rs.next()) {
-                throw new SQLException("O produto ainda não existe");
+                throw new SQLException("Já existe produto com código: " + produto.getCodigo());
             } else {
                 sql = "INSERT INTO tbProduto(nome, codigo, categoria, precoUnitario, "
                         + "quantidadeInicial) VALUES (?, ?, ?, ?, ?)";
@@ -124,7 +124,7 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
     public void atualizar(Produto produto) {
         validarProduto(produto);
 
-        String sql = "SELECT nome, codigo, categoria, precoUnitario, "
+        String sql = "SELECT nome, codigo, categoria, precoUnitario,"
                 + " quantidadeInicial FROM"
                 + " tbProduto WHERE id = ?";
 
