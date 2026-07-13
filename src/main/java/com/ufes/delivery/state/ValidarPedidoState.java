@@ -42,10 +42,14 @@ public class ValidarPedidoState extends PedidoState {
         }
         // Bloqueia edição: o pedido está em revisão para pagamento.
         view.getNovoClienteButton().setEnabled(false);
+        view.getBuscarClienteButton().setEnabled(false);
         view.getAplicarCupomButton().setEnabled(false);
-        view.getTxtCliente().setEnabled(false);
+        view.getTxtCpfCliente().setEnabled(false);
         view.getTxtCupomDesconto().setEnabled(false);
         view.getEnderecoComboBox().setEnabled(false);
+
+        // Tabela de itens não editável no estado de validação
+        view.setTabelaItensEditable(false);
 
         // Mantém Pagar e Fechar habilitados - únicas ações válidas aqui.
         view.getPagarButton().setEnabled(true);
@@ -65,6 +69,14 @@ public class ValidarPedidoState extends PedidoState {
     public void novoCliente() {
         presenter.exibirMensagem(
                 "Não é possível cadastrar cliente na fase de validação. "
+                + "Feche a validação para editar o pedido.",
+                "Operação indisponível", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void buscarCliente() {
+        presenter.exibirMensagem(
+                "Não é possível buscar cliente na fase de validação. "
                 + "Feche a validação para editar o pedido.",
                 "Operação indisponível", JOptionPane.INFORMATION_MESSAGE);
     }

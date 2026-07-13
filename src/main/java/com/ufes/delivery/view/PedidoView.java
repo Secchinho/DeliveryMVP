@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoView extends JFrame implements IPedidoView {
-    private JTextField txtCliente;
+    private JTextField txtCpfCliente;
+    private JLabel lblNomeCliente;
+    private JButton btnBuscarCliente;
     private JButton btnNovoCliente;
     private JComboBox<String> cmbEnderecoEntrega;
     private JTable tabelaItens;
@@ -44,6 +46,11 @@ public class PedidoView extends JFrame implements IPedidoView {
     }
 
     @Override
+    public JButton getBuscarClienteButton() {
+        return this.btnBuscarCliente;
+    }
+
+    @Override
     public JButton getPagarButton() {
         return this.btnPagar;
     }
@@ -69,8 +76,13 @@ public class PedidoView extends JFrame implements IPedidoView {
     }
 
     @Override
-    public JTextField getTxtCliente() {
-        return this.txtCliente;
+    public JTextField getTxtCpfCliente() {
+        return this.txtCpfCliente;
+    }
+
+    @Override
+    public JLabel getLblNomeCliente() {
+        return this.lblNomeCliente;
     }
 
     @Override
@@ -108,6 +120,11 @@ public class PedidoView extends JFrame implements IPedidoView {
         return this.itemExcluir;
     }
 
+    @Override
+    public void setTabelaItensEditable(boolean editable) {
+        this.modeloItens.setEditable(editable);
+    }
+
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(770, 620);
@@ -136,22 +153,37 @@ public class PedidoView extends JFrame implements IPedidoView {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
+        // Linha 0: CPF do Cliente + Botão Buscar + Botão Novo Cliente
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
-        painel.add(new JLabel("Cliente"), gbc);
+        painel.add(new JLabel("CPF do Cliente"), gbc);
 
-        txtCliente = new JTextField();
+        txtCpfCliente = new JTextField();
         gbc.gridx = 1; gbc.weightx = 1;
-        painel.add(txtCliente, gbc);
+        painel.add(txtCpfCliente, gbc);
+
+        btnBuscarCliente = new JButton("Buscar");
+        gbc.gridx = 2; gbc.weightx = 0;
+        painel.add(btnBuscarCliente, gbc);
 
         btnNovoCliente = new JButton("Novo Cliente");
-        gbc.gridx = 2; gbc.weightx = 0;
+        gbc.gridx = 3; gbc.weightx = 0;
         painel.add(btnNovoCliente, gbc);
 
+        // Linha 1: Nome do cliente (somente leitura, preenchido após busca)
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        painel.add(new JLabel("Nome"), gbc);
+
+        lblNomeCliente = new JLabel("");
+        gbc.gridx = 1; gbc.gridwidth = 3; gbc.weightx = 1;
+        painel.add(lblNomeCliente, gbc);
+
+        // Linha 2: Endereço de entrega
+        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
+        gbc.gridwidth = 1;
         painel.add(new JLabel("Endereço de entrega"), gbc);
 
         cmbEnderecoEntrega = new JComboBox<>();
-        gbc.gridx = 1; gbc.gridwidth = 2; gbc.weightx = 1;
+        gbc.gridx = 1; gbc.gridwidth = 3; gbc.weightx = 1;
         painel.add(cmbEnderecoEntrega, gbc);
 
         return painel;
@@ -266,13 +298,19 @@ public class PedidoView extends JFrame implements IPedidoView {
 
     private class ItensTableModel extends DefaultTableModel {
 
+        private boolean editable = false;
+
         public ItensTableModel(String[] colunas, int linhas) {
             super(colunas, linhas);
         }
 
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+
         @Override
         public boolean isCellEditable(int row, int column) {
-            return false;
+            return this.editable;
         }
 
         public List<Object[]> getDadosItens() {

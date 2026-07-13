@@ -70,6 +70,13 @@ public abstract class PedidoState {
     public abstract void novoCliente();
 
     /**
+     * Ação "Buscar cliente". No estado de criação busca o cliente por CPF
+     * no repositório e o vincula ao pedido; nos demais estados deve ser
+     * rejeitada.
+     */
+    public abstract void buscarCliente();
+
+    /**
      * Ação "Adicionar item" (geralmente via tela de busca de produtos). No
      * estado de criação adiciona o item ao pedido; nos demais estados deve ser
      * rejeitada.
