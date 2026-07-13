@@ -12,11 +12,13 @@ import javax.swing.JTextField;
 public interface IPedidoView {
     
     JButton getNovoClienteButton();
+    JButton getBuscarClienteButton();
     JButton getPagarButton();
     JButton getFecharButton();
     JButton getAplicarCupomButton();
     
-    JTextField getTxtCliente();
+    JTextField getTxtCpfCliente();
+    JLabel getLblNomeCliente();
     JTextField getTxtCupomDesconto();
     
     JTable getTabelaItens();
@@ -28,6 +30,8 @@ public interface IPedidoView {
     
     JComboBox<String> getEnderecoComboBox();
     JFrame getJanelaPrincipal();
-    
-     JMenuItem getMenuItemExcluirItem();
+
+    JMenuItem getMenuItemExcluirItem();
+
+    void setTabelaItensEditable(boolean editable);
 }

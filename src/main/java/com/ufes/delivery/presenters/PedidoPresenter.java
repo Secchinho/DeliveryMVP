@@ -5,18 +5,28 @@
 package com.ufes.delivery.presenters;
 
 import br.ufes.logauditoria.ILogger;
+import com.ufes.delivery.command.SalvarClienteCommand;
 import com.ufes.delivery.desconto.pedido.AplicadorCupomPedidoService;
+import com.ufes.delivery.model.Cliente;
+import com.ufes.delivery.model.Endereco;
 import com.ufes.delivery.model.Pedido;
+import com.ufes.delivery.repository.ClienteRepositorySQLite;
+import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.repository.IPedidoRepository;
 import com.ufes.delivery.state.CriarPedidoState;
 import com.ufes.delivery.state.PedidoState;
 import com.ufes.delivery.state.ValidarPedidoState;
+import com.ufes.delivery.view.ClienteView;
+import com.ufes.delivery.view.IClienteView;
 import com.ufes.delivery.view.IPedidoView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -45,6 +55,7 @@ public class PedidoPresenter {
 
     private final IPedidoView view;
     private final IPedidoRepository repository;
+    private final IClienteRepository clienteRepository;
     private final ILogger logger;
     private final AplicadorCupomPedidoService aplicadorCupomService;
     private final List<Pedido> pedidos;
@@ -63,17 +74,20 @@ public class PedidoPresenter {
     private final DecimalFormat formatoMoeda = new DecimalFormat("#,##0.00");
 
     public PedidoPresenter(IPedidoView view, IPedidoRepository repository,
-            ILogger logger, AplicadorCupomPedidoService aplicadorCupomService) {
+            IClienteRepository clienteRepository, ILogger logger,
+            AplicadorCupomPedidoService aplicadorCupomService) {
         this.view = Objects.requireNonNull(view, "View não pode ser nula");
         this.repository = Objects.requireNonNull(repository,
                 "Repository não pode ser nulo");
+        this.clienteRepository = Objects.requireNonNull(clienteRepository,
+                "Repository de clientes não pode ser nulo");
         this.logger = Objects.requireNonNull(logger, "Logger não pode ser nulo");
         this.aplicadorCupomService = Objects.requireNonNull(aplicadorCupomService,
                 "Serviço de aplicação de cupom não pode ser nulo");
         this.pedidos = repository.listarPedidos();
 
         // Estado inicial: criação do pedido (US09).
-        this.estado = new ValidarPedidoState(this);
+        this.estado = new CriarPedidoState(this);
 
         this.configurarEventos();
     }
@@ -100,6 +114,10 @@ public class PedidoPresenter {
         // Botão Novo Cliente -> estado.novoCliente()
         this.view.getNovoClienteButton()
                 .addActionListener(e -> this.estado.novoCliente());
+
+        // Botão Buscar Cliente -> estado.buscarCliente()
+        this.view.getBuscarClienteButton()
+                .addActionListener(e -> this.estado.buscarCliente());
 
         // Botão Aplicar Cupom -> estado.aplicarCupom()
         this.view.getAplicarCupomButton()
@@ -281,9 +299,135 @@ public class PedidoPresenter {
      * extensão para o estado.
      */
     public void abrirCadastroCliente() {
-        // Hook - integrar com o coordenador de telas da aplicação.
-        exibirMensagem("Abra a tela de cadastro de cliente a partir do menu.",
-                "Novo cliente", JOptionPane.INFORMATION_MESSAGE);
+        IClienteRepository rep = new ClienteRepositorySQLite();
+        IClienteView view = new ClienteView();
+        
+        ClientePresenter clientePresenter = new ClientePresenter(view,rep);
+        clientePresenter.setCommand(new SalvarClienteCommand(clientePresenter));
+        clientePresenter.iniciar();
+    }
+
+    /**
+     * Busca um cliente por CPF no repositório e, se encontrado, vincula-o ao
+     * pedido corrente, preenche o nome na view e carrega os endereços do
+     * cliente na caixa de combinação de endereço de entrega.
+     * <p>
+     * Validações aplicadas (alinhadas à US05):
+     * <ul>
+     *   <li>CPF obrigatório e não vazio;</li>
+     *   <li>CPF deve conter 11 dígitos numéricos;</li>
+     *   <li>Dígitos verificadores do CPF devem ser válidos;</li>
+     *   <li>Cliente deve existir no repositório.</li>
+     * </ul>
+     */
+    public void buscarClientePorCpf() {
+        String cpfInformado = view.getTxtCpfCliente().getText().trim();
+
+        if (cpfInformado == null || cpfInformado.isEmpty()) {
+            exibirMensagem("Informe o CPF para buscar o cliente.",
+                    "Buscar cliente", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Remove máscara, mantendo apenas os 11 dígitos
+        String cpf = cpfInformado.replaceAll("\\D", "");
+
+        if (cpf.length() != 11) {
+            exibirMensagem("CPF deve conter 11 dígitos numéricos.",
+                    "Buscar cliente", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!validarDigitosCpf(cpf)) {
+            exibirMensagem("CPF inválido. Verifique os dígitos informados.",
+                    "Buscar cliente", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Optional<Cliente> optCliente = clienteRepository.getPorCPF(cpf);
+        if (optCliente.isEmpty()) {
+            exibirMensagem("Cliente não encontrado para o CPF informado.",
+                    "Buscar cliente", JOptionPane.INFORMATION_MESSAGE);
+            view.getLblNomeCliente().setText("");
+            return;
+        }
+
+        Cliente clienteEncontrado = optCliente.get();
+
+        // Exibe o nome do cliente encontrado
+        view.getLblNomeCliente().setText(clienteEncontrado.getNome());
+
+        // Carrega os endereços do cliente na caixa de combinação
+        carregarEnderecosCliente(clienteEncontrado);
+
+        // Cria o pedido com o cliente encontrado, se ainda não existir
+        if (this.pedido == null) {
+            this.pedido = new Pedido(LocalDateTime.now(), clienteEncontrado,
+                    pedidos.size() + 1, logger);
+        } else {
+            // Se já existe pedido, atualiza o cliente (recria o pedido)
+            this.pedido = new Pedido(LocalDateTime.now(), clienteEncontrado,
+                    pedido.getCodigoPedido(), logger);
+        }
+
+        atualizarTabela();
+        atualizarValores();
+
+        exibirMensagem("Cliente encontrado: " + clienteEncontrado.getNome(),
+                "Buscar cliente", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Carrega os endereços do cliente na caixa de combinação de endereço de
+     * entrega da view. Cada item da caixa exibe o logradouro e o bairro.
+     *
+     * @param cliente cliente cujos endereços serão carregados
+     */
+    private void carregarEnderecosCliente(Cliente cliente) {
+        JComboBox<String> combo = view.getEnderecoComboBox();
+        combo.removeAllItems();
+        if (cliente == null || cliente.getEnderecos() == null) {
+            return;
+        }
+        for (Endereco end : cliente.getEnderecos()) {
+            String descricao = end.getLogradouro()
+                    + ", " + end.getNumero()
+                    + " - " + end.getBairro();
+            combo.addItem(descricao);
+        }
+    }
+
+    /**
+     * Valida os dígitos verificadores de um CPF com 11 dígitos.
+     *
+     * @param cpf CPF contendo exatamente 11 dígitos (sem máscara)
+     * @return {@code true} se os dígitos verificadores forem válidos
+     */
+    private boolean validarDigitosCpf(String cpf) {
+        if (cpf == null || cpf.length() != 11 || cpf.matches("(\\d)\\1{10}")) {
+            return false;
+        }
+        int soma1 = 0;
+        for (int i = 0; i < 9; i++) {
+            soma1 += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
+        }
+        int dig1 = 11 - (soma1 % 11);
+        if (dig1 >= 10) {
+            dig1 = 0;
+        }
+        if (dig1 != Character.getNumericValue(cpf.charAt(9))) {
+            return false;
+        }
+
+        int soma2 = 0;
+        for (int i = 0; i < 10; i++) {
+            soma2 += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
+        }
+        int dig2 = 11 - (soma2 % 11);
+        if (dig2 >= 10) {
+            dig2 = 0;
+        }
+        return dig2 == Character.getNumericValue(cpf.charAt(10));
     }
 
     /**

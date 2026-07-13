@@ -42,9 +42,12 @@ public class CriarPedidoState extends PedidoState {
         view.getAplicarCupomButton().setEnabled(true);
         view.getPagarButton().setEnabled(true);
         view.getFecharButton().setEnabled(true);
-        view.getTxtCliente().setEnabled(true);
+        view.getTxtCpfCliente().setEnabled(true);
         view.getTxtCupomDesconto().setEnabled(true);
         view.getEnderecoComboBox().setEnabled(true);
+
+        // Tabela de itens editável no estado de criação
+        view.setTabelaItensEditable(true);
 
         // O botão Pagar aqui significa "ir para validação", não "confirmar
         // pagamento" - o rótulo continua o mesmo pois a View é fixa.
@@ -148,5 +151,10 @@ public class CriarPedidoState extends PedidoState {
             }
         }
         presenter.getView().getJanelaPrincipal().dispose();
+    }
+
+    @Override
+    public void buscarCliente() {
+        presenter.buscarClientePorCpf();
     }
 }

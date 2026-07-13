@@ -23,6 +23,7 @@ import com.ufes.delivery.repository.IProdutoRepository;
 import com.ufes.delivery.repository.PedidoRepositoryEmMemoria;
 import com.ufes.delivery.repository.ProdutoRepositorySQLite;
 import com.ufes.delivery.repository.UsuarioRepositorySQLite;
+import com.ufes.delivery.state.CriarPedidoState;
 import com.ufes.delivery.view.BuscaClienteView;
 import com.ufes.delivery.view.BuscarProdutoView;
 import com.ufes.delivery.view.CadastrarUsuarioView;
@@ -64,8 +65,10 @@ public class Principal {
                 = new AplicadorCupomPedidoService(cupomRepository, logger);
 
         IPedidoView pedidoView = new PedidoView();
+        IClienteRepository clienteRepository = new ClienteRepositorySQLite();
         PedidoPresenter pedidoPresenter = new PedidoPresenter(
-                pedidoView, pedidoRepository, logger, aplicadorCupom);
+                pedidoView, pedidoRepository, clienteRepository, logger, aplicadorCupom);
+        pedidoPresenter.setEstado(new CriarPedidoState(pedidoPresenter));
         pedidoPresenter.iniciar();
     }
 
