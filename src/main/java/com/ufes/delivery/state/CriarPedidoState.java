@@ -49,6 +49,19 @@ public class CriarPedidoState extends PedidoState {
         // Tabela de itens editável no estado de criação
         view.setTabelaItensEditable(true);
 
+        // Habilita o botão "Adicionar Item" para que o usuário possa
+        // inserir novas linhas na tabela e digitar os dados do item
+        // diretamente (US09 - adicionar item).
+        if (view.getAdicionarItemButton() != null) {
+            view.getAdicionarItemButton().setEnabled(true);
+        }
+
+        // No estado de criação apenas as colunas "Item" e "Quantidade"
+        // são exibidas - as demais (Categoria, Preço unitário e Preço
+        // total) são calculadas/obtidas a partir do produto no momento
+        // em que o pedido é confirmado (ver pagar()).
+        view.setModoCriacaoPedido(true);
+
         // O botão Pagar aqui significa "ir para validação", não "confirmar
         // pagamento" - o rótulo continua o mesmo pois a View é fixa.
         presenter.atualizarTabela();
@@ -70,9 +83,15 @@ public class CriarPedidoState extends PedidoState {
 
     @Override
     public void adicionarItem() {
-        // Abre a busca de produtos para seleção de item. O presenter cuida de
-        // obter o produto e a quantidade e adicioná-lo ao Pedido corrente.
-        presenter.abrirBuscaProdutos();
+        // Adiciona uma nova linha em branco na tabela de itens para que o
+        // usuário possa digitar diretamente os dados do item (Categoria,
+        // Item, Preço unitário, Quantidade, Preço total). A tabela já está
+        // em modo editável neste estado (ver entrar()).
+        IPedidoView view = presenter.getView();
+        if (view == null) {
+            return;
+        }
+        view.adicionarLinhaItemVazia();
     }
 
     @Override
@@ -111,7 +130,7 @@ public class CriarPedidoState extends PedidoState {
 
     @Override
     public void pagar() {
-        // US09 cenário 2 - Rejeitar pedido sem item.
+        // US09 cenário 2 - Rejeitar pedido sem cliente.
         Pedido pedido = presenter.getPedido();
         if (pedido == null) {
             presenter.exibirMensagem(
@@ -119,6 +138,15 @@ public class CriarPedidoState extends PedidoState {
                     "Pedido", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        // Antes de validar, coleta todos os itens digitados na tabela e os
+        // adiciona ao pedido. As linhas em branco são ignoradas; linhas
+        // parcialmente preenchidas ou com produto inexistente abortam a
+        // operação (a mensagem de erro já é exibida pelo presenter).
+        if (!presenter.coletarItensDaTabela()) {
+            return;
+        }
+        // Após a coleta, revalida a lista de itens do pedido - pode ter
+        // ficado vazia se o usuário não preencheu nenhuma linha completa.
         if (pedido.getItens().isEmpty()) {
             presenter.exibirMensagem(
                     "Pelo menos um item é obrigatório para prosseguir.",

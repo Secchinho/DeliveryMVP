@@ -3,6 +3,8 @@ package com.ufes.delivery.view;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,7 +19,14 @@ public class PedidoView extends JFrame implements IPedidoView {
     private JComboBox<String> cmbEnderecoEntrega;
     private JTable tabelaItens;
     private ItensTableModel modeloItens;
+    private JButton btnAdicionarItem;
     private JTextField txtCupomDesconto;
+    // Referências às colunas removidas no modo criação, para que possam
+    // ser restauradas ao transitar para o estado de validação.
+    private TableColumn colunaCategoria;
+    private TableColumn colunaPrecoUnitario;
+    private TableColumn colunaPrecoTotal;
+    private boolean modoCriacaoAtivo = false;
     private JButton btnAplicarCupom;
     private JLabel lblTotalDescontosValor;
     private JLabel lblDescontoTaxaEntregaValor;
@@ -63,6 +72,78 @@ public class PedidoView extends JFrame implements IPedidoView {
     @Override
     public JButton getAplicarCupomButton() {
         return this.btnAplicarCupom;
+    }
+
+    @Override
+    public JButton getAdicionarItemButton() {
+        return this.btnAdicionarItem;
+    }
+
+    @Override
+    public void adicionarLinhaItemVazia() {
+        // Insere uma nova linha em branco na tabela de itens para que o
+        // usuário possa digitar diretamente os dados do item (Categoria,
+        // Item, Preço unitário, Quantidade, Preço total). A edição só é
+        // permitida quando o estado corrente do presenter é o
+        // CriarPedidoState (ver setTabelaItensEditable).
+        modeloItens.addRow(new Object[]{"", "", "", "", ""});
+    }
+
+    @Override
+    public void setModoCriacaoPedido(boolean modoCriacao) {
+        // Controla a visibilidade das colunas da tabela de itens conforme
+        // o estado corrente do presenter:
+        //   - CriarPedidoState  -> apenas "Item" e "Quantidade" visíveis
+        //                          (colunas de índice 1 e 3 do modelo)
+        //   - ValidarPedidoState -> todas as colunas visíveis
+        // As colunas removidas são mantidas em fields para que possam ser
+        // restauradas na mesma posição ao sair do modo criação.
+        TableColumnModel tcm = tabelaItens.getColumnModel();
+
+        if (modoCriacao && !modoCriacaoAtivo) {
+            // Guarda referências antes de remover para poder restaurar depois.
+            // Índices do modelo: 0=Categoria, 1=Item, 2=Preço unitário,
+            // 3=Quantidade, 4=Preço total.
+            colunaCategoria = tabelaItens.getColumn("Categoria");
+            colunaPrecoUnitario = tabelaItens.getColumn("Preço unitário");
+            colunaPrecoTotal = tabelaItens.getColumn("Preço total");
+            tabelaItens.removeColumn(colunaCategoria);
+            tabelaItens.removeColumn(colunaPrecoUnitario);
+            tabelaItens.removeColumn(colunaPrecoTotal);
+            modoCriacaoAtivo = true;
+        } else if (!modoCriacao && modoCriacaoAtivo) {
+            // Re-adiciona cada coluna na sua posição original.
+            //
+            // Estado inicial antes da restauração (visíveis):
+            //   [Item(1), Quantidade(3)]
+            //
+            // Após addColumn(Categoria) -> [Item, Quantidade, Categoria]
+            //   moveColumn(2, 0)        -> [Categoria, Item, Quantidade]
+            //
+            // Após addColumn(Preço unitário)
+            //   -> [Categoria, Item, Quantidade, Preço unitário]
+            //   moveColumn(3, 2)        -> [Categoria, Item, Preço unitário, Quantidade]
+            //
+            // Após addColumn(Preço total)
+            //   -> [Categoria, Item, Preço unitário, Quantidade, Preço total]
+            //   Já está na posição correta (índice 4), sem necessidade de move.
+            if (colunaCategoria != null) {
+                tabelaItens.addColumn(colunaCategoria);
+                tcm.moveColumn(tcm.getColumnCount() - 1, 0);
+            }
+            if (colunaPrecoUnitario != null) {
+                tabelaItens.addColumn(colunaPrecoUnitario);
+                tcm.moveColumn(tcm.getColumnCount() - 1, 2);
+            }
+            if (colunaPrecoTotal != null) {
+                tabelaItens.addColumn(colunaPrecoTotal);
+                // Já fica na última posição (índice 4), que é a correta.
+            }
+            colunaCategoria = null;
+            colunaPrecoUnitario = null;
+            colunaPrecoTotal = null;
+            modoCriacaoAtivo = false;
+        }
     }
 
     @Override
@@ -222,6 +303,14 @@ public class PedidoView extends JFrame implements IPedidoView {
         JScrollPane scroll = new JScrollPane(tabelaItens);
         scroll.setPreferredSize(new Dimension(700, 240));
         painel.add(scroll, BorderLayout.CENTER);
+
+        // Botão "Adicionar Item": disponível apenas no estado de criação
+        // do pedido. Insere uma nova linha em branco na tabela para que o
+        // usuário possa digitar manualmente os dados do item.
+        JPanel painelBotoesItens = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btnAdicionarItem = new JButton("Adicionar Item");
+        painelBotoesItens.add(btnAdicionarItem);
+        painel.add(painelBotoesItens, BorderLayout.SOUTH);
 
         return painel;
     }

@@ -66,8 +66,10 @@ public class Principal {
 
         IPedidoView pedidoView = new PedidoView();
         IClienteRepository clienteRepository = new ClienteRepositorySQLite();
+        IProdutoRepository produtoRepository = new ProdutoRepositorySQLite();
         PedidoPresenter pedidoPresenter = new PedidoPresenter(
-                pedidoView, pedidoRepository, clienteRepository, logger, aplicadorCupom);
+                pedidoView, pedidoRepository, clienteRepository,
+                produtoRepository, logger, aplicadorCupom);
         pedidoPresenter.setEstado(new CriarPedidoState(pedidoPresenter));
         pedidoPresenter.iniciar();
     }

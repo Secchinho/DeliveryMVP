@@ -16,6 +16,7 @@ public interface IPedidoView {
     JButton getPagarButton();
     JButton getFecharButton();
     JButton getAplicarCupomButton();
+    JButton getAdicionarItemButton();
     
     JTextField getTxtCpfCliente();
     JLabel getLblNomeCliente();
@@ -34,4 +35,27 @@ public interface IPedidoView {
     JMenuItem getMenuItemExcluirItem();
 
     void setTabelaItensEditable(boolean editable);
+
+    /**
+     * Insere uma nova linha em branco na tabela de itens para que o usuário
+     * possa digitar manualmente os dados do item. Só deve ser invocado quando
+     * o estado corrente do presenter é o CriarPedidoState.
+     */
+    void adicionarLinhaItemVazia();
+
+    /**
+     * Controla a visibilidade das colunas da tabela de itens conforme o
+     * estado corrente do presenter.
+     * <p>
+     * Em modo criação ({@code true}), apenas as colunas "Item" e
+     * "Quantidade" são exibidas, permitindo que o atendente informe
+     * rapidamente o produto e a quantidade desejada. Em modo validação
+     * ({@code false}), todas as colunas ("Categoria", "Item",
+     * "Preço unitário", "Quantidade", "Preço total") são exibidas para
+     * revisão completa antes do pagamento.
+     *
+     * @param modoCriacao {@code true} para exibir apenas "Item" e
+     *                    "Quantidade"; {@code false} para exibir todas
+     */
+    void setModoCriacaoPedido(boolean modoCriacao);
 }

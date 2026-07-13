@@ -9,10 +9,13 @@ import com.ufes.delivery.command.SalvarClienteCommand;
 import com.ufes.delivery.desconto.pedido.AplicadorCupomPedidoService;
 import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.model.Endereco;
+import com.ufes.delivery.model.Item;
 import com.ufes.delivery.model.Pedido;
+import com.ufes.delivery.model.Produto;
 import com.ufes.delivery.repository.ClienteRepositorySQLite;
 import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.repository.IPedidoRepository;
+import com.ufes.delivery.repository.IProdutoRepository;
 import com.ufes.delivery.state.CriarPedidoState;
 import com.ufes.delivery.state.PedidoState;
 import com.ufes.delivery.state.ValidarPedidoState;
@@ -56,6 +59,7 @@ public class PedidoPresenter {
     private final IPedidoView view;
     private final IPedidoRepository repository;
     private final IClienteRepository clienteRepository;
+    private final IProdutoRepository produtoRepository;
     private final ILogger logger;
     private final AplicadorCupomPedidoService aplicadorCupomService;
     private final List<Pedido> pedidos;
@@ -74,13 +78,15 @@ public class PedidoPresenter {
     private final DecimalFormat formatoMoeda = new DecimalFormat("#,##0.00");
 
     public PedidoPresenter(IPedidoView view, IPedidoRepository repository,
-            IClienteRepository clienteRepository, ILogger logger,
-            AplicadorCupomPedidoService aplicadorCupomService) {
+            IClienteRepository clienteRepository, IProdutoRepository produtoRepository,
+            ILogger logger, AplicadorCupomPedidoService aplicadorCupomService) {
         this.view = Objects.requireNonNull(view, "View não pode ser nula");
         this.repository = Objects.requireNonNull(repository,
                 "Repository não pode ser nulo");
         this.clienteRepository = Objects.requireNonNull(clienteRepository,
                 "Repository de clientes não pode ser nulo");
+        this.produtoRepository = Objects.requireNonNull(produtoRepository,
+                "Repository de produtos não pode ser nulo");
         this.logger = Objects.requireNonNull(logger, "Logger não pode ser nulo");
         this.aplicadorCupomService = Objects.requireNonNull(aplicadorCupomService,
                 "Serviço de aplicação de cupom não pode ser nulo");
@@ -98,6 +104,10 @@ public class PedidoPresenter {
 
     public AplicadorCupomPedidoService getAplicadorCupomService() {
         return aplicadorCupomService;
+    }
+
+    public IProdutoRepository getProdutoRepository() {
+        return produtoRepository;
     }
 
     // ------------------------------------------------------------------
@@ -122,6 +132,15 @@ public class PedidoPresenter {
         // Botão Aplicar Cupom -> estado.aplicarCupom()
         this.view.getAplicarCupomButton()
                 .addActionListener(e -> this.estado.aplicarCupom());
+
+        // Botão Adicionar Item -> estado.adicionarItem()
+        // No CriarPedidoState, isso adiciona uma linha em branco na tabela
+        // para que o usuário possa digitar manualmente os dados do item.
+        // Nos demais estados, a ação é tratada (e rejeitada) pelo estado.
+        if (this.view.getAdicionarItemButton() != null) {
+            this.view.getAdicionarItemButton()
+                    .addActionListener(e -> this.estado.adicionarItem());
+        }
 
         // Botão Pagar -> estado.pagar()
         this.view.getPagarButton()
@@ -246,6 +265,7 @@ public class PedidoPresenter {
         }
         for (var item : pedido.getItens()) {
             modelo.addRow(new Object[]{
+                item.getProduto().getCategoria(),
                 item.getProduto().getNome(),
                 String.format("R$ %s", formatoMoeda.format(item.getValorUnitario())),
                 item.getQuantidade(),
@@ -299,10 +319,9 @@ public class PedidoPresenter {
      * extensão para o estado.
      */
     public void abrirCadastroCliente() {
-        IClienteRepository rep = new ClienteRepositorySQLite();
         IClienteView view = new ClienteView();
         
-        ClientePresenter clientePresenter = new ClientePresenter(view,rep);
+        ClientePresenter clientePresenter = new ClientePresenter(view, this.clienteRepository);
         clientePresenter.setCommand(new SalvarClienteCommand(clientePresenter));
         clientePresenter.iniciar();
     }
@@ -457,6 +476,132 @@ public class PedidoPresenter {
         pedido.removerItem(pedido.getItens().get(linha));
         atualizarTabela();
         atualizarValores();
+    }
+
+    /**
+     * Coleta todas as linhas completamente preenchidas da tabela de itens,
+     * resolve o produto correspondente no repositório de produtos e adiciona
+     * os itens ao pedido corrente. Linhas em branco ou parcialmente
+     * preenchidas são ignoradas.
+     * <p>
+     * Este método é invocado pelo {@code pagar()} do {@link CriarPedidoState}
+     * antes de transitar para o estado de validação, garantindo que o pedido
+     * reflita exatamente o que foi digitado pelo atendente na tabela.
+     * <p>
+     * Regras:
+     * <ul>
+     *   <li>Uma linha é considerada "completamente preenchida" quando as
+     *       colunas "Item" (índice 1 do modelo) e "Quantidade" (índice 3)
+     *       possuem valores não vazios.</li>
+     *   <li>O nome informado em "Item" deve corresponder a um produto
+     *       cadastrado no repositório (busca por nome exato).</li>
+     *   <li>A quantidade deve ser um número inteiro maior que zero.</li>
+     *   <li>Os itens existentes no pedido são removidos antes da coleta para
+     *       evitar duplicidade ao reabrir a edição a partir do estado de
+     *       validação.</li>
+     * </ul>
+     *
+     * @return {@code true} se todos os itens da tabela foram coletados com
+     *         sucesso; {@code false} se houve produto não encontrado ou
+     *         quantidade inválida (neste caso uma mensagem já foi exibida
+     *         ao usuário e o pedido permanece inalterado)
+     */
+    public boolean coletarItensDaTabela() {
+        JTable tabela = view.getTabelaItens();
+        if (tabela == null || pedido == null) {
+            return false;
+        }
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        int totalLinhas = modelo.getRowCount();
+
+        // Acumula os itens resolvidos em uma lista temporária - só adiciona
+        // ao pedido se TODAS as linhas preenchidas forem válidas. Assim o
+        // pedido não fica em estado parcial quando há erro.
+        List<Item> itensResolvidos = new java.util.ArrayList<>();
+
+        for (int i = 0; i < totalLinhas; i++) {
+            Object valorItem = modelo.getValueAt(i, 1);    // coluna "Item"
+            Object valorQtd = modelo.getValueAt(i, 3);     // coluna "Quantidade"
+
+            String nome = valorItem == null ? "" : valorItem.toString().trim();
+            String qtdStr = valorQtd == null ? "" : valorQtd.toString().trim();
+
+            // Linha em branco ou parcialmente preenchida é ignorada.
+            if (nome.isEmpty() && qtdStr.isEmpty()) {
+                continue;
+            }
+            // Se apenas um dos dois campos foi preenchido, a linha está
+            // incompleta - avisamos o usuário e abortamos.
+            if (nome.isEmpty() || qtdStr.isEmpty()) {
+                exibirMensagem(
+                        "Linha " + (i + 1) + ": preencha o nome do item e a "
+                        + "quantidade, ou deixe ambos em branco.",
+                        "Itens do pedido", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+
+            // Resolve o produto no repositório (busca por nome exato).
+            List<Produto> produtos = produtoRepository.buscarPorNome(nome);
+            Produto produtoSelecionado = null;
+            for (Produto p : produtos) {
+                if (p.getNome().equalsIgnoreCase(nome)) {
+                    produtoSelecionado = p;
+                    break;
+                }
+            }
+            if (produtoSelecionado == null) {
+                exibirMensagem(
+                        "Linha " + (i + 1) + ": produto \"" + nome
+                        + "\" não encontrado no catálogo.",
+                        "Itens do pedido", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+
+            // Quantidade deve ser inteiro > 0.
+            int quantidade;
+            try {
+                quantidade = Integer.parseInt(qtdStr);
+            } catch (NumberFormatException ex) {
+                exibirMensagem(
+                        "Linha " + (i + 1) + ": quantidade inválida (\""
+                        + qtdStr + "\"). Informe um número inteiro.",
+                        "Itens do pedido", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            if (quantidade <= 0) {
+                exibirMensagem(
+                        "Linha " + (i + 1) + ": quantidade deve ser maior "
+                        + "que zero.",
+                        "Itens do pedido", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+
+            // Cria o Item e vincula o Produto. O valor unitário é obtido do
+            // produto cadastrado (não do que foi digitado na tabela, pois a
+            // coluna "Preço unitário" está oculta no modo criação).
+            Item item = new Item(produtoSelecionado.getNome(),
+                    quantidade, produtoSelecionado.getPrecoUnitario(),
+                    produtoSelecionado.getCategoria());
+            item.setProduto(produtoSelecionado);
+            itensResolvidos.add(item);
+        }
+
+        // Limpa os itens atuais do pedido e adiciona os resolvidos. Como
+        // getItens() retorna lista não modificável, removemos um a um.
+        List<Item> itensAtuais = new java.util.ArrayList<>(pedido.getItens());
+        for (Item item : itensAtuais) {
+            pedido.removerItem(item);
+        }
+        for (Item item : itensResolvidos) {
+            pedido.adicionarItem(item);
+        }
+
+        // Atualiza a tabela e os valores exibidos para refletir o pedido
+        // consolidado (inclui preços e totais calculados a partir do
+        // catálogo).
+        atualizarTabela();
+        atualizarValores();
+        return true;
     }
 
     /**

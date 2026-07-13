@@ -51,6 +51,19 @@ public class ValidarPedidoState extends PedidoState {
         // Tabela de itens não editável no estado de validação
         view.setTabelaItensEditable(false);
 
+        // Botão "Adicionar Item" desabilitado: o pedido está em revisão
+        // para pagamento e não pode ser alterado (US10).
+        if (view.getAdicionarItemButton() != null) {
+            view.getAdicionarItemButton().setEnabled(false);
+        }
+
+        // No estado de validação todas as colunas da tabela são exibidas
+        // (Categoria, Item, Preço unitário, Quantidade, Preço total) para
+        // que o atendente possa revisar o pedido completo antes do
+        // pagamento. As colunas foram preenchidas pelo método
+        // coletarItensDaTabela() invocado no pagar() do CriarPedidoState.
+        view.setModoCriacaoPedido(false);
+
         // Mantém Pagar e Fechar habilitados - únicas ações válidas aqui.
         view.getPagarButton().setEnabled(true);
         view.getFecharButton().setEnabled(true);
