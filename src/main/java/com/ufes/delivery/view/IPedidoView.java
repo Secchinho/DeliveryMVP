@@ -4,25 +4,30 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import java.util.List;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 public interface IPedidoView {
-    String getNomeCliente();
-    String getEnderecoSelecionado();
-    String getCupomTexto();
-    List<Object[]> getDadosItens();
-    void setNomeCliente(String nome);
-    void setEnderecosEntrega(List<String> enderecos);
-    void setCupomTexto(String cupom);
-    void atualizarTotais(String totalDescontos, String descTaxaEntrega, String taxaFinal, String totalPedido);
-    void adicionarItemTabela(Object[] item);
-    void removerItemTabela(int indiceLinha);
-    void limparTabelaItens();
+    
     JButton getNovoClienteButton();
     JButton getPagarButton();
     JButton getFecharButton();
     JButton getAplicarCupomButton();
+    
+    JTextField getTxtCliente();
+    JTextField getTxtCupomDesconto();
+    
+    JTable getTabelaItens();
+    
+    JLabel getLblTotalDescontosValor();
+    JLabel getLblDescontoTaxaEntregaValor();
+    JLabel getLblTaxaEntregaFinalValor();
+    JLabel getLblTotalPedidoValor();
+    
     JComboBox<String> getEnderecoComboBox();
-    void exibirMensagem(String mensagem, String titulo, int tipoMensagem);
-    void fecharTela();
     JFrame getJanelaPrincipal();
+    
+     JMenuItem getMenuItemExcluirItem();
 }

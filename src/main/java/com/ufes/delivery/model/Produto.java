@@ -14,6 +14,7 @@ public class Produto {
     private String categoria;
     private double precoUnitario;
     private int quantidadeInicial;
+    private int quantidadeDisponivel;
     private int id;
 
     public Produto(String nome, String codigo, String categoria, double precoUnitario, int quantidadeInicial) {
@@ -22,6 +23,7 @@ public class Produto {
         this.categoria = categoria;
         this.precoUnitario = precoUnitario;
         this.quantidadeInicial = quantidadeInicial;
+        this.quantidadeDisponivel = this.quantidadeInicial;
     }
 
     public int getId() {
@@ -71,6 +73,26 @@ public class Produto {
     public void setQuantidadeInicial(int quantidadeInicial) {
         this.quantidadeInicial = quantidadeInicial;
     }
+
+    public int getQuantidadeDisponivel() {
+        return quantidadeDisponivel;
+    }
+
+    public void setQuantidadeDisponivel(int quantidadeDisponivel) {
+        this.quantidadeDisponivel = quantidadeDisponivel;
+    }
     
-    
+    public void baixarEstoque(int quantidade) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException(
+                    "Quantidade a baixar deve ser maior que zero");
+        }
+        if (quantidade > quantidadeDisponivel) {
+            throw new IllegalStateException(
+                    "Estoque insuficiente para \"" + nome
+                    + "\". Disponível: " + quantidadeDisponivel
+                    + ", solicitado: " + quantidade);
+        }
+        this.quantidadeDisponivel -= quantidade;
+    }
 }

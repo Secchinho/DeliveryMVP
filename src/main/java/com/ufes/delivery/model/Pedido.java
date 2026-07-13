@@ -86,6 +86,23 @@ public class Pedido {
         this.logger = logger;
     }
 
+    public void removerItem(Item item) {
+        if (item == null) {
+            this.logger.criarLog(Mapper.convertToLog(this.getCodigoPedido(),
+                    "Exceção: Item a remover deve ser informado",
+                    this.getCliente().getNome()));
+            throw new IllegalArgumentException("Item a remover deve ser informado");
+        }
+        if (!itens.remove(item)) {
+            this.logger.criarLog(Mapper.convertToLog(this.getCodigoPedido(),
+                    "Exceção: Item não encontrado no pedido",
+                    this.getCliente().getNome()));
+            throw new IllegalStateException("Item não encontrado no pedido");
+        }
+        this.logger.criarLog(Mapper.convertToLog(this.getCodigoPedido(),
+                "Remover Item do Pedido", this.getCliente().getNome()));
+    }
+    
     public double getTotalDescontosTaxaEntrega() {
         double desconto = 0;
 
@@ -166,7 +183,7 @@ public class Pedido {
 
         this.cupomPedidoAplicado = cupomPedidoAplicado;
     }
-
+    
     @Override
     public String toString() {
         return "Pedido{"

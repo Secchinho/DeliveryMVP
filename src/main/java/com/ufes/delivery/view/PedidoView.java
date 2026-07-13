@@ -23,76 +23,19 @@ public class PedidoView extends JFrame implements IPedidoView {
     private JLabel lblTotalPedidoValor;
     private JButton btnPagar;
     private JButton btnCancelar;
-    
+
+    /**
+     * Menu de contexto exibido ao clicar com o botão direito sobre uma linha
+     * da tabela de itens (US09 cenário 4). Exposto pela interface para que o
+     * presenter anexe o ActionListener ao item "Excluir".
+     */
+    private JPopupMenu menuContexto;
+    private JMenuItem itemExcluir;
+
 
     public PedidoView() {
         super("Pedido");
         initComponents();
-    }
-
-    @Override
-    public String getNomeCliente() {
-        return txtCliente.getText().trim();
-    }
-
-    @Override
-    public String getEnderecoSelecionado() {
-        return (String) cmbEnderecoEntrega.getSelectedItem();
-    }
-
-    @Override
-    public String getCupomTexto() {
-        return txtCupomDesconto.getText().trim();
-    }
-
-    @Override
-    public List<Object[]> getDadosItens() {
-        return modeloItens.getDadosItens();
-    }
-
-    @Override
-    public void setNomeCliente(String nome) {
-        this.txtCliente.setText(nome);
-    }
-
-    @Override
-    public void setEnderecosEntrega(List<String> enderecos) {
-        cmbEnderecoEntrega.removeAllItems();
-        if (enderecos != null) {
-            for (String end : enderecos) {
-                cmbEnderecoEntrega.addItem(end);
-            }
-        }
-    }
-
-    @Override
-    public void setCupomTexto(String cupom) {
-        this.txtCupomDesconto.setText(cupom);
-    }
-
-    @Override
-    public void atualizarTotais(String totalDescontos, String descTaxaEntrega, String taxaFinal, String totalPedido) {
-        this.lblTotalDescontosValor.setText(totalDescontos);
-        this.lblDescontoTaxaEntregaValor.setText(descTaxaEntrega);
-        this.lblTaxaEntregaFinalValor.setText(taxaFinal);
-        this.lblTotalPedidoValor.setText(totalPedido);
-    }
-
-    @Override
-    public void adicionarItemTabela(Object[] item) {
-        modeloItens.addRow(item);
-    }
-
-    @Override
-    public void removerItemTabela(int indiceLinha) {
-        if (indiceLinha >= 0 && indiceLinha < modeloItens.getRowCount()) {
-            modeloItens.removeRow(indiceLinha);
-        }
-    }
-
-    @Override
-    public void limparTabelaItens() {
-        modeloItens.setRowCount(0);
     }
 
     @Override
@@ -109,32 +52,62 @@ public class PedidoView extends JFrame implements IPedidoView {
     public JButton getFecharButton() {
         return this.btnCancelar;
     }
-    
+
     @Override
     public JButton getAplicarCupomButton() {
         return this.btnAplicarCupom;
     }
-    
+
     @Override
     public JComboBox<String> getEnderecoComboBox() {
         return this.cmbEnderecoEntrega;
     }
 
     @Override
-    public void exibirMensagem(String mensagem, String titulo, int tipoMensagem) {
-        JOptionPane.showMessageDialog(this, mensagem, titulo, tipoMensagem);
-    }
-
-    @Override
-    public void fecharTela() {
-        this.dispose();
-    }
-
-    @Override
     public JFrame getJanelaPrincipal() {
         return this;
     }
-    
+
+    @Override
+    public JTextField getTxtCliente() {
+        return this.txtCliente;
+    }
+
+    @Override
+    public JTextField getTxtCupomDesconto() {
+        return this.txtCupomDesconto;
+    }
+
+    @Override
+    public JTable getTabelaItens() {
+        return this.tabelaItens;
+    }
+
+    @Override
+    public JLabel getLblTotalDescontosValor() {
+        return this.lblTotalDescontosValor;
+    }
+
+    @Override
+    public JLabel getLblDescontoTaxaEntregaValor() {
+        return this.lblDescontoTaxaEntregaValor;
+    }
+
+    @Override
+    public JLabel getLblTaxaEntregaFinalValor() {
+        return this.lblTaxaEntregaFinalValor;
+    }
+
+    @Override
+    public JLabel getLblTotalPedidoValor() {
+        return this.lblTotalPedidoValor;
+    }
+
+    @Override
+    public JMenuItem getMenuItemExcluirItem() {
+        return this.itemExcluir;
+    }
+
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(770, 620);
@@ -189,16 +162,18 @@ public class PedidoView extends JFrame implements IPedidoView {
 
         String[] colunas = { "Categoria", "Item", "Preço unitário", "Quantidade", "Preço total" };
         modeloItens = new ItensTableModel(colunas, 0);
-        
+
         tabelaItens = new JTable(modeloItens);
         tabelaItens.setRowHeight(26);
         tabelaItens.getTableHeader().setReorderingAllowed(false);
         tabelaItens.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JPopupMenu menuContexto = new JPopupMenu();
-        JMenuItem itemExcluir = new JMenuItem("Excluir");
+        // Menu de contexto promovido a field da classe para que o presenter
+        // possa anexar o ActionListener ao item "Excluir" via interface.
+        menuContexto = new JPopupMenu();
+        itemExcluir = new JMenuItem("Excluir");
         menuContexto.add(itemExcluir);
-        
+
         tabelaItens.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -290,7 +265,7 @@ public class PedidoView extends JFrame implements IPedidoView {
     }
 
     private class ItensTableModel extends DefaultTableModel {
-        
+
         public ItensTableModel(String[] colunas, int linhas) {
             super(colunas, linhas);
         }
