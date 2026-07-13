@@ -22,6 +22,13 @@ public class Usuario {
         this.tipo = 0; 
         this.situacao = "Pendente";
     }
+
+    public Usuario(String nome, String userName){
+        this.nome = nome;
+        this.userName = userName;
+        this.tipo = 0; 
+        this.situacao = "Pendente";
+    }
     
     public String getSenha() {
         return senha;
