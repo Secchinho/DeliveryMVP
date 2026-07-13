@@ -34,10 +34,12 @@ import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.IClienteView;
 import com.ufes.delivery.view.ILoginView;
 import com.ufes.delivery.view.IMovimentacaoEstoqueView;
+import com.ufes.delivery.view.IPagamentoView;
 import com.ufes.delivery.view.IPedidoView;
 import com.ufes.delivery.view.IProdutoView;
 import com.ufes.delivery.view.LoginView;
 import com.ufes.delivery.view.MovimentacaoEstoqueView;
+import com.ufes.delivery.view.PagamentoView;
 import com.ufes.delivery.view.PedidoView;
 import com.ufes.delivery.view.ProdutoView;
 import com.ufes.util.AutenticacaoUsuarioService;
@@ -52,26 +54,27 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // --- Tela de pedido (US09 / US10) ---
-        // Logger de auditoria - troque por JsonlLoggerImpl/XmlLoggerImpl se preferir.
-        ILogger logger = new CsvLoggerImpl("PedidoLog.csv");
+//        // --- Tela de pedido (US09 / US10) ---
+//        // Logger de auditoria - troque por JsonlLoggerImpl/XmlLoggerImpl se preferir.
+//        ILogger logger = new CsvLoggerImpl("PedidoLog.csv");
+//
+//        // Repository em memória (substituir por PedidoRepositorySQLite quando disponível).
+//        IPedidoRepository pedidoRepository = new PedidoRepositoryEmMemoria();
+//
+//        // Service de aplicação de cupom com repositório em memória.
+//        ICupomRepository cupomRepository = new CupomPedidoRepositoryEmMemoria();
+//        AplicadorCupomPedidoService aplicadorCupom
+//                = new AplicadorCupomPedidoService(cupomRepository, logger);
+//
+//        IPedidoView pedidoView = new PedidoView();
+//        IClienteRepository clienteRepository = new ClienteRepositorySQLite();
+//        IProdutoRepository produtoRepository = new ProdutoRepositorySQLite();
+//        PedidoPresenter pedidoPresenter = new PedidoPresenter(
+//                pedidoView, pedidoRepository, clienteRepository,
+//                produtoRepository, logger, aplicadorCupom);
+//        pedidoPresenter.setEstado(new CriarPedidoState(pedidoPresenter));
+//        pedidoPresenter.iniciar();
 
-        // Repository em memória (substituir por PedidoRepositorySQLite quando disponível).
-        IPedidoRepository pedidoRepository = new PedidoRepositoryEmMemoria();
-
-        // Service de aplicação de cupom com repositório em memória.
-        ICupomRepository cupomRepository = new CupomPedidoRepositoryEmMemoria();
-        AplicadorCupomPedidoService aplicadorCupom
-                = new AplicadorCupomPedidoService(cupomRepository, logger);
-
-        IPedidoView pedidoView = new PedidoView();
-        IClienteRepository clienteRepository = new ClienteRepositorySQLite();
-        IProdutoRepository produtoRepository = new ProdutoRepositorySQLite();
-        PedidoPresenter pedidoPresenter = new PedidoPresenter(
-                pedidoView, pedidoRepository, clienteRepository,
-                produtoRepository, logger, aplicadorCupom);
-        pedidoPresenter.setEstado(new CriarPedidoState(pedidoPresenter));
-        pedidoPresenter.iniciar();
     }
 
 }

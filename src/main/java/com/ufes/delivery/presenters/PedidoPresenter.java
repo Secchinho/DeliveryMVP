@@ -6,6 +6,7 @@ package com.ufes.delivery.presenters;
 
 import br.ufes.logauditoria.ILogger;
 import com.ufes.delivery.command.SalvarClienteCommand;
+import com.ufes.delivery.command.PagamentoCommand;
 import com.ufes.delivery.desconto.pedido.AplicadorCupomPedidoService;
 import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.model.Endereco;
@@ -22,6 +23,7 @@ import com.ufes.delivery.state.ValidarPedidoState;
 import com.ufes.delivery.view.ClienteView;
 import com.ufes.delivery.view.IClienteView;
 import com.ufes.delivery.view.IPedidoView;
+import com.ufes.delivery.view.PagamentoView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
@@ -35,22 +37,13 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * Presenter da tela de pedido (US09 e US10).
+ * Presenter da tela de pedido (US09, US10 e US11).
  * <p>
  * Atua como <em>contexto</em> do padrão State: mantém a referência ao
  * {@link PedidoState} corrente e delega a ele todas as ações de UI disparadas
  * pela View. O presenter não decide se uma ação é permitida - apenas
  * encaminha a requisição ao estado, que executa, rejeita ou transita para
  * outro estado.
- * <p>
- * Responsabilidades:
- * <ul>
- *   <li>configurar os listeners de eventos da View e delegá-los ao estado;</li>
- *   <li>expor ao estado os objetos de domínio (View, Pedido, Repository);</li>
- *   <li>fornecer operações utilitárias (atualizar tabela, atualizar valores,
- *       validar estoque, simular pagamento, etc.) usadas pelos estados;</li>
- *   <li>permitir a troca de estado via {@link #setEstado(PedidoState)}.</li>
- * </ul>
  *
  * @author lucas
  */
@@ -62,24 +55,37 @@ public class PedidoPresenter {
     private final IProdutoRepository produtoRepository;
     private final ILogger logger;
     private final AplicadorCupomPedidoService aplicadorCupomService;
+    private final PagamentoService pagamentoService;
     private final List<Pedido> pedidos;
 
-    /**
-     * Pedido corrente em elaboração / validação. Pode ser {@code null} quando
-     * a tela foi aberta em modo inclusão e o cliente ainda não foi informado.
-     */
     private Pedido pedido;
+    private PedidoState estado;
 
     /**
-     * Estado corrente do fluxo de pedido (Criar / Validar).
+     * Resultado da última tentativa simulada de pagamento (US11). Fica
+     * disponível após {@link #simularPagamento()} e é consumido por
+     * {@link #abrirTelaPagamento()} para popular a tela de resultado.
      */
-    private PedidoState estado;
+    private ResultadoPagamento resultadoPagamento;
 
     private final DecimalFormat formatoMoeda = new DecimalFormat("#,##0.00");
 
     public PedidoPresenter(IPedidoView view, IPedidoRepository repository,
             IClienteRepository clienteRepository, IProdutoRepository produtoRepository,
             ILogger logger, AplicadorCupomPedidoService aplicadorCupomService) {
+        this(view, repository, clienteRepository, produtoRepository, logger,
+                aplicadorCupomService, new PagamentoService());
+    }
+
+    /**
+     * Permite injetar um {@link PagamentoService} próprio - em especial uma
+     * instância configurada com {@link ISorteioPagamento} determinístico para
+     * testes automatizados, conforme exige o DoD da US11.
+     */
+    public PedidoPresenter(IPedidoView view, IPedidoRepository repository,
+            IClienteRepository clienteRepository, IProdutoRepository produtoRepository,
+            ILogger logger, AplicadorCupomPedidoService aplicadorCupomService,
+            PagamentoService pagamentoService) {
         this.view = Objects.requireNonNull(view, "View não pode ser nula");
         this.repository = Objects.requireNonNull(repository,
                 "Repository não pode ser nulo");
@@ -90,6 +96,8 @@ public class PedidoPresenter {
         this.logger = Objects.requireNonNull(logger, "Logger não pode ser nulo");
         this.aplicadorCupomService = Objects.requireNonNull(aplicadorCupomService,
                 "Serviço de aplicação de cupom não pode ser nulo");
+        this.pagamentoService = Objects.requireNonNull(pagamentoService,
+                "Serviço de pagamento não pode ser nulo");
         this.pedidos = repository.listarPedidos();
 
         // Estado inicial: criação do pedido (US09).
@@ -110,48 +118,35 @@ public class PedidoPresenter {
         return produtoRepository;
     }
 
+    public ResultadoPagamento getResultadoPagamento() {
+        return resultadoPagamento;
+    }
+
     // ------------------------------------------------------------------
     // Configuração de eventos - delega ao estado corrente
     // ------------------------------------------------------------------
 
-    /**
-     * Configura os listeners de UI da tela de pedido. Cada ação é delegada ao
-     * {@link PedidoState} corrente, que decide como tratá-la.
-     * <p>
-     * Visibilidade {@code public} conforme o diagrama de classes.
-     */
     public void configurarEventos() {
-        // Botão Novo Cliente -> estado.novoCliente()
         this.view.getNovoClienteButton()
                 .addActionListener(e -> this.estado.novoCliente());
 
-        // Botão Buscar Cliente -> estado.buscarCliente()
         this.view.getBuscarClienteButton()
                 .addActionListener(e -> this.estado.buscarCliente());
 
-        // Botão Aplicar Cupom -> estado.aplicarCupom()
         this.view.getAplicarCupomButton()
                 .addActionListener(e -> this.estado.aplicarCupom());
 
-        // Botão Adicionar Item -> estado.adicionarItem()
-        // No CriarPedidoState, isso adiciona uma linha em branco na tabela
-        // para que o usuário possa digitar manualmente os dados do item.
-        // Nos demais estados, a ação é tratada (e rejeitada) pelo estado.
         if (this.view.getAdicionarItemButton() != null) {
             this.view.getAdicionarItemButton()
                     .addActionListener(e -> this.estado.adicionarItem());
         }
 
-        // Botão Pagar -> estado.pagar()
         this.view.getPagarButton()
                 .addActionListener(e -> this.estado.pagar());
 
-        // Botão Fechar -> estado.fechar()
         this.view.getFecharButton()
                 .addActionListener(e -> this.estado.fechar());
 
-        // Tabela de itens: duplo clique para adicionar e menu de contexto
-        // (botão direito) para excluir - US09 cenário 4.
         JTable tabela = this.view.getTabelaItens();
         if (tabela != null) {
             tabela.addMouseListener(new MouseAdapter() {
@@ -191,9 +186,6 @@ public class PedidoPresenter {
     // Inicialização
     // ------------------------------------------------------------------
 
-    /**
-     * Exibe a janela do pedido e dispara a entrada do estado inicial.
-     */
     public void iniciar() {
         this.view.getJanelaPrincipal().setVisible(true);
         this.estado.entrar();
@@ -203,12 +195,6 @@ public class PedidoPresenter {
     // Transição de estado
     // ------------------------------------------------------------------
 
-    /**
-     * Troca o estado corrente. Executa {@link PedidoState#sair()} do estado
-     * atual e {@link PedidoState#entrar()} do novo estado.
-     *
-     * @param novoEstado próximo estado do fluxo de pedido
-     */
     public void setEstado(PedidoState novoEstado) {
         if (this.estado != null) {
             this.estado.sair();
@@ -250,9 +236,6 @@ public class PedidoPresenter {
     // Operações utilitárias usadas pelos estados
     // ------------------------------------------------------------------
 
-    /**
-     * Atualiza a tabela de itens a partir do pedido corrente.
-     */
     public void atualizarTabela() {
         JTable tabela = view.getTabelaItens();
         if (tabela == null) {
@@ -274,11 +257,6 @@ public class PedidoPresenter {
         }
     }
 
-    /**
-     * Recalcula e atualiza os rótulos de resumo financeiro com base no pedido
-     * corrente. Os valores são sempre apresentados em campos não editáveis
-     * (US09 - totais calculados).
-     */
     public void atualizarValores() {
         if (pedido == null) {
             view.getLblTotalDescontosValor().setText("R$ 0,00");
@@ -301,44 +279,19 @@ public class PedidoPresenter {
                 String.format("R$ %s", formatoMoeda.format(totalPedido)));
     }
 
-    /**
-     * Exibe uma mensagem modal na janela do pedido.
-     *
-     * @param mensagem texto a exibir
-     * @param titulo   título da janela
-     * @param tipo     um dos {@code JOptionPane.*_MESSAGE}
-     */
     public void exibirMensagem(String mensagem, String titulo, int tipo) {
         JOptionPane.showMessageDialog(view.getJanelaPrincipal(),
                 mensagem, titulo, tipo);
     }
 
-    /**
-     * Abre a tela de cadastro de cliente. Implementação concreta depende do
-     * presenter coordenador da aplicação; aqui apenas expõe o ponto de
-     * extensão para o estado.
-     */
     public void abrirCadastroCliente() {
         IClienteView view = new ClienteView();
-        
+
         ClientePresenter clientePresenter = new ClientePresenter(view, this.clienteRepository);
         clientePresenter.setCommand(new SalvarClienteCommand(clientePresenter));
         clientePresenter.iniciar();
     }
 
-    /**
-     * Busca um cliente por CPF no repositório e, se encontrado, vincula-o ao
-     * pedido corrente, preenche o nome na view e carrega os endereços do
-     * cliente na caixa de combinação de endereço de entrega.
-     * <p>
-     * Validações aplicadas (alinhadas à US05):
-     * <ul>
-     *   <li>CPF obrigatório e não vazio;</li>
-     *   <li>CPF deve conter 11 dígitos numéricos;</li>
-     *   <li>Dígitos verificadores do CPF devem ser válidos;</li>
-     *   <li>Cliente deve existir no repositório.</li>
-     * </ul>
-     */
     public void buscarClientePorCpf() {
         String cpfInformado = view.getTxtCpfCliente().getText().trim();
 
@@ -348,7 +301,6 @@ public class PedidoPresenter {
             return;
         }
 
-        // Remove máscara, mantendo apenas os 11 dígitos
         String cpf = cpfInformado.replaceAll("\\D", "");
 
         if (cpf.length() != 11) {
@@ -373,18 +325,14 @@ public class PedidoPresenter {
 
         Cliente clienteEncontrado = optCliente.get();
 
-        // Exibe o nome do cliente encontrado
         view.getLblNomeCliente().setText(clienteEncontrado.getNome());
 
-        // Carrega os endereços do cliente na caixa de combinação
         carregarEnderecosCliente(clienteEncontrado);
 
-        // Cria o pedido com o cliente encontrado, se ainda não existir
         if (this.pedido == null) {
             this.pedido = new Pedido(LocalDateTime.now(), clienteEncontrado,
                     pedidos.size() + 1, logger);
         } else {
-            // Se já existe pedido, atualiza o cliente (recria o pedido)
             this.pedido = new Pedido(LocalDateTime.now(), clienteEncontrado,
                     pedido.getCodigoPedido(), logger);
         }
@@ -396,12 +344,6 @@ public class PedidoPresenter {
                 "Buscar cliente", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * Carrega os endereços do cliente na caixa de combinação de endereço de
-     * entrega da view. Cada item da caixa exibe o logradouro e o bairro.
-     *
-     * @param cliente cliente cujos endereços serão carregados
-     */
     private void carregarEnderecosCliente(Cliente cliente) {
         JComboBox<String> combo = view.getEnderecoComboBox();
         combo.removeAllItems();
@@ -416,12 +358,6 @@ public class PedidoPresenter {
         }
     }
 
-    /**
-     * Valida os dígitos verificadores de um CPF com 11 dígitos.
-     *
-     * @param cpf CPF contendo exatamente 11 dígitos (sem máscara)
-     * @return {@code true} se os dígitos verificadores forem válidos
-     */
     private boolean validarDigitosCpf(String cpf) {
         if (cpf == null || cpf.length() != 11 || cpf.matches("(\\d)\\1{10}")) {
             return false;
@@ -449,63 +385,21 @@ public class PedidoPresenter {
         return dig2 == Character.getNumericValue(cpf.charAt(10));
     }
 
-    /**
-     * Abre a tela de busca de produtos para seleção de item a adicionar.
-     * Implementação concreta depende do coordenador de telas da aplicação.
-     */
     public void abrirBuscaProdutos() {
-        // Hook - integrar com o coordenador de telas da aplicação.
         exibirMensagem("Abra a busca de produtos a partir do menu Operação.",
                 "Adicionar item", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * Remove o item da linha informada do pedido corrente e recalcula os
-     * valores (US09 cenário 4).
-     *
-     * @param linha índice da linha na tabela (equivale ao índice do item na
-     *              lista do pedido)
-     */
     public void removerItem(int linha) {
         if (pedido == null || linha < 0
                 || linha >= pedido.getItens().size()) {
             return;
         }
-        // Remove da lista interna do pedido. Como getItens() é não
-        // modificável, é preciso gerenciar a remoção pelo próprio Pedido.
         pedido.removerItem(pedido.getItens().get(linha));
         atualizarTabela();
         atualizarValores();
     }
 
-    /**
-     * Coleta todas as linhas completamente preenchidas da tabela de itens,
-     * resolve o produto correspondente no repositório de produtos e adiciona
-     * os itens ao pedido corrente. Linhas em branco ou parcialmente
-     * preenchidas são ignoradas.
-     * <p>
-     * Este método é invocado pelo {@code pagar()} do {@link CriarPedidoState}
-     * antes de transitar para o estado de validação, garantindo que o pedido
-     * reflita exatamente o que foi digitado pelo atendente na tabela.
-     * <p>
-     * Regras:
-     * <ul>
-     *   <li>Uma linha é considerada "completamente preenchida" quando as
-     *       colunas "Item" (índice 1 do modelo) e "Quantidade" (índice 3)
-     *       possuem valores não vazios.</li>
-     *   <li>O nome informado em "Item" deve corresponder a um produto
-     *       cadastrado no repositório (busca por nome exato).</li>
-     *   <li>A quantidade deve ser um número inteiro maior que zero.</li>
-     *   <li>Os itens existentes no pedido são removidos antes da coleta para
-     *       evitar duplicidade ao reabrir a edição a partir do estado de
-     *       validação.</li>
-     * </ul>
-     *
-     * @return {@code true} se todos os itens da tabela foram coletados com
-     *         sucesso; {@code false} se houve produto não encontrado ou
-     *         quantidade inválida (neste caso uma mensagem já foi exibida
-     *         ao usuário e o pedido permanece inalterado)
-     */
     public boolean coletarItensDaTabela() {
         JTable tabela = view.getTabelaItens();
         if (tabela == null || pedido == null) {
@@ -514,24 +408,18 @@ public class PedidoPresenter {
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
         int totalLinhas = modelo.getRowCount();
 
-        // Acumula os itens resolvidos em uma lista temporária - só adiciona
-        // ao pedido se TODAS as linhas preenchidas forem válidas. Assim o
-        // pedido não fica em estado parcial quando há erro.
         List<Item> itensResolvidos = new java.util.ArrayList<>();
 
         for (int i = 0; i < totalLinhas; i++) {
-            Object valorItem = modelo.getValueAt(i, 1);    // coluna "Item"
-            Object valorQtd = modelo.getValueAt(i, 3);     // coluna "Quantidade"
+            Object valorItem = modelo.getValueAt(i, 1);
+            Object valorQtd = modelo.getValueAt(i, 3);
 
             String nome = valorItem == null ? "" : valorItem.toString().trim();
             String qtdStr = valorQtd == null ? "" : valorQtd.toString().trim();
 
-            // Linha em branco ou parcialmente preenchida é ignorada.
             if (nome.isEmpty() && qtdStr.isEmpty()) {
                 continue;
             }
-            // Se apenas um dos dois campos foi preenchido, a linha está
-            // incompleta - avisamos o usuário e abortamos.
             if (nome.isEmpty() || qtdStr.isEmpty()) {
                 exibirMensagem(
                         "Linha " + (i + 1) + ": preencha o nome do item e a "
@@ -540,7 +428,6 @@ public class PedidoPresenter {
                 return false;
             }
 
-            // Resolve o produto no repositório (busca por nome exato).
             List<Produto> produtos = produtoRepository.buscarPorNome(nome);
             Produto produtoSelecionado = null;
             for (Produto p : produtos) {
@@ -557,7 +444,6 @@ public class PedidoPresenter {
                 return false;
             }
 
-            // Quantidade deve ser inteiro > 0.
             int quantidade;
             try {
                 quantidade = Integer.parseInt(qtdStr);
@@ -576,9 +462,6 @@ public class PedidoPresenter {
                 return false;
             }
 
-            // Cria o Item e vincula o Produto. O valor unitário é obtido do
-            // produto cadastrado (não do que foi digitado na tabela, pois a
-            // coluna "Preço unitário" está oculta no modo criação).
             Item item = new Item(produtoSelecionado.getNome(),
                     quantidade, produtoSelecionado.getPrecoUnitario(),
                     produtoSelecionado.getCategoria());
@@ -586,8 +469,6 @@ public class PedidoPresenter {
             itensResolvidos.add(item);
         }
 
-        // Limpa os itens atuais do pedido e adiciona os resolvidos. Como
-        // getItens() retorna lista não modificável, removemos um a um.
         List<Item> itensAtuais = new java.util.ArrayList<>(pedido.getItens());
         for (Item item : itensAtuais) {
             pedido.removerItem(item);
@@ -596,20 +477,11 @@ public class PedidoPresenter {
             pedido.adicionarItem(item);
         }
 
-        // Atualiza a tabela e os valores exibidos para refletir o pedido
-        // consolidado (inclui preços e totais calculados a partir do
-        // catálogo).
         atualizarTabela();
         atualizarValores();
         return true;
     }
 
-    /**
-     * Aplica o cupom informado ao pedido corrente. Cupom inválido não aplica
-     * desconto e exibe mensagem (US09 cenário 5).
-     *
-     * @param codigo código do cupom de desconto
-     */
     public void aplicarCupom(String codigo) {
         if (pedido == null) {
             exibirMensagem("Informe o cliente antes de aplicar o cupom.",
@@ -629,14 +501,6 @@ public class PedidoPresenter {
         }
     }
 
-    /**
-     * Valida a disponibilidade de estoque de todos os itens no instante da
-     * confirmação do pagamento (US10 cenário 3).
-     *
-     * @return {@code true} se todos os itens estiverem disponíveis;
-     *         {@code false} caso contrário (neste caso a mensagem com o item e
-     *         a quantidade disponível já terá sido exibida)
-     */
     public boolean validarDisponibilidadeEstoque() {
         if (pedido == null) {
             return false;
@@ -656,32 +520,60 @@ public class PedidoPresenter {
     }
 
     /**
-     * Simula o resultado do pagamento (US11). A probabilidade é de 50% para
-     * aprovação e 50% para reprovação no MVP.
+     * Simula o resultado do pagamento (US11), delegando ao
+     * {@link PagamentoService} injetado - o que garante que a fonte de
+     * aleatoriedade ({@link ISorteioPagamento}) possa ser substituída por uma
+     * implementação determinística nos testes (DoD item 2). O
+     * {@link ResultadoPagamento} produzido é armazenado para uso por
+     * {@link #abrirTelaPagamento()}.
      *
      * @return {@code true} se aprovado; {@code false} se reprovado
      */
     public boolean simularPagamento() {
-        return Math.random() < 0.5;
+        if (pedido == null) {
+            throw new IllegalStateException("Não há pedido para simular pagamento.");
+        }
+        this.resultadoPagamento = pagamentoService.processar(pedido);
+        return this.resultadoPagamento.isAprovado();
     }
 
     /**
      * Confirma o pagamento: baixa o estoque em transação única (US10 cenário
      * 4), atualiza a situação do pedido para "Aguardando entrega" e persiste
-     * o pedido no repositório.
+     * o pedido no repositório. Deve ser chamado somente quando
+     * {@link #simularPagamento()} retornar {@code true} e o estoque já
+     * tiver sido validado.
      */
     public void confirmarPagamento() {
         if (pedido == null) {
             return;
         }
-        // Baixa de estoque em transação única - nenhum item pode ser
-        // parcialmente atualizado se outro falhar.
         for (var item : pedido.getItens()) {
             item.getProduto().baixarEstoque(item.getQuantidade());
         }
-        // Situação do pedido após resultado aprovado (US10).
         pedido.setEstado("Aguardando entrega");
-        // Persiste o pedido confirmado.
         repository.adicionar(pedido);
+    }
+
+    /**
+     * Abre a tela de resultado do pagamento (US11 - Figura 12), populada com
+     * o {@link ResultadoPagamento} da última tentativa simulada. Deve ser
+     * chamada pelo estado (ex.: {@code ValidarPedidoState.pagar()}) após
+     * {@link #simularPagamento()}, tanto em caso de aprovação quanto de
+     * reprovação, já que a US11 exige que a tela seja exibida em ambos os
+     * cenários.
+     *
+     * @param command comando responsável por tratar o fechamento da tela,
+     *                que varia conforme o resultado (aprovado ou reprovado)
+     */
+    public void abrirTelaPagamento(PagamentoCommand command) {
+        if (pedido == null || resultadoPagamento == null) {
+            throw new IllegalStateException(
+                    "Simule o pagamento antes de abrir a tela de resultado.");
+        }
+        PagamentoView pagamentoView = new PagamentoView();
+        PagamentoPresenter pagamentoPresenter = new PagamentoPresenter(
+                pagamentoView, command, pedido, resultadoPagamento);
+        pagamentoPresenter.iniciar();
     }
 }
