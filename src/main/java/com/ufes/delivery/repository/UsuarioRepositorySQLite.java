@@ -166,7 +166,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     public Optional<Usuario> getPorUserName(String userName) {
         validarUserName(userName);
 
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado "
+        String sql = "SELECT nome, userName, senha, tipo, situacao, autorizado "
                 + "FROM tbUsuario WHERE userName = ?";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql);) {
@@ -202,7 +202,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     }
 
     private Usuario mapear(ResultSet rs) throws SQLException {
-        Usuario u = new Usuario(rs.getString("nome"), rs.getString("userName"));
+        Usuario u = new Usuario(rs.getString("nome"), rs.getString("userName"), rs.getString("senha"));
         u.setTipo(rs.getInt("tipo"));
         u.setSituacao(rs.getString("situacao"));
         return u;

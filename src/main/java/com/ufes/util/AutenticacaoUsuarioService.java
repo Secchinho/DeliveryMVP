@@ -37,6 +37,7 @@ public class AutenticacaoUsuarioService {
         }
         
         Optional<Usuario> usuario = usuarioRepository.getPorUserName(nome);
+        senha = CriptografarService.gerarHash(senha);
 
         if (usuario.isEmpty() || !senhaCorresponde(usuario.get(), senha)) {
             throw new RuntimeException("Usuário inválido!");
