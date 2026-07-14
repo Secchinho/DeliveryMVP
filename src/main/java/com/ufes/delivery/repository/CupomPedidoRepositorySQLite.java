@@ -42,7 +42,7 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
         validarCupom(cupom);
 
         String sql = "SELECT codigo, percentual, dataHoraInicio, dataHoraFim "
-                + "FROM tbCupomPedido WHERE = " + cupom.getCodigo();
+                + "FROM tbCupomPedido WHERE codigo = " + cupom.getCodigo();
         try (var conn = DriverManager.getConnection(url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 throw new SQLException("O cupom já existe na tabela.");
@@ -70,7 +70,7 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
         validarCupom(cupom);
 
         String sql = "SELECT codigo, percentual, dataHoraInicio, dataHoraFim "
-                + "FROM tbCupomPedido WHERE = " + cupom.getCodigo();
+                + "FROM tbCupomPedido WHERE codigo = " + cupom.getCodigo();
         try (var conn = DriverManager.getConnection(url); var stmt = conn.createStatement(); var rs = stmt.executeQuery(sql)) {
             if (!rs.next()) {
                 throw new SQLException("O cupom ainda não existe na tabela.");

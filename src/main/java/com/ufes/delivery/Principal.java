@@ -18,7 +18,7 @@ import com.ufes.delivery.repository.ICupomRepository;
 import com.ufes.delivery.repository.IPedidoRepository;
 import com.ufes.delivery.repository.IProdutoRepository;
 import com.ufes.delivery.repository.IUsuarioRepository;
-import com.ufes.delivery.repository.PedidoRepositoryEmMemoria;
+import com.ufes.delivery.repository.PedidoRepositorySQLite;
 import com.ufes.delivery.repository.ProdutoRepositorySQLite;
 import com.ufes.delivery.repository.UsuarioRepositorySQLite;
 import com.ufes.delivery.view.CadastrarUsuarioView;
@@ -56,11 +56,7 @@ public class Principal {
         IClienteRepository clienteRepository = new ClienteRepositorySQLite();
         IProdutoRepository produtoRepository = new ProdutoRepositorySQLite();
         ICupomRepository cupomRepository = new CupomPedidoRepositorySQLite();
-
-        // O repositório de pedidos em SQLite ainda não está disponível neste
-        // pacote (ver observações ao final da implementação); usa-se por ora
-        // o repositório em memória para não interromper o fluxo do painel.
-        IPedidoRepository pedidoRepository = new PedidoRepositoryEmMemoria();
+        IPedidoRepository pedidoRepository = new PedidoRepositorySQLite();
 
         // --- Serviços de domínio ---
         AplicadorCupomPedidoService aplicadorCupomService
