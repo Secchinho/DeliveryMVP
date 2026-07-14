@@ -30,11 +30,15 @@ public class LoginPresenter {
     private ILoginView view;
     private AutenticacaoUsuarioService autenticacaoService;
     private CadastrarUsuarioPresenter cadastroUsuarioPresenter;
+    private PainelOperacionalPresenter painelOperacionalPresenter;
 
-    public LoginPresenter(ILoginView view, AutenticacaoUsuarioService service, CadastrarUsuarioPresenter cadastroUsuarioPresenter) {
+    public LoginPresenter(ILoginView view, AutenticacaoUsuarioService service,
+            CadastrarUsuarioPresenter cadastroUsuarioPresenter,
+            PainelOperacionalPresenter painelOperacionalPresenter) {
         this.view = view;
         this.autenticacaoService = service;
         this.cadastroUsuarioPresenter = cadastroUsuarioPresenter;
+        this.painelOperacionalPresenter = painelOperacionalPresenter;
         this.configurarEventos();
     }
 
@@ -100,10 +104,15 @@ public class LoginPresenter {
             UsuarioLogadoService user = UsuarioLogadoService.getInstance();
             user.logar(usuario);
 
-            // Login bem-sucedido: fechar tela de login e abrir painel operacional
-            this.view.getJanelaPrincipal().setVisible(false);
-            // TODO: Navegar para PainelOperacionalPresenter com o usuario autenticado
-            // Exemplo: new PainelOperacionalPresenter(usuario, ...).iniciar();
+            // Login bem-sucedido: fechar tela de login e abrir painel operacional.
+            // O usuário autenticado já está disponível globalmente através do
+            // UsuarioLogadoService (logado logo acima), de onde o painel
+            // operacional lê o nome de usuário e o tipo (Administrador/
+            // Atendente) para compor a barra de status (US04 - Cenário 3).
+            this.view.getNomeUsuario().setText("");
+            this.view.getSenhaUsuario().setText("");
+            this.view.getJanelaPrincipal().dispose();
+            this.painelOperacionalPresenter.iniciar();
 
         } catch (IllegalArgumentException e) {
             // Campos obrigatórios ausentes ou em branco (validação do service)

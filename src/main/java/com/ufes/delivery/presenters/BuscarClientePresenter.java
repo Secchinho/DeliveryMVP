@@ -70,6 +70,7 @@ public class BuscarClientePresenter {
      *
      * @param view              interface da tela de busca de clientes
      * @param clienteRepository repositório de clientes
+     * @param clienteView
      * @throws NullPointerException se view ou clienteRepository forem nulos
      */
     public BuscarClientePresenter(IBuscarClienteView view, IClienteRepository clienteRepository, IClienteView clienteView) {
