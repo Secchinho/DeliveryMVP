@@ -1,6 +1,7 @@
 package com.ufes.delivery.view;
 
 import java.util.function.IntConsumer;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
@@ -14,6 +15,7 @@ public interface IPainelOperacionalView {
     JMenuItem getMenuMovimentacaoEstoque();
     JMenuItem getMenuNovoCliente();
     JMenuItem getMenuBuscarClientes();
+    JMenuItem getMenuGerenciarUsuarios();
     void exibirDataOperacao(String dataOperacao);
     void exibirIndicadores(
             int pedidosDoDia,

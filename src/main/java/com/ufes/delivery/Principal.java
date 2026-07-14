@@ -77,7 +77,7 @@ public class Principal {
         IPainelOperacionalView painelView = new PainelOperacionalView();
         PainelOperacionalPresenter painelPresenter = new PainelOperacionalPresenter(
                 painelView, pedidoRepository, clienteRepository, produtoRepository,
-                logger, aplicadorCupomService, pagamentoService);
+                logger, aplicadorCupomService, pagamentoService, usuarioRepository);
 
         // --- Tela de login (US01) ---
         // O painel operacional é passado ao LoginPresenter, que o inicia

@@ -13,14 +13,19 @@ import com.ufes.delivery.model.Pedido;
 import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.repository.IPedidoRepository;
 import com.ufes.delivery.repository.IProdutoRepository;
+import com.ufes.delivery.repository.IUsuarioRepository;
 import com.ufes.delivery.state.CriarPedidoState;
 import com.ufes.delivery.state.ValidarPedidoState;
 import com.ufes.delivery.view.BuscaClienteView;
 import com.ufes.delivery.view.BuscarProdutoView;
+import com.ufes.delivery.view.CadastrarUsuarioView;
 import com.ufes.delivery.view.ClienteView;
+import com.ufes.delivery.view.GerenciarUsuariosView;
 import com.ufes.delivery.view.IBuscarClienteView;
 import com.ufes.delivery.view.IBuscarProdutoView;
+import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.IClienteView;
+import com.ufes.delivery.view.IGerenciarUsuariosView;
 import com.ufes.delivery.view.IMovimentacaoEstoqueView;
 import com.ufes.delivery.view.IPainelOperacionalView;
 import com.ufes.delivery.view.IPedidoView;
@@ -64,6 +69,7 @@ public class PainelOperacionalPresenter {
     private final IPedidoRepository pedidoRepository;
     private final IClienteRepository clienteRepository;
     private final IProdutoRepository produtoRepository;
+    private final IUsuarioRepository usuarioRepository;
     private final ILogger logger;
     private final AplicadorCupomPedidoService aplicadorCupomService;
     private final PagamentoService pagamentoService;
@@ -92,7 +98,8 @@ public class PainelOperacionalPresenter {
             IProdutoRepository produtoRepository,
             ILogger logger,
             AplicadorCupomPedidoService aplicadorCupomService,
-            PagamentoService pagamentoService) {
+            PagamentoService pagamentoService,
+            IUsuarioRepository usuarioRepository) {
         this.view = Objects.requireNonNull(view, "Insira uma tela");
         this.pedidoRepository = Objects.requireNonNull(pedidoRepository, "Insira um PedidoRepository");
         this.clienteRepository = Objects.requireNonNull(clienteRepository, "Insira um ClienteRepository");
@@ -101,6 +108,7 @@ public class PainelOperacionalPresenter {
         this.aplicadorCupomService = Objects.requireNonNull(aplicadorCupomService,
                 "Insira um AplicadorCupomPedidoService");
         this.pagamentoService = Objects.requireNonNull(pagamentoService, "Insira um PagamentoService");
+        this.usuarioRepository = Objects.requireNonNull(usuarioRepository,"Insira um UsuarioRepository");
 
         this.configurarEventos();
     }
@@ -129,6 +137,7 @@ public class PainelOperacionalPresenter {
         this.view.getMenuMovimentacaoEstoque().addActionListener(v -> this.abrirMovimentacaoEstoque());
         this.view.getMenuNovoCliente().addActionListener(v -> this.abrirNovoCliente());
         this.view.getMenuBuscarClientes().addActionListener(v -> this.abrirBuscarClientes());
+        this.view.getMenuGerenciarUsuarios().addActionListener(v -> this.abrirGerenciarUsuarios());
 
         this.view.setAcaoVisualizarPedidoListener(this::visualizarPedido);
     }
@@ -224,6 +233,25 @@ public class PainelOperacionalPresenter {
     // Ações do menu Operação
     // ------------------------------------------------------------------
 
+    private void abrirGerenciarUsuarios() {
+        // US03 - Acesso: a tela deve ser aberta somente por sessão cujo
+        // perfil seja Administrador.
+        if (UsuarioLogadoService.getInstance().getTipo() != TIPO_ADMINISTRADOR) {
+            this.view.exibirMensagem(
+                    "Funcionalidade restrita ao perfil Administrador.",
+                    "Acesso negado", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        IGerenciarUsuariosView gerenciarUsuariosView = new GerenciarUsuariosView();
+        ICadastrarUsuarioView cadastrarUsuarioView = new CadastrarUsuarioView();
+        GerenciarUsuariosPresenter gerenciarUsuariosPresenter = new GerenciarUsuariosPresenter(
+                gerenciarUsuariosView, this.usuarioRepository, cadastrarUsuarioView);
+
+        this.atualizarPainelAoFechar(gerenciarUsuariosView.getJanelaPrincipal());
+        gerenciarUsuariosPresenter.iniciar();
+    }
+    
     private void abrirNovoPedido() {
         IPedidoView pedidoView = new PedidoView();
         PedidoPresenter pedidoPresenter = new PedidoPresenter(pedidoView,

@@ -13,12 +13,13 @@ import com.ufes.util.UsuarioLogadoService;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author lucas
+ * 
+ * CORRIGIDO: Removido import desnecessário de DefaultTableModel
+ * e simplificado o método atualizarTabela() para usar o método da View
  */
 public class GerenciarUsuariosPresenter {
 
@@ -144,19 +145,26 @@ public class GerenciarUsuariosPresenter {
         this.atualizarTabela(usuarios);
     }
 
+    /**
+     * CORRIGIDO: 
+     * 
+     * ❌ ANTES (ERRADO):
+     * private void atualizarTabela(List<Usuario> usuarios) {
+     *     JTable tabela = this.view.getUsuariosTable();
+     *     DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();  // ClassCastException!
+     *     modelo.setRowCount(0);
+     *     for (Usuario usuario : usuarios) {
+     *         modelo.addRow(new Object[]{...});
+     *     }
+     * }
+     * 
+     * ✅ DEPOIS (CORRETO):
+     * O método atualizarTabela() da View já faz toda a manipulação corretamente.
+     * Delegamos essa responsabilidade à View, seguindo o padrão MVP.
+     */
     private void atualizarTabela(List<Usuario> usuarios) {
-        JTable tabela = this.view.getUsuariosTable();
-        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-        modelo.setRowCount(0);
-
-        for (Usuario usuario : usuarios) {
-            modelo.addRow(new Object[]{
-                usuario.getUserName(),
-                usuario.getNome(),
-                usuario.getSituacao(),
-                usuario.getTipo()
-            });
-        }
+        // Simples: deixamos a View cuidar de sua própria atualização
+        this.view.atualizarTabela(usuarios);
     }
 
     private void exibirMensagem(String mensagem) {

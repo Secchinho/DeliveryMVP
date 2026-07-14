@@ -13,6 +13,7 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
     private JMenuItem miMovimentacaoEstoque;
     private JMenuItem miNovoCliente;
     private JMenuItem miBuscarClientes;
+    private JMenuItem miGerenciarUsuarios;
     private JLabel lblDataOperacao;
     private JLabel lblPedidosDoDia;
     private JLabel lblNovos;
@@ -62,6 +63,7 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
         miMovimentacaoEstoque = new JMenuItem("Movimentação de estoque");
         miNovoCliente = new JMenuItem("Novo cliente");
         miBuscarClientes = new JMenuItem("Buscar clientes");
+        miGerenciarUsuarios = new JMenuItem("Gerenciar usuários");
 
         menuOperacao.add(miNovoPedido);
         menuOperacao.add(miBuscarProdutos);
@@ -69,6 +71,8 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
         menuOperacao.add(miMovimentacaoEstoque);
         menuOperacao.add(miNovoCliente);
         menuOperacao.add(miBuscarClientes);
+        menuOperacao.addSeparator();
+        menuOperacao.add(miGerenciarUsuarios);
 
         menuBar.add(menuOperacao);
         return menuBar;
@@ -261,6 +265,11 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
     @Override
     public JMenuItem getMenuBuscarClientes() {
         return miBuscarClientes;
+    }
+
+    @Override
+    public JMenuItem getMenuGerenciarUsuarios() {
+        return miGerenciarUsuarios;
     }
 
     @Override
