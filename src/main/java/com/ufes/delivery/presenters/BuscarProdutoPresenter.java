@@ -155,7 +155,7 @@ public class BuscarProdutoPresenter {
                 produto.getNome(),
                 produto.getCategoria(),
                 produto.getPrecoUnitario(),
-                produto.getQuantidadeInicial(),
+                produto.getQuantidadeDisponivel(),
                 "Visualizar"
             });
         }

@@ -91,7 +91,7 @@ public class PagamentoService {
         // Aprovação: gera identificador único, valor pago (= total do pedido)
         // e prazo estimado de entrega.
         String identificadorTransacao = this.gerarIdentificadorTransacao(dataHoraPagamento);
-        double valorPago = pedido.getValorPedido();
+        double valorPago = pedido.calcularValorTotal();
         LocalDateTime prazoEstimadoEntrega = this.sorteio.sortearPrazoEntrega(dataHoraPagamento);
 
         return new ResultadoPagamento(
