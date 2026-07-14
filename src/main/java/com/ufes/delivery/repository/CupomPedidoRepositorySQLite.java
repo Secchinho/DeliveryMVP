@@ -76,7 +76,7 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
                 throw new SQLException("O cupom ainda não existe na tabela.");
             }
 
-            sql = "UPDATE tbCupomPedidos SET codigo = ?, percentual = ?, "
+            sql = "UPDATE tbCupomPedido SET codigo = ?, percentual = ?, "
                     + "dataHoraInicio = ?, dataHoraFim = ? WHERE codigo = "
                     + cupom.getCodigo();
 
@@ -120,7 +120,7 @@ public class CupomPedidoRepositorySQLite implements ICupomRepository {
                         DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
                 if (dataFim.isBefore(LocalDateTime.now())) {
-                    sql = "DELETE FROM tbUsuario WHERE userName = ?";
+                    sql = "DELETE FROM tbCupomPedido WHERE codigo = ?";
                     var dstmt = conn.prepareStatement(sql);
                     dstmt.setString(1, rs.getString("codigo"));
                     dstmt.executeUpdate();
