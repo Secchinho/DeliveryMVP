@@ -29,8 +29,7 @@ public class SalvarProdutoCommand extends ProdutoPresenterCommand {
 
         String codigo = view.getTxtCodigo().getText().trim();
         String nome = view.getTxtNome().getText().trim();
-        Object categoriaSelecionada = view.getComboCategoria().getSelectedItem();
-        String categoria = categoriaSelecionada == null ? "" : categoriaSelecionada.toString().trim();
+        String categoria = view.getTxtCategoria().getText().trim();
         String precoTexto = view.getTxtPrecoUnitario().getText().trim();
         String quantidadeTexto = view.getTxtQuantidadeInicial().getText().trim();
 

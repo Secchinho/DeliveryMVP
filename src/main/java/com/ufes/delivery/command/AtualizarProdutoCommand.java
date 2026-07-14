@@ -30,8 +30,7 @@ public class AtualizarProdutoCommand extends ProdutoPresenterCommand {
         Produto produto = produtoPresenter.getProduto();
 
         String nome = view.getTxtNome().getText().trim();
-        Object categoriaSelecionada = view.getComboCategoria().getSelectedItem();
-        String categoria = categoriaSelecionada == null ? "" : categoriaSelecionada.toString().trim();
+        String categoria = view.getTxtCategoria().getText().trim();
         String precoTexto = view.getTxtPrecoUnitario().getText().trim();
         String quantidadeTexto = view.getTxtQuantidadeInicial().getText().trim();
 

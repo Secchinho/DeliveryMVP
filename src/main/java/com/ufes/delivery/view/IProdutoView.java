@@ -1,7 +1,7 @@
 package com.ufes.delivery.view;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+// JComboBox import removido — categoria agora é campo de texto livre
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
@@ -13,6 +13,6 @@ public interface IProdutoView {
     JTextField getTxtNome();
     JTextField getTxtPrecoUnitario();
     JTextField getTxtQuantidadeInicial();
-    JComboBox<String> getComboCategoria();
+    JTextField getTxtCategoria();
     void exibirMensagem(String mensagem, String titulo, int tipoMensagem);
 }

@@ -52,9 +52,11 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             var rs = stmt.executeQuery();
 
             while (rs.next()) {
-                produtos.add(new Produto(rs.getString("nome"),
+                Produto p = new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial"));
+                p.setId(rs.getInt("id"));
+                produtos.add(p);
 
             }
         } catch (SQLException e) {
@@ -79,9 +81,11 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
             var rs = stmt.executeQuery();
 
             while (rs.next()) {
-                produtos.add(new Produto(rs.getString("nome"),
+                Produto p = new Produto(rs.getString("nome"),
                         rs.getString("codigo"), rs.getString("categoria"),
-                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial")));
+                        rs.getDouble("precoUnitario"), rs.getInt("quantidadeInicial"));
+                p.setId(rs.getInt("id"));
+                produtos.add(p);
 
             }
         } catch (SQLException e) {
@@ -130,17 +134,18 @@ public class ProdutoRepositorySQLite implements IProdutoRepository {
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, produto.getId());
-            var rs = stmt.executeQuery(sql);
+            var rs = stmt.executeQuery();
             if (rs.next()) {
                 sql = "UPDATE tbProduto SET nome = ?, categoria = ?,"
                         + " precoUnitario = ?, quantidadeInicial = ? "
-                        + "WHERE codigo = " + produto.getCodigo();
+                        + "WHERE id = ?";
 
                 var ustmt = conn.prepareStatement(sql);
                 ustmt.setString(1, produto.getNome());
                 ustmt.setString(2, produto.getCategoria());
                 ustmt.setDouble(3, produto.getPrecoUnitario());
                 ustmt.setInt(4, produto.getQuantidadeInicial());
+                ustmt.setInt(5, produto.getId());
                 ustmt.executeUpdate();
             } else {
                 throw new SQLException("O produto ainda não existe");

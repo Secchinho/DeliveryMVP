@@ -74,7 +74,7 @@ public class ProdutoPresenter {
     private void preencherCampos() {
         this.view.getTxtCodigo().setText(String.valueOf(produto.getCodigo()));
         this.view.getTxtNome().setText(produto.getNome());
-        this.view.getComboCategoria().setSelectedItem(produto.getCategoria());
+        this.view.getTxtCategoria().setText(produto.getCategoria());
         this.view.getTxtPrecoUnitario().setText(String.valueOf(produto.getPrecoUnitario()));
         this.view.getTxtQuantidadeInicial().setText(String.valueOf(produto.getQuantidadeInicial()));
 

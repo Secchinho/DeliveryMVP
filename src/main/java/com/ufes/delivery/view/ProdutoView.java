@@ -7,7 +7,7 @@ import java.awt.*;
 public class ProdutoView extends JFrame implements IProdutoView {
     private JTextField txtCodigo;
     private JTextField txtNome;
-    private JComboBox<String> cmbCategoria;
+    private JTextField txtCategoria;
     private JTextField txtPrecoUnitario;
     private JTextField txtQuantidadeInicial;
     private JButton btnSalvar;
@@ -54,8 +54,8 @@ public class ProdutoView extends JFrame implements IProdutoView {
     }
 
     @Override
-    public JComboBox<String> getComboCategoria() {
-        return this.cmbCategoria;
+    public JTextField getTxtCategoria() {
+        return this.txtCategoria;
     }
 
     @Override
@@ -111,12 +111,11 @@ public class ProdutoView extends JFrame implements IProdutoView {
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
         painel.add(new JLabel("Categoria"), gbc);
 
-        cmbCategoria = new JComboBox<>();
-
-        cmbCategoria.setPreferredSize(new Dimension(200, cmbCategoria.getPreferredSize().height));
+        txtCategoria = new JTextField();
+        txtCategoria.setPreferredSize(new Dimension(200, txtCategoria.getPreferredSize().height));
         
         gbc.gridx = 1; gbc.weightx = 0;
-        painel.add(cmbCategoria, gbc);
+        painel.add(txtCategoria, gbc);
 
         gbc.gridx = 2; gbc.weightx = 1;
         painel.add(Box.createHorizontalGlue(), gbc);
