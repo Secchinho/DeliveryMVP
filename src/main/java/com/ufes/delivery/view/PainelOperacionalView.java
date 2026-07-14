@@ -184,12 +184,13 @@ public class PainelOperacionalView extends JFrame implements IPainelOperacionalV
             {
                 botao.setFont(new Font("SansSerif", Font.PLAIN, 11));
                 botao.addActionListener(e -> {
+                    // IMPORTANTE: capturar a linha ANTES de encerrar a edicao.
+                    // Apos fireEditingStopped(), getEditingRow() retorna -1,
+                    // o que fazia o listener nunca ser disparado (bug original).
+                    int linha = tabelaPedidos.getEditingRow();
                     fireEditingStopped();
-                    if (acaoVisualizarPedidoListener != null) {
-                        int linha = tabelaPedidos.getEditingRow();
-                        if (linha >= 0) {
-                            acaoVisualizarPedidoListener.accept(linha);
-                        }
+                    if (acaoVisualizarPedidoListener != null && linha >= 0) {
+                        acaoVisualizarPedidoListener.accept(linha);
                     }
                 });
             }

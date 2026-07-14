@@ -10,6 +10,7 @@ import com.ufes.delivery.view.ICadastrarUsuarioView;
 import com.ufes.delivery.view.IGerenciarUsuariosView;
 import com.ufes.util.UsuarioLogadoService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.JOptionPane;
@@ -17,9 +18,6 @@ import javax.swing.JOptionPane;
 /**
  *
  * @author lucas
- * 
- * CORRIGIDO: Removido import desnecessário de DefaultTableModel
- * e simplificado o método atualizarTabela() para usar o método da View
  */
 public class GerenciarUsuariosPresenter {
 
@@ -27,7 +25,7 @@ public class GerenciarUsuariosPresenter {
     private IUsuarioRepository usuarioRepository;
     private ICadastrarUsuarioView cadastrarUsuarioView;
 
-    public GerenciarUsuariosPresenter(IGerenciarUsuariosView view, 
+    public GerenciarUsuariosPresenter(IGerenciarUsuariosView view,
             IUsuarioRepository usuarioRepository,
             ICadastrarUsuarioView cadastrarUsuarioView) {
         this.view = Objects.requireNonNull(view, "Insira uma tela.");
@@ -58,6 +56,8 @@ public class GerenciarUsuariosPresenter {
         this.view.getNovoBtn().addActionListener(v -> this.novoUsuario());
 
         this.view.getNomeBuscaTxt().addActionListener(v -> this.buscarUsuario());
+
+        this.view.getBuscarBtn().addActionListener(v -> this.buscarUsuario());
     }
 
     private void autorizarUsuario() {
@@ -126,14 +126,32 @@ public class GerenciarUsuariosPresenter {
     private void buscarUsuario() {
         String nomeBusca = this.view.getNomeBuscaTxt().getText().trim();
 
+        // Recarrega sempre do banco para refletir autorizacoes/exclusoes
+        // feitas anteriormente; o filtro por nome OU userName e aplicado
+        // localmente, em memoria, para evitar a limitacao do SQL atual
+        // (que so filtra por 'nome' e ignora o userName).
+        List<Usuario> todos = this.usuarioRepository.listarUsuarios();
+
         List<Usuario> usuarios;
-        if (nomeBusca.isEmpty() || nomeBusca.length() < 2) {
-            usuarios = this.usuarioRepository.listarUsuarios();
+        if (nomeBusca.isEmpty()) {
+            usuarios = todos;
         } else {
-            usuarios = this.usuarioRepository.buscarPorNomeContendo(nomeBusca);
+            String alvo = nomeBusca.toLowerCase();
+            usuarios = new ArrayList<>();
+            for (Usuario u : todos) {
+                String nome = u.getNome() == null ? "" : u.getNome().toLowerCase();
+                String userName = u.getUserName() == null ? "" : u.getUserName().toLowerCase();
+                if (nome.contains(alvo) || userName.contains(alvo)) {
+                    usuarios.add(u);
+                }
+            }
         }
 
         this.atualizarTabela(usuarios);
+
+        if (usuarios.isEmpty()) {
+            this.exibirMensagem("Nenhum usuário encontrado para '" + nomeBusca + "'.");
+        }
     }
 
     private void cancelar() {
@@ -145,25 +163,11 @@ public class GerenciarUsuariosPresenter {
         this.atualizarTabela(usuarios);
     }
 
-    /**
-     * CORRIGIDO: 
-     * 
-     * ❌ ANTES (ERRADO):
-     * private void atualizarTabela(List<Usuario> usuarios) {
-     *     JTable tabela = this.view.getUsuariosTable();
-     *     DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();  // ClassCastException!
-     *     modelo.setRowCount(0);
-     *     for (Usuario usuario : usuarios) {
-     *         modelo.addRow(new Object[]{...});
-     *     }
-     * }
-     * 
-     * ✅ DEPOIS (CORRETO):
-     * O método atualizarTabela() da View já faz toda a manipulação corretamente.
-     * Delegamos essa responsabilidade à View, seguindo o padrão MVP.
-     */
     private void atualizarTabela(List<Usuario> usuarios) {
-        // Simples: deixamos a View cuidar de sua própria atualização
+        // Delega para a view, que cria o UsuariosTableModel customizado
+        // (herda de AbstractTableModel, nao de DefaultTableModel).
+        // Antes havia aqui um cast para DefaultTableModel que causava
+        // ClassCastException em runtime ao abrir "Gerenciar Usuários".
         this.view.atualizarTabela(usuarios);
     }
 
