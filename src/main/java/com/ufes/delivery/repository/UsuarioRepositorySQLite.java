@@ -41,7 +41,14 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     @Override
     public List<Usuario> buscarPorNomeContendo(String nome) {
         validarTrechoNome(nome);
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM"
+        // IMPORTANTE: a coluna "senha" DEVE constar no SELECT, porque o
+        // mapeador mapear() a lê via rs.getString("senha"). Sem ela, a
+        // SQLException lançada dentro do while faz com que a lista seja
+        // devolvida vazia, o que por sua vez faz CadastrarUsuarioPresenter
+        // crer que não há usuários cadastrados (isPrimeiroUsuario()==true)
+        // e atribuir perfil Administrador + situação Autorizado a todos os
+        // cadastros posteriores — violando o US02, Cenário 2.
+        String sql = "SELECT nome, userName, senha, tipo, situacao, autorizado FROM"
                 + " tbUsuario WHERE nome LIKE ?";
         List<Usuario> usuarios = new ArrayList<>();
 
@@ -63,7 +70,9 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     public void adicionar(Usuario usuario) {
         validarUsuario(usuario);
 
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM"
+        // Mesmo raciocínio de buscarPorNomeContendo: o SELECT precisa trazer
+        // a coluna "senha" para que o mapear() não lance SQLException.
+        String sql = "SELECT nome, userName, senha, tipo, situacao, autorizado FROM"
                 + " tbUsuario WHERE userName = ?";
 
         try (var conn = DriverManager.getConnection(this.url);
@@ -97,22 +106,31 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     public void atualizar(Usuario usuario) {
         validarUsuario(usuario);
 
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM"
+        // SELECT traz "senha" para compatibilidade com mapear().
+        String sql = "SELECT nome, userName, senha, tipo, situacao, autorizado FROM"
                 + " tbUsuario WHERE userName = ?";
 
         try (var conn = DriverManager.getConnection(this.url); var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, usuario.getUserName());
             var rs = stmt.executeQuery();
             if (rs.next()) {
+                // Corrigido: o WHERE agora usa parâmetro (?) em vez de
+                // concatenação de string. Antes, "WHERE userName = " + userName
+                // produzia SQL inválido (userName tratado como nome de coluna
+                // inexistente) e o UPDATE silenciosamente falhava, de modo que
+                // autorizações/desautorizações dadas via Gerenciar Usuários
+                // nunca eram persistidas. Adicionalmente, a concatenação abria
+                // brecha de SQL injection.
                 sql = "UPDATE tbUsuario SET nome = ?, senha = ?, tipo = ?,"
                         + " situacao = ?, autorizado = ? "
-                        + "WHERE userName = " + usuario.getUserName();
+                        + "WHERE userName = ?";
                 var ustmt = conn.prepareStatement(sql);
                 ustmt.setString(1, usuario.getNome());
                 ustmt.setString(2, usuario.getSenha());
                 ustmt.setInt(3, usuario.getTipo());
                 ustmt.setString(4, usuario.getSituacao());
                 ustmt.setBoolean(5, usuario.isAutorizado());
+                ustmt.setString(6, usuario.getUserName());
                 ustmt.executeUpdate();
             } else {
                 sql = "INSERT INTO tbUsuario(nome, userName, senha, tipo, "
@@ -147,7 +165,15 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
     @Override
     public List<Usuario> listarUsuarios() {
-        String sql = "SELECT nome, userName, tipo, situacao, autorizado FROM "
+        // IMPORTANTE: a coluna "senha" DEVE constar no SELECT porque o
+        // mapeador mapear() a lê via rs.getString("senha"). Sem ela, a
+        // SQLException lançada no primeiro rs.next() faz com que a lista
+        // seja devolvida vazia, levando CadastrarUsuarioPresenter a crer
+        // que não há usuários cadastrados (isPrimeiroUsuario()==true) e a
+        // registrar TODO novo usuário como Administrador+Autorizado — bug
+        // que viola o US02 (Cenário 2) e, em cascata, faz o painel
+        // operacional exibir "Administrador" para qualquer login (US04).
+        String sql = "SELECT nome, userName, senha, tipo, situacao, autorizado FROM "
                 + "tbUsuario";
         List<Usuario> usuarios = new ArrayList<>();
 
@@ -205,6 +231,11 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         Usuario u = new Usuario(rs.getString("nome"), rs.getString("userName"), rs.getString("senha"));
         u.setTipo(rs.getInt("tipo"));
         u.setSituacao(rs.getString("situacao"));
+        // Antes faltava: o campo "autorizado" nunca era reposto a partir do
+        // ResultSet, permanecendo com o default false mesmo para usuários
+        // previamente autorizados. Agora é lido da coluna, presente em todos
+        // os SELECTs deste repositório.
+        u.setAutorizado(rs.getBoolean("autorizado"));
         return u;
     }
 }

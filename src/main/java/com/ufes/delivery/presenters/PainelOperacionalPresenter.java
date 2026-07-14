@@ -5,6 +5,7 @@
 package com.ufes.delivery.presenters;
 
 import br.ufes.logauditoria.ILogger;
+import com.ufes.delivery.command.SalvarClienteCommand;
 import com.ufes.delivery.command.SalvarProdutoCommand;
 import com.ufes.delivery.desconto.pedido.AplicadorCupomPedidoService;
 import com.ufes.delivery.model.Cliente;
@@ -275,6 +276,7 @@ public class PainelOperacionalPresenter {
     private void abrirNovoCliente() {
         IClienteView clienteView = new ClienteView();
         ClientePresenter clientePresenter = new ClientePresenter(clienteView, this.clienteRepository);
+        clientePresenter.setCommand(new SalvarClienteCommand(clientePresenter));
 
         this.atualizarPainelAoFechar(clienteView.getJanelaPrincipal());
         clientePresenter.iniciar();
