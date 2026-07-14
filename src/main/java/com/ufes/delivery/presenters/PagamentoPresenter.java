@@ -188,7 +188,7 @@ public class PagamentoPresenter {
     }
 
     private String formatarMoeda(double valor) {
-        NumberFormat formato = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        NumberFormat formato = NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
         formato.setRoundingMode(RoundingMode.HALF_UP);
         return formato.format(valor);
     }
