@@ -56,7 +56,7 @@ public class Principal {
         IClienteRepository clienteRepository = new ClienteRepositorySQLite();
         IProdutoRepository produtoRepository = new ProdutoRepositorySQLite();
         ICupomRepository cupomRepository = new CupomPedidoRepositorySQLite();
-        IPedidoRepository pedidoRepository = new PedidoRepositorySQLite();
+        IPedidoRepository pedidoRepository = new PedidoRepositorySQLite(logger);
 
         // --- Serviços de domínio ---
         AplicadorCupomPedidoService aplicadorCupomService
